@@ -3,7 +3,7 @@ seed: 42
 # Audio and reference transcripts prepared by asr-dataset-pipelines.
 # The label CSV lives at the root of the media directory, so config.py derives
 # it from whichever media copy is in use rather than declaring it twice.
-hpc_media_dir: /bighome/gdhakal/asr-paper/data/media
+hpc_media_dir: /bighome/gdhakal/child_asr/data/media
 local_media_dir: ../asr-dataset-pipelines/data/media
 reference_report_filename: media_download_report.csv
 
