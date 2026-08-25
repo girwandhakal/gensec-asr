@@ -16,7 +16,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import load_config
@@ -46,7 +46,11 @@ def build_reference_map(config: dict) -> dict[str, str]:
                 no_clip += 1  # utterance was never cut into a clip
                 continue
 
-            utterance_id = Path(output).stem
+            # `output` is a Windows absolute path baked in when the report was
+            # generated on a Windows laptop. `Path` on Linux won't split on
+            # backslashes, so this must use PureWindowsPath (it accepts both
+            # `\` and `/`) rather than the platform `Path`.
+            utterance_id = PureWindowsPath(output).stem
             described_clips.add(utterance_id)
             if utterance_id not in clips_on_disk:
                 missing_file += 1
