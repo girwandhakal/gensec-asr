@@ -1,0 +1,253 @@
+"""
+What this file is for:
+Stage 4. Fine-tunes FLAN-T5 to read a list of competing ASR hypotheses and
+write the corrected transcript, then runs it on the held-out test split.
+
+High-level role in the pipeline:
+This is the correction model itself. It can do three things the acoustic model
+cannot: prefer the reading most hypotheses agree on, splice the right words
+out of different candidates, and fall back on what English usually sounds
+like.
+"""
+
+from __future__ import annotations
+
+import random
+import sys
+from pathlib import Path
+
+import pandas as pd
+import torch
+from datasets import Dataset
+from sklearn.model_selection import train_test_split
+from transformers import (
+    AutoModelForSeq2SeqLM,
+    AutoTokenizer,
+    DataCollatorForSeq2Seq,
+    Seq2SeqTrainer,
+    Seq2SeqTrainingArguments,
+)
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import load_config, predictions_path
+from text import collapse_whitespace
+
+INSTRUCTION = """You are correcting ASR output.
+Below are multiple recognition hypotheses for the same utterance.
+Choose the single most likely correct transcript.
+Do not paraphrase.
+Do not add information.
+Preserve the original wording as much as possible.
+Output only the corrected transcript."""
+
+
+def normalize(text: str) -> str:
+    return collapse_whitespace(str(text or "").lower())
+
+
+def format_hypotheses(hypotheses: list[str]) -> str:
+    return "\n".join(f"{i}. {text}" for i, text in enumerate(hypotheses, start=1))
+
+
+def build_nbest_prompt(hypotheses: list[str]) -> str:
+    return f"{INSTRUCTION}\n\nHypotheses:\n{format_hypotheses(hypotheses)}"
+
+
+def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
+    """Prompt with in-context examples, trimmed to fit the token budget.
+
+    Demonstrations go first because they are the cheapest thing to lose; only
+    once they are all gone do we start dropping hypotheses.
+    """
+    demos = list(demonstrations)
+    hyps = list(hypotheses)
+
+    def render() -> str:
+        blocks = [INSTRUCTION]
+        for demo in demos:
+            demo_hyps = demo["input"][:config["icl_demo_hypotheses"]]
+            blocks.append(
+                f"Hypotheses:\n{format_hypotheses(demo_hyps)}\nCorrected: {demo['output']}"
+            )
+        blocks.append(f"Hypotheses:\n{format_hypotheses(hyps)}\nCorrected:")
+        return "\n\n".join(blocks)
+
+    def token_count(text: str) -> int:
+        return len(tokenizer(text, add_special_tokens=True)["input_ids"])
+
+    prompt = render()
+    while token_count(prompt) > config["max_source_length"] and demos:
+        demos.pop()
+        prompt = render()
+    while token_count(prompt) > config["max_source_length"] and len(hyps) > config["min_hypotheses"]:
+        hyps.pop()
+        prompt = render()
+
+    return prompt, len(demos), len(hyps), token_count(prompt)
+
+
+def load_examples(config: dict) -> pd.DataFrame:
+    """Read the processed dataset, normalize it, and drop anything unusable."""
+    frame = pd.read_json(config["processed_path"])
+
+    rows = []
+    for example in frame.to_dict("records"):
+        target = normalize(example["output"])
+        hypotheses = [h for h in (normalize(h) for h in example["input"]) if h]
+        # Deduplicate again: two hypotheses can collide once lowercased.
+        hypotheses = list(dict.fromkeys(hypotheses))
+
+        if target and len(hypotheses) >= config["min_hypotheses"]:
+            rows.append({"id": example["id"], "input": hypotheses, "output": target})
+
+    print(f"Examples after normalizing: {len(rows):,} of {len(frame):,}")
+    return pd.DataFrame(rows)
+
+
+def make_splits(examples: pd.DataFrame, config: dict):
+    train_frame, test_frame = train_test_split(
+        examples,
+        test_size=config["test_size"],
+        random_state=config["seed"],
+        shuffle=True,
+    )
+
+    config["splits_dir"].mkdir(parents=True, exist_ok=True)
+    train_frame.to_csv(config["splits_dir"] / "train_split.csv", index=False)
+    test_frame.to_csv(config["splits_dir"] / "test_split.csv", index=False)
+    print(f"Train: {len(train_frame):,} | Test: {len(test_frame):,}")
+
+    return train_frame, test_frame
+
+
+def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
+    def tokenize(batch):
+        prompts = [build_nbest_prompt(h) for h in batch["input"]]
+        model_inputs = tokenizer(
+            prompts, max_length=config["max_source_length"], truncation=True
+        )
+        model_inputs["labels"] = tokenizer(
+            text_target=batch["output"], max_length=config["max_target_length"], truncation=True
+        )["input_ids"]
+        return model_inputs
+
+    dataset = Dataset.from_pandas(train_frame[["input", "output"]], preserve_index=False)
+    dataset = dataset.map(tokenize, batched=True, remove_columns=dataset.column_names)
+
+    model = AutoModelForSeq2SeqLM.from_pretrained(config["gensec_model_id"])
+    arguments = Seq2SeqTrainingArguments(
+        output_dir=str(config["work_dir"]),
+        per_device_train_batch_size=config["train_batch_size"],
+        learning_rate=config["learning_rate"],
+        num_train_epochs=config["num_train_epochs"],
+        save_strategy="epoch",
+        save_total_limit=1,
+        logging_steps=100,
+        fp16=torch.cuda.is_available(),
+        report_to=[],
+        seed=config["seed"],
+    )
+
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=arguments,
+        train_dataset=dataset,
+        data_collator=DataCollatorForSeq2Seq(tokenizer, model=model),
+    )
+    trainer.train()
+
+    final_checkpoint = config["work_dir"] / "final_checkpoint"
+    trainer.save_model(str(final_checkpoint))
+    tokenizer.save_pretrained(str(final_checkpoint))
+    print(f"Saved model to {final_checkpoint}")
+
+    return model
+
+
+def pick_demonstrations(mode: str, utterance_id: str, pool: list[dict], config: dict) -> list[dict]:
+    """Sample in-context examples, deterministically per test utterance."""
+    if mode == "zero_shot":
+        return []
+
+    count = 1 if mode == "one_shot" else config["few_shot_examples"]
+    rng = random.Random(f"{mode}:{utterance_id}")
+    candidates = [example for example in pool if example["id"] != utterance_id]
+    return rng.sample(candidates, min(count, len(candidates)))
+
+
+def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> None:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device).eval()
+
+    pool = train_frame.to_dict("records")
+    tests = test_frame.to_dict("records")
+
+    rows = []
+    for start in range(0, len(tests), config["eval_batch_size"]):
+        batch = tests[start:start + config["eval_batch_size"]]
+        built = [
+            build_icl_prompt(
+                example["input"],
+                pick_demonstrations(mode, example["id"], pool, config),
+                tokenizer,
+                config,
+            )
+            for example in batch
+        ]
+
+        inputs = tokenizer(
+            [prompt for prompt, _, _, _ in built],
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=config["max_source_length"],
+        ).to(device)
+
+        with torch.inference_mode():
+            generated = model.generate(
+                **inputs,
+                max_new_tokens=config["max_target_length"],
+                num_beams=config["num_beams"],
+                do_sample=False,
+            )
+        predictions = tokenizer.batch_decode(generated, skip_special_tokens=True)
+
+        for example, (prompt, demos, hyps, tokens), prediction in zip(batch, built, predictions):
+            rows.append({
+                "id": example["id"],
+                "input": " | ".join(example["input"]),
+                "input_token_count": tokens,
+                "retained_icl_examples": demos,
+                "retained_input_hypotheses": hyps,
+                "truth": example["output"],
+                "prediction": collapse_whitespace(prediction),
+            })
+
+        if start % (config["eval_batch_size"] * 20) == 0:
+            print(f"  [{mode}] {min(start + len(batch), len(tests)):,}/{len(tests):,}")
+
+    output_path = predictions_path(config, mode)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(rows).to_csv(output_path, index=False)
+    print(f"Wrote {output_path}")
+
+
+def main(config: dict | None = None) -> None:
+    config = config or load_config()
+
+    if not config["processed_path"].is_file():
+        raise SystemExit(f"Missing dataset: {config['processed_path']}")
+
+    examples = load_examples(config)
+    train_frame, test_frame = make_splits(examples, config)
+
+    tokenizer = AutoTokenizer.from_pretrained(config["gensec_model_id"])
+    model = fine_tune(train_frame, tokenizer, config)
+
+    for mode in config["inference_modes"]:
+        print(f"===== inference: {mode} =====")
+        run_inference(model, tokenizer, train_frame, test_frame, mode, config)
+
+
+if __name__ == "__main__":
+    main()

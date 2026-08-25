@@ -1,0 +1,11 @@
+name: gensec_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  # librosa decodes the media pipeline's mp3 clips through ffmpeg.
+  - ffmpeg
+  - pip:
+      - -r requirements.txt

@@ -1,0 +1,32 @@
+# Generated pipeline data: n-best output, datasets, splits, predictions
+data/
+
+# Model checkpoints and Slurm logs
+work_directory/
+gensec_training.txt
+**/*.pt
+**/*.pth
+**/*.bin
+**/*.safetensors
+**/checkpoint-*/
+
+# Evaluation outputs are part of the research record
+!evaluation_results/
+!evaluation_results/**
+!evaluation_history/
+!evaluation_history/**
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# agents
+.claude/
+.agents/
+.codex/
