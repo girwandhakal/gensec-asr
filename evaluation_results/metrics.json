@@ -1,0 +1,32 @@
+{
+  "whisper_1best": {
+    "substitutions": 25470,
+    "deletions": 12556,
+    "insertions": 10045,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 48071,
+    "wer": 0.6169117835784502,
+    "exact_match_rate": 0.0549252536038441
+  },
+  "gensec_zero_shot": {
+    "substitutions": 26751,
+    "deletions": 21889,
+    "insertions": 161946,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 210586,
+    "wer": 2.702523035856369,
+    "exact_match_rate": 0.0
+  },
+  "gensec_zero_shot_cleaned": {
+    "substitutions": 26698,
+    "deletions": 22004,
+    "insertions": 147576,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 196278,
+    "wer": 2.5189035189035187,
+    "exact_match_rate": 0.0
+  }
+}

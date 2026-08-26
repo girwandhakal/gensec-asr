@@ -1,0 +1,115 @@
+GenSEC evaluation
+========================================================================
+Test utterances: 14,984
+
+system                             WER     exact        S        D        I
+------------------------------------------------------------------------
+whisper_1best                  61.69%     5.49%   25,470   12,556   10,045
+gensec_zero_shot              270.25%     0.00%   26,751   21,889  161,946
+gensec_zero_shot_cleaned      251.89%     0.00%   26,698   22,004  147,576
+
+gensec_zero_shot vs whisper_1best: -338.07% relative WER reduction (worse)
+
+gensec_zero_shot_cleaned vs whisper_1best: -308.31% relative WER reduction (worse)
+
+
+Worst utterances - whisper_1best
+------------------------------------------------------------------------
+caa18248_847798_847898_201  sentence_wer=221.00
+  ref: huh
+  hyp: oh and also i just realized i just got a new channel and it is called love and hope and i just realized that right now that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000
+2038beb2_1185083_1186143_315  sentence_wer=98.67
+  ref: a dirty shirt
+  hyp: i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need
+286c4c29_1133850_1139795_66  sentence_wer=44.20
+  ref: mm mm mm mm mm
+  hyp: mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm
+4ad311a3_73398_75780_7  sentence_wer=41.50
+  ref: c cookies
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+6aa69f93_675226_675326_171  sentence_wer=32.00
+  ref: hm
+  hyp: oh and i just wanted to let you know that i really like you and i just wanted to share a little bit about me and the whole story with you guys
+21371139_362301_364604_42  sentence_wer=30.60
+  ref: we were eating and eating
+  hyp: we were eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and
+aa9c983b_149275_167526_17  sentence_wer=28.00
+  ref: then
+  hyp: then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms
+e27739fd_2129082_2131504_621  sentence_wer=22.89
+  ref: blah blah blah blah blah blah blah blah blah
+  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
+6bb5b2b3_116072_138642_7  sentence_wer=19.33
+  ref: i think not
+  hyp: he responded i think not uh and so it wasnt in response to one of his own statements he had set him up for but it was just in response something i said and for the first time he was doing not as the object of the verb um im sure well see a lot more of it starting now um
+d034267d_335967_336108_141  sentence_wer=18.00
+  ref: yep
+  hyp: i dont really know but i do know that they are living a very special and wonderful life
+
+
+Worst utterances - gensec_zero_shot
+------------------------------------------------------------------------
+52baa29b_1746616_1746716_544  sentence_wer=115.00
+  ref: mm
+  hyp: 1 and i hope you enjoyed this video 2 i hate you 3 you 4 and then i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of
+aa9c983b_149275_167526_17  sentence_wer=103.00
+  ref: then
+  hyp: 1 then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms 2 well then then after then does uh i wanted to um the two that the oh yeah i heard that yeah okay and then and then and then then 3 well then then after then theres uh i wanted to um the two that the the beautiful well then its fine and then and then then 4 then then i think theres a i think that you um that you that you that
+caa18248_847798_847898_201  sentence_wer=100.00
+  ref: huh
+  hyp: 1 oh and also i just realized that i just got a new channel and it is called love and hope and i just realized that right now that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i
+64288f8f_434783_435283_121  sentence_wer=98.00
+  ref: equals
+  hyp: 1 of 2 of 3 of 4 of 5 of 6 of 7 of 8 of 9 of 10 of 11 of 12 of 13 of 14 of 15 of 16 of 17 of 18 of 19 of 20 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of 25 of
+c7fb7885_483851_484351_52  sentence_wer=98.00
+  ref: well
+  hyp: 1 yes 2 yes 3 yes 4 yes 5 yes 6 yes 7 yes 8 yes 9 yes 10 yes 11 yes 12 yes 13 yes 14 yes 15 yes 16 yes 17 yes 18 yes 19 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes 20 yes
+c054b8b2_202836_203096_67  sentence_wer=86.00
+  ref: yogurt
+  hyp: 1 i feel 2 i feel 3 i feel 4 i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel i feel
+7a9e2918_1662362_1662822_359  sentence_wer=86.00
+  ref: yeah
+  hyp: 1 i think thats it 2 i think thats it 3 i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i think i
+99122406_594123_594623_78  sentence_wer=82.00
+  ref: what
+  hyp: 1 oh i should 2 oh i should 3 oh i should 4 oh i should 5 oh i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should i should
+6aa69f93_675226_675326_171  sentence_wer=81.00
+  ref: hm
+  hyp: 1 oh and i just wanted to let you know that i really like you and i just wanted to share a little bit about me and the whole story with you guys 2 oh and i was like okay ill just do a little bit of work and be back in a bit 3 oh and i was like okay ill just do a little bit of work and be back in a bit 4 oh and yeah 5 you
+50e773ce_67907_68407_4  sentence_wer=77.00
+  ref: no
+  hyp: 1 put it on 2 put it on 3 put it on 4 put it on 5 put it on 6 put it on 7 put it on 8 put it on 9 put it on 10 put it on 11 put it on 12 put it on 13 put it on 14 put it on 15 put it on 16 put it on 17 put it on 18 put it on 19 put it on 20
+
+
+Worst utterances - gensec_zero_shot_cleaned
+------------------------------------------------------------------------
+52baa29b_1746616_1746716_544  sentence_wer=115.00
+  ref: mm
+  hyp: 1 and i hope you enjoyed this video 2 i hate you 3 you 4 and then i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of course i put on some more lipstick and of
+aa9c983b_149275_167526_17  sentence_wer=103.00
+  ref: then
+  hyp: 1 then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms 2 well then then after then does uh i wanted to um the two that the oh yeah i heard that yeah okay and then and then and then then 3 well then then after then theres uh i wanted to um the two that the the beautiful well then its fine and then and then then 4 then then i think theres a i think that you um that you that you that
+caa18248_847798_847898_201  sentence_wer=100.00
+  ref: huh
+  hyp: 1 oh and also i just realized that i just got a new channel and it is called love and hope and i just realized that right now that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i
+6aa69f93_675226_675326_171  sentence_wer=81.00
+  ref: hm
+  hyp: 1 oh and i just wanted to let you know that i really like you and i just wanted to share a little bit about me and the whole story with you guys 2 oh and i was like okay ill just do a little bit of work and be back in a bit 3 oh and i was like okay ill just do a little bit of work and be back in a bit 4 oh and yeah 5 you
+50e773ce_67907_68407_4  sentence_wer=77.00
+  ref: no
+  hyp: 1 put it on 2 put it on 3 put it on 4 put it on 5 put it on 6 put it on 7 put it on 8 put it on 9 put it on 10 put it on 11 put it on 12 put it on 13 put it on 14 put it on 15 put it on 16 put it on 17 put it on 18 put it on 19 put it on 20
+3cc5f021_605208_605708_205  sentence_wer=73.00
+  ref: i've
+  hyp: 1 i don't know 2 i don't know 3 i don't know 4 i don't know 5 i don't know 6 i don't know 7 i don't know 8 i don't know 9 i don't know 10 i don't know 11 i don't know 12 i don't know 13 i don't know 14 i don't know 15 i don't know 16 i don't know 17 i don't know 18 i don't know 19
+e01f964c_941122_941622_194  sentence_wer=64.00
+  ref: no
+  hyp: 1 a s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s
+25be4080_1263632_1264132_300  sentence_wer=64.00
+  ref: no
+  hyp: 1 a s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s
+ce6e9664_230044_230543_28  sentence_wer=64.00
+  ref: so
+  hyp: 1 a s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s
+4cd30874_471943_472443_118  sentence_wer=64.00
+  ref: sho
+  hyp: 1 a s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s s

@@ -1,0 +1,49 @@
+seed: 42
+
+# Audio and reference transcripts prepared by asr-dataset-pipelines.
+# The label CSV lives at the root of the media directory, so config.py derives
+# it from whichever media copy is in use rather than declaring it twice.
+hpc_media_dir: /bighome/gdhakal/child_asr/data/media
+local_media_dir: ../asr-dataset-pipelines/data/media
+reference_report_filename: media_download_report.csv
+
+# Reference transcripts are raw CHILDES CHAT markup. Whisper can never emit
+# "xxx" for unintelligible speech, so keeping it would count as errors the
+# model cannot avoid.
+remove_unintelligible: true
+
+# Stage 2: Whisper n-best generation.
+asr_model_id: rishabhjain16/whisper_medium_to_myst55h
+audio_extension: .mp3
+sample_rate: 16000
+max_clip_seconds: 30      # Whisper's window; 91 clips exceed it, longest is 75 min
+min_clip_seconds: 0.1     # 135 clips are effectively zero-length
+num_return_sequences: 5
+temperature: 0.6
+top_p: 0.95
+top_k: 50
+asr_batch_size: 16
+asr_save_every: 500       # checkpoint the n-best JSON this often, so the job resumes
+asr_limit: null           # set to an integer for a quick smoke test
+
+# Stage 3: dataset construction.
+max_hypotheses: 5
+min_hypotheses: 2
+
+# Stage 4: the correction model.
+gensec_model_id: google/flan-t5-base
+max_source_length: 512
+max_target_length: 128
+num_train_epochs: 5
+learning_rate: 3.0e-5
+train_batch_size: 8
+eval_batch_size: 16
+num_beams: 8
+test_size: 0.2
+inference_modes: [zero_shot]   # also available: one_shot, few_shot
+few_shot_examples: 5
+icl_demo_hypotheses: 3         # hypotheses shown per in-context demonstration
+
+data_dir: data
+work_dir: work_directory
+results_dir: evaluation_results
