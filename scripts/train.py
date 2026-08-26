@@ -12,6 +12,7 @@ like.
 
 from __future__ import annotations
 
+import math
 import random
 import sys
 from pathlib import Path
@@ -26,6 +27,7 @@ from transformers import (
     DataCollatorForSeq2Seq,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
+    TrainerCallback,
 )
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -63,6 +65,13 @@ def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
     hyps = list(hypotheses)
 
     def render() -> str:
+        # With no demonstrations this has to match the fine-tuning prompt
+        # exactly. It used to append a trailing "Corrected:" the fine-tune
+        # never saw, which put zero-shot inference off-distribution and made
+        # the model echo the hypothesis list back instead of correcting it.
+        if not demos:
+            return build_nbest_prompt(hyps)
+
         blocks = [INSTRUCTION]
         for demo in demos:
             demo_hyps = demo["input"][:config["icl_demo_hypotheses"]]
@@ -120,6 +129,39 @@ def make_splits(examples: pd.DataFrame, config: dict):
     return train_frame, test_frame
 
 
+class AbortOnDeadTraining(TrainerCallback):
+    """Stop the job the moment the optimizer stops updating weights.
+
+    A NaN gradient norm, or a loss of exactly 0.0, means the scaler is
+    discarding every step and the run cannot learn anything. Left alone that
+    still costs a full walltime and produces a checkpoint identical to the
+    pretrained model, which is indistinguishable from a bad result until you
+    read the log. Fail loudly instead.
+    """
+
+    def __init__(self, grace_steps: int = 100):
+        self.grace_steps = grace_steps
+
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        if not logs or state.global_step < self.grace_steps:
+            return
+
+        grad_norm = logs.get("grad_norm")
+        if grad_norm is not None and math.isnan(float(grad_norm)):
+            raise RuntimeError(
+                f"Gradient norm is NaN at step {state.global_step}. No weights are "
+                "being updated - check the training precision (T5 needs bf16 or fp32, "
+                "never fp16)."
+            )
+
+        loss = logs.get("loss")
+        if loss is not None and float(loss) == 0.0:
+            raise RuntimeError(
+                f"Training loss is exactly 0.0 at step {state.global_step}. That is a "
+                "dead run, not a converged one - check the training precision."
+            )
+
+
 def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     def tokenize(batch):
         prompts = [build_nbest_prompt(h) for h in batch["input"]]
@@ -134,16 +176,27 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     dataset = Dataset.from_pandas(train_frame[["input", "output"]], preserve_index=False)
     dataset = dataset.map(tokenize, batched=True, remove_columns=dataset.column_names)
 
+    # A slice held out of training, purely so the loss curve has something to
+    # be checked against per epoch. The scored test split is separate.
+    split = dataset.train_test_split(test_size=config["eval_size"], seed=config["seed"])
+    print(f"Fine-tune on {len(split['train']):,} | validate on {len(split['test']):,}")
+
     model = AutoModelForSeq2SeqLM.from_pretrained(config["gensec_model_id"])
     arguments = Seq2SeqTrainingArguments(
         output_dir=str(config["work_dir"]),
         per_device_train_batch_size=config["train_batch_size"],
+        per_device_eval_batch_size=config["eval_batch_size"],
         learning_rate=config["learning_rate"],
         num_train_epochs=config["num_train_epochs"],
         save_strategy="epoch",
+        eval_strategy="epoch",
         save_total_limit=1,
         logging_steps=100,
-        fp16=torch.cuda.is_available(),
+        # NOT fp16. T5 was pretrained in bfloat16 and overflows fp16's range:
+        # the gradient scaler then skips every optimizer step, so the loss logs
+        # as exactly 0.0, the LR never decays, and five epochs of training
+        # change no weights at all. That is what happened on 2026-08-25.
+        bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
         report_to=[],
         seed=config["seed"],
     )
@@ -151,8 +204,10 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     trainer = Seq2SeqTrainer(
         model=model,
         args=arguments,
-        train_dataset=dataset,
+        train_dataset=split["train"],
+        eval_dataset=split["test"],
         data_collator=DataCollatorForSeq2Seq(tokenizer, model=model),
+        callbacks=[AbortOnDeadTraining()],
     )
     trainer.train()
 

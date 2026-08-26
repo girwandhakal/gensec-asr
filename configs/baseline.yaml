@@ -40,6 +40,7 @@ train_batch_size: 8
 eval_batch_size: 16
 num_beams: 8
 test_size: 0.2
+eval_size: 0.02                # held out of the fine-tune for a per-epoch loss check
 inference_modes: [zero_shot]   # also available: one_shot, few_shot
 few_shot_examples: 5
 icl_demo_hypotheses: 3         # hypotheses shown per in-context demonstration
