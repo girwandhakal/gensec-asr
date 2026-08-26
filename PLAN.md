@@ -172,7 +172,7 @@ seed: 42
 # Audio + reference transcripts produced by asr-dataset-pipelines.
 # The report CSV lives at the root of the media dir, so it is derived from it
 # rather than declared twice.
-hpc_media_dir: /bighome/gdhakal/asr-paper/data/media
+hpc_media_dir: /bighome/gdhakal/child_asr/data/media
 local_media_dir: ../asr-dataset-pipelines/data/media   # relative to PROJECT_ROOT
 reference_report_filename: media_download_report.csv
 
@@ -411,12 +411,10 @@ makes a resubmitted job resume rather than restart. This is the only script
 
 ## Open items to confirm
 
-- **HPC paths and getting the data there.** `hpc_media_dir` is written as
-  `/bighome/gdhakal/asr-paper/data/media` and `PROJECT_ROOT` as
-  `/home/gdhakal/gensec-asr` by analogy with the Ecolang setup
-  (`/home/gdhakal/<repo>` + `/bighome/gdhakal/<project>/data`) — both need
-  confirming against the actual cluster layout. The 55,262 clips (~50 h of
-  mp3) plus `media_download_report.csv` need rsyncing from the OneDrive path
+- **HPC paths and getting the data there.** `hpc_media_dir` is confirmed as
+  `/bighome/gdhakal/child_asr/data/media`; `PROJECT_ROOT` is
+  `/home/gdhakal/gensec-asr`. The 55,262 clips (~50 h of mp3) plus
+  `media_download_report.csv` need rsyncing from the OneDrive path
   to `hpc_media_dir` before the first submission; worth confirming the
   `/bighome` quota has room.
 - **The 400 orphan clips.** On disk with no row in the report — HSLLD 278,

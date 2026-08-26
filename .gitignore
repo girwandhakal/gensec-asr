@@ -1,6 +1,3 @@
-# Generated pipeline data: n-best output, datasets, splits, predictions
-data/
-
 # Model checkpoints and Slurm logs
 work_directory/
 gensec_training.txt
