@@ -1,6 +1,5 @@
 # Model checkpoints and Slurm logs
 work_directory/
-gensec_training.txt
 **/*.pt
 **/*.pth
 **/*.bin
