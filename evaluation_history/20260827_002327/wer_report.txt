@@ -1,0 +1,115 @@
+GenSEC evaluation
+========================================================================
+Test utterances: 14,984
+
+system                             WER     exact        S        D        I
+------------------------------------------------------------------------
+whisper_1best                  61.69%     5.49%   25,470   12,556   10,045
+gensec_zero_shot              184.69%    13.67%   25,207    7,997  110,711
+gensec_zero_shot_cleaned       58.92%    13.70%   24,425    8,974   12,514
+
+gensec_zero_shot vs whisper_1best: -199.38% relative WER reduction (worse)
+
+gensec_zero_shot_cleaned vs whisper_1best: +4.49% relative WER reduction (better)
+
+
+Worst utterances - whisper_1best
+------------------------------------------------------------------------
+caa18248_847798_847898_201  sentence_wer=221.00
+  ref: huh
+  hyp: oh and also i just realized i just got a new channel and it is called love and hope and i just realized that right now that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000
+2038beb2_1185083_1186143_315  sentence_wer=98.67
+  ref: a dirty shirt
+  hyp: i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need
+286c4c29_1133850_1139795_66  sentence_wer=44.20
+  ref: mm mm mm mm mm
+  hyp: mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm
+4ad311a3_73398_75780_7  sentence_wer=41.50
+  ref: c cookies
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+6aa69f93_675226_675326_171  sentence_wer=32.00
+  ref: hm
+  hyp: oh and i just wanted to let you know that i really like you and i just wanted to share a little bit about me and the whole story with you guys
+21371139_362301_364604_42  sentence_wer=30.60
+  ref: we were eating and eating
+  hyp: we were eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and
+aa9c983b_149275_167526_17  sentence_wer=28.00
+  ref: then
+  hyp: then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms
+e27739fd_2129082_2131504_621  sentence_wer=22.89
+  ref: blah blah blah blah blah blah blah blah blah
+  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
+6bb5b2b3_116072_138642_7  sentence_wer=19.33
+  ref: i think not
+  hyp: he responded i think not uh and so it wasnt in response to one of his own statements he had set him up for but it was just in response something i said and for the first time he was doing not as the object of the verb um im sure well see a lot more of it starting now um
+d034267d_335967_336108_141  sentence_wer=18.00
+  ref: yep
+  hyp: i dont really know but i do know that they are living a very special and wonderful life
+
+
+Worst utterances - gensec_zero_shot
+------------------------------------------------------------------------
+5c14c17c_382635_383155_84  sentence_wer=128.00
+  ref: mips
+  hyp: boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom
+7f8b8806_378889_379389_126  sentence_wer=128.00
+  ref: foo
+  hyp: boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom
+ce153372_1140660_1141102_144  sentence_wer=128.00
+  ref: yeah
+  hyp: boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom boom
+2038beb2_1922475_1927141_515  sentence_wer=128.00
+  ref: cold
+  hyp: go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go go
+b64078ed_201316_201816_48  sentence_wer=126.00
+  ref: plates
+  hyp: p plate p plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate plate
+52baa29b_1746616_1746716_544  sentence_wer=115.00
+  ref: mm
+  hyp: and then i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more
+53a688b2_1291785_1292285_399  sentence_wer=85.00
+  ref: swinging
+  hyp: i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i mean i
+939ddeec_396230_396730_86  sentence_wer=85.00
+  ref: forty
+  hyp: k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k key k
+9246e2d0_1052797_1053297_226  sentence_wer=85.00
+  ref: plain
+  hyp: p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p
+522ceb1e_199243_199743_29  sentence_wer=85.00
+  ref: hey
+  hyp: p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p plate p
+
+
+Worst utterances - gensec_zero_shot_cleaned
+------------------------------------------------------------------------
+52baa29b_1746616_1746716_544  sentence_wer=115.00
+  ref: mm
+  hyp: and then i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more paint and of course i put on some more
+ada64d4e_824894_825394_112  sentence_wer=27.00
+  ref: what
+  hyp: i don't know if i'm a good person or if i'm a bad person then if i'm a good person then if i'm a bad person then
+d034267d_335967_336108_141  sentence_wer=20.00
+  ref: yep
+  hyp: i don't know what it is but i do know that they are living a very special and wonderful life
+aa9c983b_149275_167526_17  sentence_wer=16.00
+  ref: then
+  hyp: then then after then there's i want them to the two the the beautiful i heard that
+6aa69f93_675226_675326_171  sentence_wer=15.00
+  ref: hm
+  hyp: oh i'll just do a little bit of work and be back in a bit
+136fa536_438230_438350_90  sentence_wer=14.00
+  ref: mm
+  hyp: and i guess that was my fault for not keeping an eye on you
+0c638c0f_350341_350481_150  sentence_wer=12.00
+  ref: eighty
+  hyp: and then i just hit the button and then it went off
+0d54eec3_1545194_1545694_449  sentence_wer=12.00
+  ref: he
+  hyp: b b c d e f g h i i i i
+56be58e0_1548168_1557994_204  sentence_wer=12.00
+  ref: oh
+  hyp: i might need something in the other room no one hasta drink
+4b03320d_4815_5275_1  sentence_wer=12.00
+  ref: maybe
+  hyp: b b c d e f g h i i i i
