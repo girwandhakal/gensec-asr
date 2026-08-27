@@ -185,6 +185,11 @@ def bootstrap_reductions(baseline: list[int], system: list[int], iterations: int
     systems are scored on the same draw every time, so the shared difficulty of
     an utterance cancels. Reference words are identical across systems, so the
     ratio of error counts is the relative reduction directly.
+
+    Returned in draw order, NOT sorted. Two of these get differenced elementwise
+    to compare groups, and that is only a resample-by-resample difference while
+    the order is preserved - differencing two sorted lists compares quantile
+    against quantile, which collapses the spread and reports a false certainty.
     """
     size = len(baseline)
     if size < 2:
@@ -195,19 +200,25 @@ def bootstrap_reductions(baseline: list[int], system: list[int], iterations: int
     for _ in range(iterations):
         draw = rng.choices(indices, k=size)
         baseline_errors = sum(baseline[i] for i in draw)
-        if not baseline_errors:
-            continue
         system_errors = sum(system[i] for i in draw)
-        reductions.append((baseline_errors - system_errors) / baseline_errors)
+        # Keep one entry per iteration either way, so elementwise differencing
+        # between two groups stays aligned.
+        reductions.append(
+            (baseline_errors - system_errors) / baseline_errors if baseline_errors else 0.0
+        )
 
-    return sorted(reductions)
+    return reductions
 
 
 def interval(values: list[float]) -> tuple[float, float]:
-    """95% percentile interval."""
+    """95% percentile interval. Sorts internally; callers keep draw order."""
     if not values:
         return (0.0, 0.0)
-    return (values[int(.025 * len(values))], values[min(int(.975 * len(values)), len(values) - 1)])
+    ordered = sorted(values)
+    return (
+        ordered[int(.025 * len(ordered))],
+        ordered[min(int(.975 * len(ordered)), len(ordered) - 1)],
+    )
 
 
 def candidates(nbest: dict, utterance_id: str) -> list[str]:
@@ -313,18 +324,25 @@ def significance(systems: dict, metadata: dict, config: dict) -> tuple[list[str]
     # wrong side of zero is the two-sided p-value.
     if "LT" in per_group and "TD" in per_group:
         paired = min(len(per_group["LT"]), len(per_group["TD"]))
-        gaps = sorted(per_group["TD"][i] - per_group["LT"][i] for i in range(paired))
+        gaps = [per_group["TD"][i] - per_group["LT"][i] for i in range(paired)]
         low, high = interval(gaps)
         point = summary["TD"]["reduction"] - summary["LT"]["reduction"]
+
         wrong_side = sum(1 for g in gaps if (g <= 0) == (point > 0))
-        p_value = 2 * wrong_side / len(gaps) if gaps else 1.0
+        p_value = min(2 * wrong_side / len(gaps), 1.0) if gaps else 1.0
+        # No draw landed on the wrong side, so all this resolution can say is
+        # that p is below the smallest value it could have measured.
+        floor = 2 / len(gaps) if gaps else 1.0
+        shown = f"p = {p_value:.3f}" if wrong_side else f"p < {floor:.3f}"
         verdict = "significant at p<0.05" if p_value < 0.05 else "NOT significant at p<0.05"
+
         summary["TD_minus_LT"] = {"difference": point, "ci_low": low, "ci_high": high,
-                                  "p_value": p_value, "significant": p_value < 0.05}
+                                  "p_value": p_value, "p_below": None if wrong_side else floor,
+                                  "significant": p_value < 0.05}
         lines += [
             "",
             f"  {'TD - LT':<12}{'':>8}{point:>10.2%}   95% CI [{low:+.2%}, {high:+.2%}]",
-            f"  p = {min(p_value, 1.0):.3f} - {verdict}",
+            f"  {shown} - {verdict}",
         ]
 
     return lines, summary
