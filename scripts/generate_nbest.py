@@ -46,17 +46,56 @@ def load_model(model_id: str):
     return processor, model, device, dtype
 
 
-def unique_hypotheses(texts: list[str], limit: int) -> list[dict]:
-    """Rank the candidates for one clip, keeping the distinct ones first."""
-    ranked: list[str] = []
-    for text in texts:
-        cleaned = clean_whisper_text(text)
-        if cleaned and cleaned not in ranked:
-            ranked.append(cleaned)
+def unique_hypotheses(texts: list[str], scores: list, limit: int) -> list[dict]:
+    """The distinct candidates for one clip, best first.
 
-    # If sampling gave us fewer distinct strings than asked for, that is a real
-    # signal about this clip - don't pad it out with duplicates.
-    return [{"rank": i + 1, "text": text} for i, text in enumerate(ranked[:limit])]
+    Under beam search the incoming order is already by sequence score, so rank 1
+    is a genuine 1-best rather than an arbitrary draw. Scores are kept because
+    they are what any later reranking would need.
+    """
+    ranked: list[tuple[str, float | None]] = []
+    seen: set[str] = set()
+
+    for text, score in zip(texts, scores):
+        cleaned = clean_whisper_text(text)
+        if cleaned and cleaned not in seen:
+            seen.add(cleaned)
+            ranked.append((cleaned, score))
+
+    # Fewer distinct strings than asked for is a real signal about this clip -
+    # don't pad it out with duplicates.
+    return [
+        {"rank": i + 1, "text": text, "score": score}
+        for i, (text, score) in enumerate(ranked[:limit])
+    ]
+
+
+def decode_arguments(config: dict) -> dict:
+    """Whichever decoding strategy the config asks for.
+
+    Beam search is the default. Sampling gave no ranking at all - rank 1 was
+    whichever draw happened to land first - so the 1-best baseline it produced
+    was not a best of anything, and 44% of clips collapsed to a single distinct
+    string. Sampling stays available for ablation.
+    """
+    if config["asr_do_sample"]:
+        return {
+            "do_sample": True,
+            "num_beams": 1,
+            "temperature": config["temperature"],
+            "top_p": config["top_p"],
+            "top_k": config["top_k"],
+        }
+
+    arguments = {"do_sample": False, "num_beams": config["asr_num_beams"]}
+
+    # Grouped beams spread the candidates further apart. Transformers rejects a
+    # diversity penalty when there is only one group, so only send it when asked.
+    if config["asr_beam_groups"] > 1:
+        arguments["num_beam_groups"] = config["asr_beam_groups"]
+        arguments["diversity_penalty"] = config["asr_diversity_penalty"]
+
+    return arguments
 
 
 def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> list[list[dict]]:
@@ -68,24 +107,29 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
     input_features = inputs.input_features.to(device=device, dtype=dtype)
 
     with torch.inference_mode():
-        generated = model.generate(
+        output = model.generate(
             input_features,
             language="english",
             task="transcribe",
-            do_sample=True,
-            num_beams=1,
             num_return_sequences=config["num_return_sequences"],
-            temperature=config["temperature"],
-            top_p=config["top_p"],
-            top_k=config["top_k"],
+            output_scores=True,
+            return_dict_in_generate=True,
+            **decode_arguments(config),
         )
 
-    texts = processor.batch_decode(generated, skip_special_tokens=True)
+    texts = processor.batch_decode(output.sequences, skip_special_tokens=True)
+
+    sequence_scores = getattr(output, "sequences_scores", None)
+    scores = sequence_scores.tolist() if sequence_scores is not None else [None] * len(texts)
 
     # generate() returns the sequences for each clip back to back.
     per_clip = config["num_return_sequences"]
     return [
-        unique_hypotheses(texts[i * per_clip:(i + 1) * per_clip], per_clip)
+        unique_hypotheses(
+            texts[i * per_clip:(i + 1) * per_clip],
+            scores[i * per_clip:(i + 1) * per_clip],
+            per_clip,
+        )
         for i in range(len(audio_arrays))
     ]
 
