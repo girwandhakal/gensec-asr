@@ -16,6 +16,7 @@ from __future__ import annotations
 import csv
 import json
 import sys
+from collections import Counter
 from pathlib import Path, PureWindowsPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -26,7 +27,7 @@ from text import normalize_chat
 csv.field_size_limit(10_000_000)
 
 
-def build_reference_map(config: dict) -> dict[str, str]:
+def build_reference_map(config: dict) -> tuple[dict[str, str], dict[str, dict]]:
     report_path = config["reference_report_csv"]
     if not report_path.is_file():
         raise SystemExit(f"Reference report not found: {report_path}")
@@ -34,6 +35,11 @@ def build_reference_map(config: dict) -> dict[str, str]:
     clips_on_disk = {p.stem for p in config["media_dir"].rglob("*" + config["audio_extension"])}
 
     references: dict[str, str] = {}
+    # Corpus and group travel with the reference so results can be broken down
+    # by them later. `group` is the late-talker / typically-developing label,
+    # which is the distinction this dataset has and the published child GenSEC
+    # work does not - losing it in a single corpus-level WER wastes it.
+    metadata: dict[str, dict] = {}
     described_clips: set[str] = set()
     no_clip = 0
     missing_file = 0
@@ -62,6 +68,11 @@ def build_reference_map(config: dict) -> dict[str, str]:
                 continue
 
             references[utterance_id] = transcript
+            metadata[utterance_id] = {
+                "corpus": (row.get("corpus") or "").strip(),
+                "group": (row.get("group") or "").strip(),
+                "child_id": (row.get("child_id") or "").strip(),
+            }
 
     orphan_clips = clips_on_disk - described_clips
 
@@ -73,20 +84,27 @@ def build_reference_map(config: dict) -> dict[str, str]:
     print(f"Empty after cleaning:     {empty_after_cleaning:,}")
     print(f"References kept:          {len(references):,}")
 
+    groups = Counter(entry["group"] for entry in metadata.values())
+    print(f"Group split:              {dict(groups.most_common())}")
+
     if not references:
         raise SystemExit("No references were built; check the media path in baseline.yaml.")
 
-    return references
+    return references, metadata
 
 
 def main(config: dict | None = None) -> None:
     config = config or load_config()
-    references = build_reference_map(config)
+    references, metadata = build_reference_map(config)
 
     config["reference_map_path"].parent.mkdir(parents=True, exist_ok=True)
     with config["reference_map_path"].open("w", encoding="utf-8") as handle:
         json.dump(references, handle, ensure_ascii=False, indent=2)
     print(f"Wrote {config['reference_map_path']}")
+
+    with config["metadata_path"].open("w", encoding="utf-8") as handle:
+        json.dump(metadata, handle, ensure_ascii=False, indent=2)
+    print(f"Wrote {config['metadata_path']}")
 
 
 if __name__ == "__main__":

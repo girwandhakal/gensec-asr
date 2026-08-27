@@ -23,8 +23,12 @@ from text import normalize_for_scoring
 WORST_EXAMPLES = 10
 
 
-def count_errors(reference: list[str], hypothesis: list[str]) -> tuple[int, int, int]:
-    """Levenshtein alignment over words, returning substitutions/deletions/insertions."""
+def align(reference: list[str], hypothesis: list[str]) -> list[tuple[str, int]]:
+    """Levenshtein backtrace as (operation, reference index) steps.
+
+    Operations are M/S/D/I; the index is the reference word the step consumed,
+    or -1 for an insertion, which consumes none.
+    """
     rows, columns = len(reference) + 1, len(hypothesis) + 1
     costs = [[0] * columns for _ in range(rows)]
     operations = [[""] * columns for _ in range(rows)]
@@ -48,21 +52,85 @@ def count_errors(reference: list[str], hypothesis: list[str]) -> tuple[int, int,
             costs[i][j] = best
             operations[i][j] = "S" if best == substitution else ("D" if best == deletion else "I")
 
-    substitutions = deletions = insertions = 0
+    steps: list[tuple[str, int]] = []
     i, j = len(reference), len(hypothesis)
     while i > 0 or j > 0:
         operation = operations[i][j]
         if operation in ("M", "S"):
+            steps.append((operation, i - 1))
             i, j = i - 1, j - 1
-            substitutions += operation == "S"
         elif operation == "D":
+            steps.append((operation, i - 1))
             i -= 1
-            deletions += 1
         else:
+            steps.append((operation, -1))
             j -= 1
-            insertions += 1
 
-    return substitutions, deletions, insertions
+    return steps
+
+
+def count_errors(reference: list[str], hypothesis: list[str]) -> tuple[int, int, int]:
+    """Substitutions, deletions and insertions between two word sequences."""
+    steps = align(reference, hypothesis)
+    return (
+        sum(operation == "S" for operation, _ in steps),
+        sum(operation == "D" for operation, _ in steps),
+        sum(operation == "I" for operation, _ in steps),
+    )
+
+
+def oracle_best_hypothesis(reference_text: str, hypotheses: list[str]) -> str:
+    """The candidate with the fewest errors - the ceiling for picking, not composing.
+
+    A correction model that could only ever return one of its inputs verbatim
+    would score exactly this. The gap between it and the raw 1-best is how much
+    the n-best list is worth at all; the gap between it and the model is how
+    much of that the model captured.
+    """
+    reference = normalize_for_scoring(reference_text).split()
+
+    best_text, fewest = "", None
+    for text in hypotheses:
+        errors = sum(count_errors(reference, normalize_for_scoring(text).split()))
+        if fewest is None or errors < fewest:
+            best_text, fewest = text, errors
+
+    return best_text
+
+
+def score_compositional_oracle(triples: list[tuple[str, str, list[str]]]) -> dict:
+    """Lower bound on WER when any word may be taken from any hypothesis.
+
+    A reference word counts as reachable if at least one candidate aligned to
+    it exactly. This is optimistic - it does not require the kept words to form
+    one consistent path through the candidates, and it charges nothing for
+    insertions - so read it as a floor nobody can beat, not a target.
+    """
+    unreachable = 0
+    reference_words = 0
+
+    for _, reference_text, hypotheses in triples:
+        reference = normalize_for_scoring(reference_text).split()
+        reference_words += len(reference)
+
+        reachable: set[int] = set()
+        for text in hypotheses:
+            steps = align(reference, normalize_for_scoring(text).split())
+            reachable.update(index for operation, index in steps if operation == "M")
+
+        unreachable += len(reference) - len(reachable)
+
+    return {
+        "substitutions": 0,
+        "deletions": unreachable,
+        "insertions": 0,
+        "reference_words": reference_words,
+        "utterances": len(triples),
+        "total_errors": unreachable,
+        "wer": unreachable / reference_words if reference_words else 0.0,
+        "exact_match_rate": 0.0,
+        "worst": [],
+    }
 
 
 def score(pairs: list[tuple[str, str, str]]) -> dict:
@@ -98,6 +166,14 @@ def score(pairs: list[tuple[str, str, str]]) -> dict:
     }
 
 
+def candidates(nbest: dict, utterance_id: str) -> list[str]:
+    """Every distinct hypothesis the ASR offered for one utterance."""
+    entry = nbest.get(utterance_id, {})
+    texts = [entry.get("1best_text", "")]
+    texts += [item.get("text", "") for item in entry.get("nbest", [])]
+    return list(dict.fromkeys(text for text in texts if text))
+
+
 def collect_systems(config: dict) -> dict[str, list[tuple[str, str, str]]]:
     """Build (id, truth, prediction) triples for each system, on the same utterances."""
     mode = config["inference_modes"][0]
@@ -120,7 +196,39 @@ def collect_systems(config: dict) -> dict[str, list[tuple[str, str, str]]]:
             (row["id"], row["truth"], row["prediction"]) for row in cleaned.to_dict("records")
         ]
 
+    # The ceiling. Without it a WER reduction has no scale: 4% of a reachable
+    # 5% is most of what there was, 4% of a reachable 40% is barely a start.
+    systems["oracle_nbest"] = [
+        (row["id"], row["truth"], oracle_best_hypothesis(row["truth"], candidates(nbest, row["id"])))
+        for row in frame.to_dict("records")
+    ]
+
     return systems
+
+
+LENGTH_BUCKETS = [
+    ("1 word", 1, 1),
+    ("2 words", 2, 2),
+    ("3-5 words", 3, 5),
+    ("6-10 words", 6, 10),
+    ("11+ words", 11, 10**6),
+]
+
+
+def breakdown(systems: dict, keep, label: str) -> list[str]:
+    """Score every system over one subset of the utterances."""
+    subsets = {name: [t for t in triples if keep(t)] for name, triples in systems.items()}
+    if not next(iter(subsets.values())):
+        return []
+
+    lines = [label]
+    for name, triples in subsets.items():
+        result = score(triples)
+        lines.append(
+            f"  {name:<26}{result['utterances']:>8}"
+            f"{result['wer']:>10.2%}{result['exact_match_rate']:>10.2%}"
+        )
+    return lines
 
 
 def main(config: dict | None = None) -> None:
@@ -130,7 +238,20 @@ def main(config: dict | None = None) -> None:
     if not predictions_path(config, mode).is_file():
         raise SystemExit(f"Missing predictions: {predictions_path(config, mode)}")
 
-    results = {name: score(pairs) for name, pairs in collect_systems(config).items()}
+    systems = collect_systems(config)
+    results = {name: score(pairs) for name, pairs in systems.items()}
+
+    # The compositional floor needs every candidate, not one chosen string, so
+    # it is scored separately and folded into the table afterwards.
+    nbest = json.loads(config["nbest_path"].read_text(encoding="utf-8"))
+    results["oracle_compositional"] = score_compositional_oracle(
+        [(uid, truth, candidates(nbest, uid)) for uid, truth, _ in systems["whisper_1best"]]
+    )
+
+    metadata = {}
+    if config["metadata_path"].is_file():
+        metadata = json.loads(config["metadata_path"].read_text(encoding="utf-8"))
+
     config["results_dir"].mkdir(parents=True, exist_ok=True)
 
     lines = [
@@ -157,7 +278,44 @@ def main(config: dict | None = None) -> None:
                 f"\n{name} vs whisper_1best: {reduction:+.2%} relative WER reduction ({verdict})"
             )
 
+    # Late-talker vs typically-developing. This split is the reason the dataset
+    # is worth running GenSEC over at all, so it gets its own table rather than
+    # being averaged away into the corpus number.
+    if metadata:
+        groups = sorted({metadata.get(uid, {}).get("group", "") for uid, _, _ in systems["whisper_1best"]} - {""})
+        if groups:
+            lines.append("\n\nBy group (LT = late talker, TD = typically developing)")
+            lines.append("-" * 72)
+            lines.append(f"{'':<28}{'utts':>8}{'WER':>10}{'exact':>10}")
+            for group in groups:
+                lines += breakdown(
+                    systems, lambda t, g=group: metadata.get(t[0], {}).get("group") == g, group
+                )
+
+    # Reference length. A one-word reference makes sentence WER unbounded, so a
+    # handful of them can dominate a corpus number; this shows how much.
+    lines.append("\n\nBy reference length")
+    lines.append("-" * 72)
+    lines.append(f"{'':<28}{'utts':>8}{'WER':>10}{'exact':>10}")
+    for label, low, high in LENGTH_BUCKETS:
+        lines += breakdown(
+            systems,
+            lambda t, lo=low, hi=high: lo <= len(normalize_for_scoring(t[1]).split()) <= hi,
+            label,
+        )
+
+    # CHSER (Shankar et al., Interspeech 2025) drops references under 3 words
+    # before scoring. This subset is the row that can be compared with theirs.
+    lines.append("\n\nReferences of 3+ words only (comparable to published child GenSEC work)")
+    lines.append("-" * 72)
+    lines.append(f"{'':<28}{'utts':>8}{'WER':>10}{'exact':>10}")
+    lines += breakdown(
+        systems, lambda t: len(normalize_for_scoring(t[1]).split()) >= 3, "3+ words"
+    )
+
     for name, result in results.items():
+        if not result["worst"]:
+            continue
         lines.append(f"\n\nWorst utterances - {name}")
         lines.append("-" * 72)
         for sentence_wer, utterance_id, reference, hypothesis in result["worst"]:
