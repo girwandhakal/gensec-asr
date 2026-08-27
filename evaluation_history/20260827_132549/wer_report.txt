@@ -5,14 +5,14 @@ Test utterances: 14,984
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
 whisper_1best                  61.69%     5.49%   25,470   12,556   10,045
-gensec_zero_shot               50.89%    14.36%   23,219   10,439    5,996
-gensec_zero_shot_cleaned       50.89%    14.36%   23,219   10,439    5,996
+gensec_zero_shot               54.46%    14.11%   23,869    9,703    8,867
+gensec_zero_shot_cleaned       54.46%    14.11%   23,869    9,703    8,867
 oracle_nbest                   50.29%    11.20%   21,695   11,456    6,037
 oracle_compositional           40.85%     0.00%        0   31,830        0
 
-gensec_zero_shot vs whisper_1best: +17.51% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +11.72% relative WER reduction (better)
 
-gensec_zero_shot_cleaned vs whisper_1best: +17.51% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: +11.72% relative WER reduction (better)
 
 oracle_nbest vs whisper_1best: +18.48% relative WER reduction (better)
 
@@ -22,11 +22,11 @@ oracle_compositional vs whisper_1best: +33.79% relative WER reduction (better)
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall        14984    17.51%   95% CI [+15.42%, +19.91%]
-  LT              1466    11.23%   95% CI [+8.91%, +13.39%]
-  TD             13518    18.46%   95% CI [+16.07%, +21.00%]
+  overall        14984    11.72%   95% CI [+9.47%, +14.05%]
+  LT              1466     9.49%   95% CI [+7.16%, +11.77%]
+  TD             13518    12.05%   95% CI [+9.53%, +14.68%]
 
-  TD - LT                  7.23%   95% CI [+6.93%, +7.63%]
+  TD - LT                  2.56%   95% CI [+2.28%, +2.91%]
   p = 0.000 - significant at p<0.05
 
 
@@ -35,13 +35,13 @@ By group (LT = late talker, TD = typically developing)
                                 utts       WER     exact
 LT
   whisper_1best                 1466    63.52%     3.27%
-  gensec_zero_shot              1466    56.39%     8.73%
-  gensec_zero_shot_cleaned      1466    56.39%     8.73%
+  gensec_zero_shot              1466    57.49%     8.66%
+  gensec_zero_shot_cleaned      1466    57.49%     8.66%
   oracle_nbest                  1466    54.70%     6.68%
 TD
   whisper_1best                13518    61.42%     5.73%
-  gensec_zero_shot             13518    50.08%    14.97%
-  gensec_zero_shot_cleaned     13518    50.08%    14.97%
+  gensec_zero_shot             13518    54.02%    14.70%
+  gensec_zero_shot_cleaned     13518    54.02%    14.70%
   oracle_nbest                 13518    49.64%    11.69%
 
 
@@ -50,28 +50,28 @@ By reference length
                                 utts       WER     exact
 1 word
   whisper_1best                 2750   132.11%     9.24%
-  gensec_zero_shot              2750   121.89%    14.98%
-  gensec_zero_shot_cleaned      2750   121.89%    14.98%
+  gensec_zero_shot              2750   204.80%    12.11%
+  gensec_zero_shot_cleaned      2750   204.80%    12.11%
   oracle_nbest                  2750    90.65%    18.55%
 2 words
   whisper_1best                 1892    99.02%     4.76%
-  gensec_zero_shot              1892    88.64%    15.22%
-  gensec_zero_shot_cleaned      1892    88.64%    15.22%
+  gensec_zero_shot              1892    99.71%    15.27%
+  gensec_zero_shot_cleaned      1892    99.71%    15.27%
   oracle_nbest                  1892    80.89%    10.52%
 3-5 words
   whisper_1best                 4585    78.63%     4.82%
-  gensec_zero_shot              4585    65.51%    14.74%
-  gensec_zero_shot_cleaned      4585    65.51%    14.74%
+  gensec_zero_shot              4585    66.02%    15.46%
+  gensec_zero_shot_cleaned      4585    66.02%    15.46%
   oracle_nbest                  4585    62.88%    10.05%
 6-10 words
   whisper_1best                 4276    54.28%     4.91%
-  gensec_zero_shot              4276    43.33%    15.01%
-  gensec_zero_shot_cleaned      4276    43.33%    15.01%
+  gensec_zero_shot              4276    43.31%    15.18%
+  gensec_zero_shot_cleaned      4276    43.31%    15.18%
   oracle_nbest                  4276    45.36%     9.78%
 11+ words
   whisper_1best                 1481    42.45%     3.24%
-  gensec_zero_shot              1481    33.72%     8.98%
-  gensec_zero_shot_cleaned      1481    33.72%     8.98%
+  gensec_zero_shot              1481    33.71%     9.05%
+  gensec_zero_shot_cleaned      1481    33.71%     9.05%
   oracle_nbest                  1481    36.17%     6.08%
 
 
@@ -80,8 +80,8 @@ References of 3+ words only (comparable to published child GenSEC work)
                                 utts       WER     exact
 3+ words
   whisper_1best                10342    57.00%     4.63%
-  gensec_zero_shot             10342    46.15%    14.03%
-  gensec_zero_shot_cleaned     10342    46.15%    14.03%
+  gensec_zero_shot             10342    46.27%    14.43%
+  gensec_zero_shot_cleaned     10342    46.27%    14.43%
   oracle_nbest                 10342    47.11%     9.37%
 
 
@@ -124,33 +124,33 @@ Worst utterances - gensec_zero_shot
 aa9c983b_149275_167526_17  sentence_wer=16.00
   ref: then
   hyp: then then after then there's i want them to the two the the beautiful i heard that
+6aa69f93_675226_675326_171  sentence_wer=16.00
+  ref: hm
+  hyp: oh and i'll just do a little bit of work and be back in a bit
+136fa536_438230_438350_90  sentence_wer=14.00
+  ref: mm
+  hyp: and i guess that was my fault for not keeping an eye on you
+0c638c0f_350341_350481_150  sentence_wer=12.00
+  ref: eighty
+  hyp: and then i just hit the button and then it went off
+d034267d_1093293_1093513_390  sentence_wer=12.00
+  ref: yeah
+  hyp: yeah i think that's one of the most important parts of a project
 56be58e0_1548168_1557994_204  sentence_wer=12.00
   ref: oh
   hyp: i might need something in the other room no one hasta drink
 884b4c25_309985_321577_39  sentence_wer=11.67
   ref: and that's it
   hyp: i'm also very interested ben in how kids tell me stories after i give them some special instructions so you know what i would like you to do now that you've told me the story
+d16ef2df_1325965_1326465_243  sentence_wer=11.00
+  ref: ow
+  hyp: i'll see if i can get a picture of the bird
+d8cdc09b_1458143_1458343_445  sentence_wer=9.00
+  ref: witch
+  hyp: i've been talking about this for a long time
 0c7b9136_6522465_6529249_102  sentence_wer=8.67
   ref: what is this
   hyp: what we could do is we could put something behind i know that would be best time i think you did there kind of keep it in place
-36017a08_343460_348870_7  sentence_wer=8.00
-  ref: daddy
-  hyp: so that i had had may hafta be
-3e1b73d5_233172_239859_4  sentence_wer=8.00
-  ref: so mark
-  hyp: to make sure that he got into my bed tonight and he said i said ross
-49204e25_204854_223075_38  sentence_wer=8.00
-  ref: nickie
-  hyp: n nose nifty oh and then your nose
-ce153372_112981_126240_6  sentence_wer=7.50
-  ref: oh please
-  hyp: and he said oh please and handed it back to me clearly solicitous because it's my birthday
-379dbb55_900347_902704_40  sentence_wer=7.00
-  ref: firecrackers
-  hyp: open like she was by her crackers
-56384d1a_871081_874006_177  sentence_wer=7.00
-  ref: now
-  hyp: now i'll put it on this other hand
 
 
 Worst utterances - gensec_zero_shot_cleaned
@@ -158,33 +158,33 @@ Worst utterances - gensec_zero_shot_cleaned
 aa9c983b_149275_167526_17  sentence_wer=16.00
   ref: then
   hyp: then then after then there's i want them to the two the the beautiful i heard that
+6aa69f93_675226_675326_171  sentence_wer=16.00
+  ref: hm
+  hyp: oh and i'll just do a little bit of work and be back in a bit
+136fa536_438230_438350_90  sentence_wer=14.00
+  ref: mm
+  hyp: and i guess that was my fault for not keeping an eye on you
+0c638c0f_350341_350481_150  sentence_wer=12.00
+  ref: eighty
+  hyp: and then i just hit the button and then it went off
+d034267d_1093293_1093513_390  sentence_wer=12.00
+  ref: yeah
+  hyp: yeah i think that's one of the most important parts of a project
 56be58e0_1548168_1557994_204  sentence_wer=12.00
   ref: oh
   hyp: i might need something in the other room no one hasta drink
 884b4c25_309985_321577_39  sentence_wer=11.67
   ref: and that's it
   hyp: i'm also very interested ben in how kids tell me stories after i give them some special instructions so you know what i would like you to do now that you've told me the story
+d16ef2df_1325965_1326465_243  sentence_wer=11.00
+  ref: ow
+  hyp: i'll see if i can get a picture of the bird
+d8cdc09b_1458143_1458343_445  sentence_wer=9.00
+  ref: witch
+  hyp: i've been talking about this for a long time
 0c7b9136_6522465_6529249_102  sentence_wer=8.67
   ref: what is this
   hyp: what we could do is we could put something behind i know that would be best time i think you did there kind of keep it in place
-36017a08_343460_348870_7  sentence_wer=8.00
-  ref: daddy
-  hyp: so that i had had may hafta be
-3e1b73d5_233172_239859_4  sentence_wer=8.00
-  ref: so mark
-  hyp: to make sure that he got into my bed tonight and he said i said ross
-49204e25_204854_223075_38  sentence_wer=8.00
-  ref: nickie
-  hyp: n nose nifty oh and then your nose
-ce153372_112981_126240_6  sentence_wer=7.50
-  ref: oh please
-  hyp: and he said oh please and handed it back to me clearly solicitous because it's my birthday
-379dbb55_900347_902704_40  sentence_wer=7.00
-  ref: firecrackers
-  hyp: open like she was by her crackers
-56384d1a_871081_874006_177  sentence_wer=7.00
-  ref: now
-  hyp: now i'll put it on this other hand
 
 
 Worst utterances - oracle_nbest

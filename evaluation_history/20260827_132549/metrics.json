@@ -10,24 +10,24 @@
     "exact_match_rate": 0.0549252536038441
   },
   "gensec_zero_shot": {
-    "substitutions": 23219,
-    "deletions": 10439,
-    "insertions": 5996,
+    "substitutions": 23869,
+    "deletions": 9703,
+    "insertions": 8867,
     "reference_words": 77922,
     "utterances": 14984,
-    "total_errors": 39654,
-    "wer": 0.5088935088935089,
-    "exact_match_rate": 0.14355312333155365
+    "total_errors": 42439,
+    "wer": 0.5446343779677113,
+    "exact_match_rate": 0.14108382274426054
   },
   "gensec_zero_shot_cleaned": {
-    "substitutions": 23219,
-    "deletions": 10439,
-    "insertions": 5996,
+    "substitutions": 23869,
+    "deletions": 9703,
+    "insertions": 8867,
     "reference_words": 77922,
     "utterances": 14984,
-    "total_errors": 39654,
-    "wer": 0.5088935088935089,
-    "exact_match_rate": 0.14355312333155365
+    "total_errors": 42439,
+    "wer": 0.5446343779677113,
+    "exact_match_rate": 0.14108382274426054
   },
   "oracle_nbest": {
     "substitutions": 21695,
@@ -52,26 +52,26 @@
   "significance": {
     "overall": {
       "utterances": 14984,
-      "reduction": 0.17509517172515654,
-      "ci_low": 0.1541648868005126,
-      "ci_high": 0.19905174859180613
+      "reduction": 0.11716003411620311,
+      "ci_low": 0.09471323700522541,
+      "ci_high": 0.14047962784728907
     },
     "LT": {
       "utterances": 1466,
-      "reduction": 0.11230453324909177,
-      "ci_low": 0.08912269843725824,
-      "ci_high": 0.13385457388584832
+      "reduction": 0.09492971094613806,
+      "ci_low": 0.07159277504105091,
+      "ci_high": 0.11774325429272281
     },
     "TD": {
       "utterances": 13518,
-      "reduction": 0.1846190704360326,
-      "ci_low": 0.16068132030423118,
-      "ci_high": 0.21001115385490884
+      "reduction": 0.12053186391950167,
+      "ci_low": 0.0953272409291327,
+      "ci_high": 0.1468463462072798
     },
     "TD_minus_LT": {
-      "difference": 0.07231453718694082,
-      "ci_low": 0.06932083713142108,
-      "ci_high": 0.07625456097704161,
+      "difference": 0.025602152973363615,
+      "ci_low": 0.02277749491183048,
+      "ci_high": 0.029065040060886047,
       "p_value": 0.0,
       "significant": true
     }
