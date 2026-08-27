@@ -14,9 +14,11 @@
 #SBATCH --qos=gpu
 # Pin the GPU model. A bare `gpu:1` is a lottery: one run landed an H100 80GB,
 # the next a Tesla T4, which has a quarter of the memory, no bf16 support (so
-# training silently falls back to fp32), and ran 8x slower. Confirm the gres
-# name your cluster uses with:  sinfo -o "%N %G"
-#SBATCH --gres=gpu:h100:1
+# training silently falls back to fp32), and ran 8x slower.
+# This partition offers: v100, t4, l4, a100-80, h100-80 (sinfo -p gpu -o "%N %G").
+# Only a100-80 and h100-80 have both bf16 and the memory for beam search;
+# swap to a100-80 if the two h100 nodes are busy.
+#SBATCH --gres=gpu:h100-80:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
