@@ -230,13 +230,33 @@ def pick_demonstrations(mode: str, utterance_id: str, pool: list[dict], config: 
     return rng.sample(candidates, min(count, len(candidates)))
 
 
-def generation_cap(batch: list[dict], tokenizer, config) -> int:
-    """The longest output worth allowing for this batch.
+def clip_seconds(utterance_id: str) -> float | None:
+    """Clip duration, read straight out of the id.
 
-    A corrected transcript should come out about as long as one hypothesis, so
-    the longest hypothesis in the batch bounds it. Letting generation run to
-    max_target_length instead - 128 tokens, against a 5-word median reference -
-    is what gives a repetition loop the room to emit 100-word predictions.
+    Clips are named `<transcript_hash>_<start_ms>_<end_ms>_<ordinal>`, so how
+    long the audio was is already known here and costs nothing to recover.
+    """
+    parts = utterance_id.split("_")
+    if len(parts) < 4:
+        return None
+
+    try:
+        start, end = int(parts[-3]), int(parts[-2])
+    except ValueError:
+        return None
+
+    return (end - start) / 1000 if end > start else None
+
+
+def generation_cap(batch: list[dict], tokenizer, config) -> int:
+    """The longest output worth allowing for this batch - the tighter of two bounds.
+
+    What the clip could physically contain, from its duration, and roughly the
+    length of the longest hypothesis. The duration bound is the one that
+    matters: Whisper hallucinates whole sentences onto near-silent clips, and
+    every catastrophic row of the 2026-08-27 run was a 100-500 ms clip scored
+    against a one-word reference. A hypothesis-derived bound cannot catch that,
+    because it scales off the hallucination itself.
     """
     longest = max(
         (
@@ -246,8 +266,19 @@ def generation_cap(batch: list[dict], tokenizer, config) -> int:
         ),
         default=0,
     )
-    cap = int(longest * config["generation_length_slack"]) + 5
-    return max(8, min(cap, config["max_target_length"]))
+    by_hypothesis = int(longest * config["generation_length_slack"]) + 5
+
+    # Unparseable ids fall back to the hypothesis bound alone rather than
+    # silently capping everything at the floor.
+    seconds = max((clip_seconds(example["id"]) or 0.0 for example in batch), default=0.0)
+    by_duration = (
+        int(seconds * config["generation_tokens_per_second"])
+        if seconds
+        else config["max_target_length"]
+    )
+
+    cap = min(by_hypothesis, by_duration, config["max_target_length"])
+    return max(config["generation_min_tokens"], cap)
 
 
 def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> None:
@@ -255,7 +286,11 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
     model.to(device).eval()
 
     pool = train_frame.to_dict("records")
-    tests = test_frame.to_dict("records")
+
+    # Batch clips of similar length together. The cap below is one number for
+    # the whole batch, so mixing a 30-second clip with a 100 ms one would lift
+    # the short clip's ceiling to the long clip's. Sorting also cuts padding.
+    tests = sorted(test_frame.to_dict("records"), key=lambda e: clip_seconds(e["id"]) or 0.0)
 
     # Beam search holds num_beams sequences in flight per row, and reordering
     # the cache between steps allocates a second copy of it - so generation

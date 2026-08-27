@@ -46,11 +46,21 @@ num_beams: 8
 no_repeat_ngram_size: 3        # 0 disables
 repetition_penalty: 1.2        # 1.0 disables
 generation_length_slack: 1.5   # cap output at this multiple of the longest input hypothesis
+
+# The harder cap: what the clip could physically hold. Whisper writes whole
+# sentences onto near-silent audio - the worst rows of 2026-08-27 were 100 ms
+# clips against one-word references - and no hypothesis-derived bound catches
+# that. 8 tokens/s is deliberately generous against ~3 words/s of child speech.
+generation_tokens_per_second: 8
+generation_min_tokens: 4       # floor, so the shortest clips can still say "mm"
 test_size: 0.2
 eval_size: 0.02                # held out of the fine-tune for a per-epoch loss check
 inference_modes: [zero_shot]   # also available: one_shot, few_shot
 few_shot_examples: 5
 icl_demo_hypotheses: 3         # hypotheses shown per in-context demonstration
+
+# Stage 6: how many resamples behind the LT/TD confidence intervals.
+bootstrap_iterations: 1000
 
 data_dir: data
 work_dir: work_directory

@@ -11,6 +11,7 @@ on the identical set of utterances, or the comparison means nothing.
 from __future__ import annotations
 
 import json
+import random
 import sys
 from pathlib import Path
 
@@ -166,6 +167,49 @@ def score(pairs: list[tuple[str, str, str]]) -> dict:
     }
 
 
+def utterance_errors(pairs: list[tuple[str, str, str]]) -> list[int]:
+    """Total errors per utterance, in the order given."""
+    return [
+        sum(count_errors(
+            normalize_for_scoring(reference).split(),
+            normalize_for_scoring(hypothesis).split(),
+        ))
+        for _, reference, hypothesis in pairs
+    ]
+
+
+def bootstrap_reductions(baseline: list[int], system: list[int], iterations: int, rng) -> list[float]:
+    """Relative WER reductions over resampled utterance sets.
+
+    Resampling utterances rather than words is what makes this paired: both
+    systems are scored on the same draw every time, so the shared difficulty of
+    an utterance cancels. Reference words are identical across systems, so the
+    ratio of error counts is the relative reduction directly.
+    """
+    size = len(baseline)
+    if size < 2:
+        return []
+
+    indices = range(size)
+    reductions = []
+    for _ in range(iterations):
+        draw = rng.choices(indices, k=size)
+        baseline_errors = sum(baseline[i] for i in draw)
+        if not baseline_errors:
+            continue
+        system_errors = sum(system[i] for i in draw)
+        reductions.append((baseline_errors - system_errors) / baseline_errors)
+
+    return sorted(reductions)
+
+
+def interval(values: list[float]) -> tuple[float, float]:
+    """95% percentile interval."""
+    if not values:
+        return (0.0, 0.0)
+    return (values[int(.025 * len(values))], values[min(int(.975 * len(values)), len(values) - 1)])
+
+
 def candidates(nbest: dict, utterance_id: str) -> list[str]:
     """Every distinct hypothesis the ASR offered for one utterance."""
     entry = nbest.get(utterance_id, {})
@@ -213,6 +257,77 @@ LENGTH_BUCKETS = [
     ("6-10 words", 6, 10),
     ("11+ words", 11, 10**6),
 ]
+
+
+def significance(systems: dict, metadata: dict, config: dict) -> tuple[list[str], dict]:
+    """Confidence intervals on the WER reduction, overall and per group.
+
+    The LT-vs-TD gap is the finding this project exists to report, and it rests
+    on the smaller group. Without an interval there is no way to tell a real
+    difference from 1,466 utterances of noise.
+    """
+    mode = config["inference_modes"][0]
+    system_name = f"gensec_{mode}"
+    if system_name not in systems:
+        return [], {}
+
+    iterations = config.get("bootstrap_iterations", 1000)
+    rng = random.Random(config["seed"])
+
+    baseline_pairs = systems["whisper_1best"]
+    system_pairs = systems[system_name]
+    baseline_all = utterance_errors(baseline_pairs)
+    system_all = utterance_errors(system_pairs)
+
+    lines = [
+        f"\n\nSignificance ({iterations:,} bootstrap resamples of the utterance set)",
+        "-" * 72,
+        f"{system_name} vs whisper_1best",
+    ]
+    summary: dict[str, dict] = {}
+    per_group: dict[str, list[float]] = {}
+
+    subsets = {"overall": list(range(len(baseline_all)))}
+    for group in sorted({metadata.get(uid, {}).get("group", "") for uid, _, _ in baseline_pairs} - {""}):
+        subsets[group] = [
+            i for i, (uid, _, _) in enumerate(baseline_pairs)
+            if metadata.get(uid, {}).get("group") == group
+        ]
+
+    for label, rows in subsets.items():
+        if len(rows) < 2:
+            continue
+        base = [baseline_all[i] for i in rows]
+        syst = [system_all[i] for i in rows]
+        point = (sum(base) - sum(syst)) / sum(base) if sum(base) else 0.0
+        draws = bootstrap_reductions(base, syst, iterations, rng)
+        low, high = interval(draws)
+        per_group[label] = draws
+        summary[label] = {"utterances": len(rows), "reduction": point, "ci_low": low, "ci_high": high}
+        lines.append(
+            f"  {label:<12}{len(rows):>8}{point:>10.2%}   95% CI [{low:+.2%}, {high:+.2%}]"
+        )
+
+    # Does correction help one group more than the other? Differencing the two
+    # bootstrap distributions gives the interval; the share of draws on the
+    # wrong side of zero is the two-sided p-value.
+    if "LT" in per_group and "TD" in per_group:
+        paired = min(len(per_group["LT"]), len(per_group["TD"]))
+        gaps = sorted(per_group["TD"][i] - per_group["LT"][i] for i in range(paired))
+        low, high = interval(gaps)
+        point = summary["TD"]["reduction"] - summary["LT"]["reduction"]
+        wrong_side = sum(1 for g in gaps if (g <= 0) == (point > 0))
+        p_value = 2 * wrong_side / len(gaps) if gaps else 1.0
+        verdict = "significant at p<0.05" if p_value < 0.05 else "NOT significant at p<0.05"
+        summary["TD_minus_LT"] = {"difference": point, "ci_low": low, "ci_high": high,
+                                  "p_value": p_value, "significant": p_value < 0.05}
+        lines += [
+            "",
+            f"  {'TD - LT':<12}{'':>8}{point:>10.2%}   95% CI [{low:+.2%}, {high:+.2%}]",
+            f"  p = {min(p_value, 1.0):.3f} - {verdict}",
+        ]
+
+    return lines, summary
 
 
 def breakdown(systems: dict, keep, label: str) -> list[str]:
@@ -278,6 +393,9 @@ def main(config: dict | None = None) -> None:
                 f"\n{name} vs whisper_1best: {reduction:+.2%} relative WER reduction ({verdict})"
             )
 
+    significance_lines, significance_summary = significance(systems, metadata, config)
+    lines += significance_lines
+
     # Late-talker vs typically-developing. This split is the reason the dataset
     # is worth running GenSEC over at all, so it gets its own table rather than
     # being averaged away into the corpus number.
@@ -331,6 +449,8 @@ def main(config: dict | None = None) -> None:
         name: {key: value for key, value in result.items() if key != "worst"}
         for name, result in results.items()
     }
+    if significance_summary:
+        metrics["significance"] = significance_summary
     (config["results_dir"] / "metrics.json").write_text(
         json.dumps(metrics, indent=2), encoding="utf-8"
     )
