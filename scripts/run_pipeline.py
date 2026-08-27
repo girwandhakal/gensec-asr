@@ -31,11 +31,28 @@ TOTAL_STAGES = 6
 
 
 def archive_previous_results(results_dir: Path, history_dir: Path) -> None:
-    """Move the last run aside so its numbers stay readable."""
+    """Move the last run aside so its numbers stay readable.
+
+    Call this only once the replacement is about to be written. Archiving up
+    front means a run that dies in between - an inference OOM, a walltime -
+    leaves no results at all: the 2026-08-26 job did exactly that, emptying the
+    directory and then crashing.
+    """
     if not results_dir.is_dir() or not any(results_dir.iterdir()):
         return
 
-    destination = history_dir / datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Name the archive for the run that produced it, not for this moment.
+    # Archiving on the 26th a report written on the 25th used to label it
+    # 20260826, which is worse than useless in a research record.
+    written = max(item.stat().st_mtime for item in results_dir.iterdir())
+    stamp = datetime.fromtimestamp(written).strftime("%Y%m%d_%H%M%S")
+
+    destination = history_dir / stamp
+    collision = 1
+    while destination.exists():
+        collision += 1
+        destination = history_dir / f"{stamp}_{collision}"
+
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.move(str(results_dir), str(destination))
     print(f"Archived previous results to {destination}")
@@ -56,9 +73,6 @@ def main() -> None:
         raise SystemExit(f"Media directory not found: {config['media_dir']}")
     print(f"Media:  {config['media_dir']}")
     print(f"Output: {config['data_dir']}")
-
-    print("\n===== HOUSEKEEPING: ARCHIVE PREVIOUS RESULTS =====")
-    archive_previous_results(config["results_dir"], config["results_dir"].parent / "evaluation_history")
 
     # Stages 1, 3, 5 and 6 take seconds and read data that can still be
     # growing, so they always rerun rather than caching a stale answer. Only
@@ -85,6 +99,12 @@ def main() -> None:
         postprocess.main(config)
 
     with stage(6, "EVALUATE"):
+        # Last possible moment: everything that can fail has already run, so
+        # the previous numbers survive a crash anywhere upstream.
+        archive_previous_results(
+            config["results_dir"], config["results_dir"].parent / "evaluation_history"
+        )
+
         evaluate.main(config)
 
     # Keep the settings next to the numbers they produced.
