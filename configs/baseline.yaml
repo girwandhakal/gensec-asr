@@ -40,6 +40,12 @@ train_batch_size: 8
 eval_batch_size: 16
 generation_batch_size: 4       # beam search is far heavier per row than eval; keep this small
 num_beams: 8
+
+# Repetition control at generation time. References average 5.2 words, so an
+# unbounded 128-token decode is pure room for a loop to run in.
+no_repeat_ngram_size: 3        # 0 disables
+repetition_penalty: 1.2        # 1.0 disables
+generation_length_slack: 1.5   # cap output at this multiple of the longest input hypothesis
 test_size: 0.2
 eval_size: 0.02                # held out of the fine-tune for a per-epoch loss check
 inference_modes: [zero_shot]   # also available: one_shot, few_shot

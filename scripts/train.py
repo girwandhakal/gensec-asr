@@ -230,6 +230,26 @@ def pick_demonstrations(mode: str, utterance_id: str, pool: list[dict], config: 
     return rng.sample(candidates, min(count, len(candidates)))
 
 
+def generation_cap(batch: list[dict], tokenizer, config) -> int:
+    """The longest output worth allowing for this batch.
+
+    A corrected transcript should come out about as long as one hypothesis, so
+    the longest hypothesis in the batch bounds it. Letting generation run to
+    max_target_length instead - 128 tokens, against a 5-word median reference -
+    is what gives a repetition loop the room to emit 100-word predictions.
+    """
+    longest = max(
+        (
+            len(tokenizer(text, add_special_tokens=False)["input_ids"])
+            for example in batch
+            for text in example["input"]
+        ),
+        default=0,
+    )
+    cap = int(longest * config["generation_length_slack"]) + 5
+    return max(8, min(cap, config["max_target_length"]))
+
+
 def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device).eval()
@@ -267,8 +287,14 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
         with torch.inference_mode():
             generated = model.generate(
                 **inputs,
-                max_new_tokens=config["max_target_length"],
+                max_new_tokens=generation_cap(batch, tokenizer, config),
                 num_beams=config["num_beams"],
+                # Repetition control, not cleanup. The first working run emitted
+                # 110,711 insertions - looping phrases until the length limit -
+                # and postprocessing stripped 98,197 of them after the fact.
+                # Blocking the loop here is what should carry the result.
+                no_repeat_ngram_size=config["no_repeat_ngram_size"],
+                repetition_penalty=config["repetition_penalty"],
                 do_sample=False,
             )
         predictions = tokenizer.batch_decode(generated, skip_special_tokens=True)
