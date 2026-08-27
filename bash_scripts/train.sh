@@ -12,7 +12,11 @@
 #SBATCH --job-name=gensec
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
-#SBATCH --gres=gpu:1
+# Pin the GPU model. A bare `gpu:1` is a lottery: one run landed an H100 80GB,
+# the next a Tesla T4, which has a quarter of the memory, no bf16 support (so
+# training silently falls back to fp32), and ran 8x slower. Confirm the gres
+# name your cluster uses with:  sinfo -o "%N %G"
+#SBATCH --gres=gpu:h100:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8

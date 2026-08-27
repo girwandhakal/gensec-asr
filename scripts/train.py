@@ -237,9 +237,15 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
     pool = train_frame.to_dict("records")
     tests = test_frame.to_dict("records")
 
+    # Beam search holds num_beams sequences in flight per row, and reordering
+    # the cache between steps allocates a second copy of it - so generation
+    # needs a far smaller batch than the teacher-forced eval pass does. Sharing
+    # one number with eval_batch_size is what put a T4 out of memory.
+    batch_size = config["generation_batch_size"]
+
     rows = []
-    for start in range(0, len(tests), config["eval_batch_size"]):
-        batch = tests[start:start + config["eval_batch_size"]]
+    for start in range(0, len(tests), batch_size):
+        batch = tests[start:start + batch_size]
         built = [
             build_icl_prompt(
                 example["input"],
@@ -278,7 +284,7 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 "prediction": collapse_whitespace(prediction),
             })
 
-        if start % (config["eval_batch_size"] * 20) == 0:
+        if start % (batch_size * 20) == 0:
             print(f"  [{mode}] {min(start + len(batch), len(tests)):,}/{len(tests):,}")
 
     output_path = predictions_path(config, mode)
@@ -297,7 +303,17 @@ def main(config: dict | None = None) -> None:
     train_frame, test_frame = make_splits(examples, config)
 
     tokenizer = AutoTokenizer.from_pretrained(config["gensec_model_id"])
-    model = fine_tune(train_frame, tokenizer, config)
+
+    # Stage 4 is two expensive halves and only the second one is cheap to
+    # repeat. Inference dying - on an OOM, or a walltime - used to throw away a
+    # finished fine-tune, because the stage only skips on the predictions file.
+    # Delete final_checkpoint/ to force a retrain on a grown dataset.
+    final_checkpoint = config["work_dir"] / "final_checkpoint"
+    if final_checkpoint.is_dir():
+        print(f"Using existing fine-tune: {final_checkpoint}")
+        model = AutoModelForSeq2SeqLM.from_pretrained(str(final_checkpoint))
+    else:
+        model = fine_tune(train_frame, tokenizer, config)
 
     for mode in config["inference_modes"]:
         print(f"===== inference: {mode} =====")
