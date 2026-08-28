@@ -89,12 +89,16 @@ def decode_arguments(config: dict) -> dict:
             "top_k": config["top_k"],
         }
 
-    # Without early stopping, beam search keeps exploring long after every beam
-    # has finished, which on 2-second clips is almost all of the work.
+    # early_stopping=True was tried here (2026-08-27) to bound runtime, but it
+    # stops the search the instant num_beams sequences hit EOS - with
+    # num_beams == num_return_sequences that left no room for beams to diverge
+    # into different word choices, and candidate diversity collapsed (98% of
+    # clips down to one distinct string). Runtime is bounded by max_new_tokens
+    # (decode_budget below) instead, so early stopping is left at its default
+    # and the beam margin in configs/baseline.yaml does the diversity work.
     arguments = {
         "do_sample": False,
         "num_beams": config["asr_num_beams"],
-        "early_stopping": True,
     }
 
     # Grouped beams spread the candidates further apart. Transformers rejects a

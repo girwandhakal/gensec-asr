@@ -24,8 +24,16 @@ num_return_sequences: 5
 # "1best" was an arbitrary draw rather than a best - an indefensible baseline -
 # and 44% of clips collapsed to one distinct string, which is the ceiling the
 # corrector then ran into. Beams give ranked, genuinely distinct candidates.
+#
+# num_beams > num_return_sequences on purpose: with them equal (tried on
+# 2026-08-27) and early_stopping=True, search stopped the instant all 5 beams
+# hit EOS, with no spare beams left to diverge into different word choices -
+# 98% of clips collapsed to a single distinct string, worse than sampling ever
+# was. The 3 spare beams restore exploration room; early_stopping is off so
+# search doesn't cut that exploration short again. Runtime stays bounded by
+# the max_new_tokens budget below, not by early_stopping.
 asr_do_sample: false           # true restores the sampling ablation below
-asr_num_beams: 5
+asr_num_beams: 8
 asr_beam_groups: 1             # >1 switches on diverse beam search
 asr_diversity_penalty: 0.5     # only used when asr_beam_groups > 1
 
@@ -34,7 +42,7 @@ temperature: 0.6
 top_p: 0.95
 top_k: 50
 
-asr_batch_size: 12            # 5 beams x 12 clips; the cross-attention cache is the limit
+asr_batch_size: 8             # 8 beams x 8 clips; the cross-attention cache is the limit
 
 # Whisper decodes toward its 448-token limit even on a 2-second clip. Sampling
 # hid that (each draw stopped at its own EOS); beam search does not, and
