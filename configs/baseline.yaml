@@ -34,7 +34,8 @@ temperature: 0.6
 top_p: 0.95
 top_k: 50
 
-asr_batch_size: 8              # halved: 10 beams x 8 returns is far heavier than sampling
+asr_batch_size: 4             # 10 beams x 4 clips holds ~6 GB of cross-attention cache;
+                              # reordering it between steps briefly doubles that
 asr_save_every: 500       # checkpoint the n-best JSON this often, so the job resumes
 asr_limit: null           # set to an integer for a quick smoke test
 

@@ -107,20 +107,22 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
     input_features = inputs.input_features.to(device=device, dtype=dtype)
 
     with torch.inference_mode():
-        output = model.generate(
+        # Deliberately NOT output_scores/return_dict_in_generate. Getting
+        # sequences_scores out of transformers requires output_scores, which
+        # also retains the full per-step logits: 448 steps x (batch x beams) x
+        # 51,865 vocab is several GB per batch and exhausted an 80 GB H100.
+        # Beam search already returns candidates best-first, so rank carries the
+        # ordering and the numeric score was only ever a nice-to-have.
+        sequences = model.generate(
             input_features,
             language="english",
             task="transcribe",
             num_return_sequences=config["num_return_sequences"],
-            output_scores=True,
-            return_dict_in_generate=True,
             **decode_arguments(config),
         )
 
-    texts = processor.batch_decode(output.sequences, skip_special_tokens=True)
-
-    sequence_scores = getattr(output, "sequences_scores", None)
-    scores = sequence_scores.tolist() if sequence_scores is not None else [None] * len(texts)
+    texts = processor.batch_decode(sequences, skip_special_tokens=True)
+    scores = [None] * len(texts)
 
     # generate() returns the sequences for each clip back to back.
     per_clip = config["num_return_sequences"]
@@ -170,31 +172,44 @@ def generate_nbest(config: dict) -> None:
         if not batch_audio:
             return
 
+        def record(utterance_id: str, nbest: list[dict]) -> None:
+            nonlocal done
+            results[utterance_id] = {
+                "nbest": nbest,
+                "1best_text": nbest[0]["text"] if nbest else "",
+            }
+            done += 1
+
+        failure = None
         try:
             for utterance_id, nbest in zip(
                 batch_ids, transcribe_batch(batch_audio, processor, model, device, dtype, config)
             ):
-                results[utterance_id] = {
-                    "nbest": nbest,
-                    "1best_text": nbest[0]["text"] if nbest else "",
-                }
-                done += 1
+                record(utterance_id, nbest)
         except Exception as error:
-            # One bad clip shouldn't cost the whole batch, so retry singly.
-            print(f"[batch failed, retrying singly] {type(error).__name__}: {error}")
+            failure = f"{type(error).__name__}: {error}"
+
+        # The retry has to happen out here, not in the except block. While that
+        # block is running the traceback still references the failed call's
+        # frames - every activation and cache it allocated - so on an OOM there
+        # is no memory to retry into and all the singles fail too. Leaving the
+        # block drops those references; empty_cache then returns the blocks.
+        if failure is not None:
+            if device == "cuda":
+                torch.cuda.empty_cache()
+            print(f"[batch failed, retrying singly] {failure}")
+
             for utterance_id, audio in zip(batch_ids, batch_audio):
                 try:
-                    nbest = transcribe_batch(
-                        [audio], processor, model, device, dtype, config
-                    )[0]
-                    results[utterance_id] = {
-                        "nbest": nbest,
-                        "1best_text": nbest[0]["text"] if nbest else "",
-                    }
-                    done += 1
+                    record(
+                        utterance_id,
+                        transcribe_batch([audio], processor, model, device, dtype, config)[0],
+                    )
                 except Exception as inner:
                     failed += 1
                     print(f"[skip] {utterance_id}: {type(inner).__name__}: {inner}")
+                    if device == "cuda":
+                        torch.cuda.empty_cache()
 
         batch_ids, batch_audio = [], []
 

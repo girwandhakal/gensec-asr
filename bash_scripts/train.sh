@@ -56,6 +56,9 @@ conda activate gensec_env
 set -u
 
 export OMP_NUM_THREADS=8
+# Beam search allocates and frees large, unevenly sized blocks every step, which
+# fragments the caching allocator badly enough to OOM with GBs nominally free.
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export MKL_NUM_THREADS=8
 export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 cd "$PROJECT_ROOT"
