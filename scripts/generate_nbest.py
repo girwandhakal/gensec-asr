@@ -4,10 +4,12 @@ Stage 2. Runs the child-speech Whisper model over every clip and keeps the
 top N candidate transcripts for each one, not just the best.
 
 High-level role in the pipeline:
-This is where the raw material for correction comes from. Decoding is sampled
-rather than beam-searched on purpose: beams collapse into near-identical
-strings, and the correction model only has something to work with when the
-hypotheses actually disagree.
+This is where the raw material for correction comes from, and it sets the
+ceiling on everything downstream: the corrector cannot recover a word that
+appears in none of these candidates. Decoding is beam search, so the candidates
+come back ranked and rank 1 is a genuine 1-best. Sampling was tried first and
+was worse on both counts - it returned candidates in no order at all, and 44%
+of clips collapsed to a single distinct string.
 
 This is the long stage. It saves as it goes and skips clips it has already
 done, so a job that runs out of walltime just needs resubmitting.
@@ -25,7 +27,7 @@ import torch
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import load_config
+from config import clip_seconds, load_config
 from text import clean_whisper_text
 
 
@@ -87,7 +89,13 @@ def decode_arguments(config: dict) -> dict:
             "top_k": config["top_k"],
         }
 
-    arguments = {"do_sample": False, "num_beams": config["asr_num_beams"]}
+    # Without early stopping, beam search keeps exploring long after every beam
+    # has finished, which on 2-second clips is almost all of the work.
+    arguments = {
+        "do_sample": False,
+        "num_beams": config["asr_num_beams"],
+        "early_stopping": True,
+    }
 
     # Grouped beams spread the candidates further apart. Transformers rejects a
     # diversity penalty when there is only one group, so only send it when asked.
@@ -96,6 +104,19 @@ def decode_arguments(config: dict) -> dict:
         arguments["diversity_penalty"] = config["asr_diversity_penalty"]
 
     return arguments
+
+
+def decode_budget(audio_arrays, config) -> int:
+    """How many tokens the longest clip in this batch could plausibly need.
+
+    Whisper pads every clip to 30 seconds and will happily decode toward its
+    448-token limit on a 2-second one. Sampling hid this because each draw
+    stopped at its own EOS; beam search does not, and uncapped it made stage 2
+    roughly 45x slower than it needs to be.
+    """
+    longest = max((len(audio) / config["sample_rate"] for audio in audio_arrays), default=0.0)
+    budget = int(longest * config["asr_tokens_per_second"]) + config["asr_token_margin"]
+    return max(config["asr_token_margin"], budget)
 
 
 def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> list[list[dict]]:
@@ -118,6 +139,7 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
             language="english",
             task="transcribe",
             num_return_sequences=config["num_return_sequences"],
+            max_new_tokens=decode_budget(audio_arrays, config),
             **decode_arguments(config),
         )
 
@@ -148,7 +170,11 @@ def generate_nbest(config: dict) -> None:
     clips = sorted(config["media_dir"].rglob("*" + config["audio_extension"]))
     if config["asr_limit"]:
         clips = clips[:config["asr_limit"]]
-    todo = [p for p in clips if p.stem not in results]
+    # Longest-clip-wins is how the decode budget is set, so group similar
+    # durations together; otherwise one 25 s clip lifts the budget for the
+    # 0.1 s clips sharing its batch.
+    todo = sorted((p for p in clips if p.stem not in results),
+                  key=lambda p: clip_seconds(p.stem) or 0.0)
     print(f"Clips found: {len(clips):,} | to transcribe: {len(todo):,}")
 
     if not todo:

@@ -18,14 +18,14 @@ audio_extension: .mp3
 sample_rate: 16000
 max_clip_seconds: 30      # Whisper's window; 91 clips exceed it, longest is 75 min
 min_clip_seconds: 0.1     # 135 clips are effectively zero-length
-num_return_sequences: 8
+num_return_sequences: 5
 
 # Beam search, not sampling. Sampling returned candidates in no order at all, so
 # "1best" was an arbitrary draw rather than a best - an indefensible baseline -
 # and 44% of clips collapsed to one distinct string, which is the ceiling the
 # corrector then ran into. Beams give ranked, genuinely distinct candidates.
 asr_do_sample: false           # true restores the sampling ablation below
-asr_num_beams: 10
+asr_num_beams: 5
 asr_beam_groups: 1             # >1 switches on diverse beam search
 asr_diversity_penalty: 0.5     # only used when asr_beam_groups > 1
 
@@ -34,13 +34,18 @@ temperature: 0.6
 top_p: 0.95
 top_k: 50
 
-asr_batch_size: 4             # 10 beams x 4 clips holds ~6 GB of cross-attention cache;
-                              # reordering it between steps briefly doubles that
+asr_batch_size: 12            # 5 beams x 12 clips; the cross-attention cache is the limit
+
+# Whisper decodes toward its 448-token limit even on a 2-second clip. Sampling
+# hid that (each draw stopped at its own EOS); beam search does not, and
+# uncapped it ran stage 2 at 0.13 clips/sec - twelve days for the corpus.
+asr_tokens_per_second: 8
+asr_token_margin: 16          # floor, and headroom above the spoken content
 asr_save_every: 500       # checkpoint the n-best JSON this often, so the job resumes
 asr_limit: null           # set to an integer for a quick smoke test
 
 # Stage 3: dataset construction.
-max_hypotheses: 8         # beam search returns 8 ranked candidates; show the model all of them
+max_hypotheses: 5         # beam search returns 5 ranked candidates; show the model all of them
 min_hypotheses: 2
 
 # Stage 4: the correction model.

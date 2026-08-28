@@ -31,7 +31,7 @@ from transformers import (
 )
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import load_config, predictions_path
+from config import clip_seconds, load_config, predictions_path
 from text import collapse_whitespace
 
 INSTRUCTION = """You are correcting ASR output.
@@ -228,24 +228,6 @@ def pick_demonstrations(mode: str, utterance_id: str, pool: list[dict], config: 
     rng = random.Random(f"{mode}:{utterance_id}")
     candidates = [example for example in pool if example["id"] != utterance_id]
     return rng.sample(candidates, min(count, len(candidates)))
-
-
-def clip_seconds(utterance_id: str) -> float | None:
-    """Clip duration, read straight out of the id.
-
-    Clips are named `<transcript_hash>_<start_ms>_<end_ms>_<ordinal>`, so how
-    long the audio was is already known here and costs nothing to recover.
-    """
-    parts = utterance_id.split("_")
-    if len(parts) < 4:
-        return None
-
-    try:
-        start, end = int(parts[-3]), int(parts[-2])
-    except ValueError:
-        return None
-
-    return (end - start) / 1000 if end > start else None
 
 
 def generation_cap(batch: list[dict], tokenizer, config) -> int:
