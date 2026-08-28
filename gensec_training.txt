@@ -1,6 +1,6 @@
 ===== GENSEC PIPELINE STARTED =====
 Repository: /home/gdhakal/gensec-asr
-Started: Thu Aug 27 13:26:07 CDT 2026
+Started: Thu Aug 27 15:00:26 CDT 2026
 ===== DEPENDENCY CHECK =====
 Dependencies are already installed.
 CUDA available: True
@@ -19,7 +19,7 @@ References kept:          140,268
 Group split:              {'TD': 128983, 'LT': 11285}
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_reference.json
 Wrote /home/gdhakal/gensec-asr/data/utterance_metadata.json
------ Stage 1/6 finished in 3.0s -----
+----- Stage 1/6 finished in 2.9s -----
 
 ===== STAGE 2/6: GENERATE WHISPER N-BEST =====
 Resuming from 139,348 clips already transcribed
@@ -33,7 +33,7 @@ Skipped (duration): 3,386
 Failed:             0
 Time:               0.2 min
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_nbest.json
------ Stage 2/6 finished in 14.5s -----
+----- Stage 2/6 finished in 15.0s -----
 
 ===== STAGE 3/6: BUILD GENSEC DATASET =====
 Utterances seen: 139,348
@@ -47,206 +47,11 @@ Hypotheses per kept example:
   4: 13,613
   5: 7,573
 Wrote /home/gdhakal/gensec-asr/data/processed_gensec.json
------ Stage 3/6 finished in 1.5s -----
+----- Stage 3/6 finished in 1.4s -----
 
 ===== STAGE 4/6: TRAIN AND RUN INFERENCE =====
-Examples after normalizing: 74,920 of 75,340
-Train: 59,936 | Test: 14,984
-/bighome/gdhakal/.conda/envs/gensec_env/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
-  warnings.warn(
-Using existing fine-tune: /home/gdhakal/gensec-asr/work_directory/final_checkpoint
-===== inference: zero_shot =====
-  [zero_shot] 4/14,984
-  [zero_shot] 84/14,984
-  [zero_shot] 164/14,984
-  [zero_shot] 244/14,984
-  [zero_shot] 324/14,984
-  [zero_shot] 404/14,984
-  [zero_shot] 484/14,984
-  [zero_shot] 564/14,984
-  [zero_shot] 644/14,984
-  [zero_shot] 724/14,984
-  [zero_shot] 804/14,984
-  [zero_shot] 884/14,984
-  [zero_shot] 964/14,984
-  [zero_shot] 1,044/14,984
-  [zero_shot] 1,124/14,984
-  [zero_shot] 1,204/14,984
-  [zero_shot] 1,284/14,984
-  [zero_shot] 1,364/14,984
-  [zero_shot] 1,444/14,984
-  [zero_shot] 1,524/14,984
-  [zero_shot] 1,604/14,984
-  [zero_shot] 1,684/14,984
-  [zero_shot] 1,764/14,984
-  [zero_shot] 1,844/14,984
-  [zero_shot] 1,924/14,984
-  [zero_shot] 2,004/14,984
-  [zero_shot] 2,084/14,984
-  [zero_shot] 2,164/14,984
-  [zero_shot] 2,244/14,984
-  [zero_shot] 2,324/14,984
-  [zero_shot] 2,404/14,984
-  [zero_shot] 2,484/14,984
-  [zero_shot] 2,564/14,984
-  [zero_shot] 2,644/14,984
-  [zero_shot] 2,724/14,984
-  [zero_shot] 2,804/14,984
-  [zero_shot] 2,884/14,984
-  [zero_shot] 2,964/14,984
-  [zero_shot] 3,044/14,984
-  [zero_shot] 3,124/14,984
-  [zero_shot] 3,204/14,984
-  [zero_shot] 3,284/14,984
-  [zero_shot] 3,364/14,984
-  [zero_shot] 3,444/14,984
-  [zero_shot] 3,524/14,984
-  [zero_shot] 3,604/14,984
-  [zero_shot] 3,684/14,984
-  [zero_shot] 3,764/14,984
-  [zero_shot] 3,844/14,984
-  [zero_shot] 3,924/14,984
-  [zero_shot] 4,004/14,984
-  [zero_shot] 4,084/14,984
-  [zero_shot] 4,164/14,984
-  [zero_shot] 4,244/14,984
-  [zero_shot] 4,324/14,984
-  [zero_shot] 4,404/14,984
-  [zero_shot] 4,484/14,984
-  [zero_shot] 4,564/14,984
-  [zero_shot] 4,644/14,984
-  [zero_shot] 4,724/14,984
-  [zero_shot] 4,804/14,984
-  [zero_shot] 4,884/14,984
-  [zero_shot] 4,964/14,984
-  [zero_shot] 5,044/14,984
-  [zero_shot] 5,124/14,984
-  [zero_shot] 5,204/14,984
-  [zero_shot] 5,284/14,984
-Token indices sequence length is longer than the specified maximum sequence length for this model (573 > 512). Running this sequence through the model will result in indexing errors
-  [zero_shot] 5,364/14,984
-  [zero_shot] 5,444/14,984
-  [zero_shot] 5,524/14,984
-  [zero_shot] 5,604/14,984
-  [zero_shot] 5,684/14,984
-  [zero_shot] 5,764/14,984
-  [zero_shot] 5,844/14,984
-  [zero_shot] 5,924/14,984
-  [zero_shot] 6,004/14,984
-  [zero_shot] 6,084/14,984
-  [zero_shot] 6,164/14,984
-  [zero_shot] 6,244/14,984
-  [zero_shot] 6,324/14,984
-  [zero_shot] 6,404/14,984
-  [zero_shot] 6,484/14,984
-  [zero_shot] 6,564/14,984
-  [zero_shot] 6,644/14,984
-  [zero_shot] 6,724/14,984
-  [zero_shot] 6,804/14,984
-  [zero_shot] 6,884/14,984
-  [zero_shot] 6,964/14,984
-  [zero_shot] 7,044/14,984
-  [zero_shot] 7,124/14,984
-  [zero_shot] 7,204/14,984
-  [zero_shot] 7,284/14,984
-  [zero_shot] 7,364/14,984
-  [zero_shot] 7,444/14,984
-  [zero_shot] 7,524/14,984
-  [zero_shot] 7,604/14,984
-  [zero_shot] 7,684/14,984
-  [zero_shot] 7,764/14,984
-  [zero_shot] 7,844/14,984
-  [zero_shot] 7,924/14,984
-  [zero_shot] 8,004/14,984
-  [zero_shot] 8,084/14,984
-  [zero_shot] 8,164/14,984
-  [zero_shot] 8,244/14,984
-  [zero_shot] 8,324/14,984
-  [zero_shot] 8,404/14,984
-  [zero_shot] 8,484/14,984
-  [zero_shot] 8,564/14,984
-  [zero_shot] 8,644/14,984
-  [zero_shot] 8,724/14,984
-  [zero_shot] 8,804/14,984
-  [zero_shot] 8,884/14,984
-  [zero_shot] 8,964/14,984
-  [zero_shot] 9,044/14,984
-  [zero_shot] 9,124/14,984
-  [zero_shot] 9,204/14,984
-  [zero_shot] 9,284/14,984
-  [zero_shot] 9,364/14,984
-  [zero_shot] 9,444/14,984
-  [zero_shot] 9,524/14,984
-  [zero_shot] 9,604/14,984
-  [zero_shot] 9,684/14,984
-  [zero_shot] 9,764/14,984
-  [zero_shot] 9,844/14,984
-  [zero_shot] 9,924/14,984
-  [zero_shot] 10,004/14,984
-  [zero_shot] 10,084/14,984
-  [zero_shot] 10,164/14,984
-  [zero_shot] 10,244/14,984
-  [zero_shot] 10,324/14,984
-  [zero_shot] 10,404/14,984
-  [zero_shot] 10,484/14,984
-  [zero_shot] 10,564/14,984
-  [zero_shot] 10,644/14,984
-  [zero_shot] 10,724/14,984
-  [zero_shot] 10,804/14,984
-  [zero_shot] 10,884/14,984
-  [zero_shot] 10,964/14,984
-  [zero_shot] 11,044/14,984
-  [zero_shot] 11,124/14,984
-  [zero_shot] 11,204/14,984
-  [zero_shot] 11,284/14,984
-  [zero_shot] 11,364/14,984
-  [zero_shot] 11,444/14,984
-  [zero_shot] 11,524/14,984
-  [zero_shot] 11,604/14,984
-  [zero_shot] 11,684/14,984
-  [zero_shot] 11,764/14,984
-  [zero_shot] 11,844/14,984
-  [zero_shot] 11,924/14,984
-  [zero_shot] 12,004/14,984
-  [zero_shot] 12,084/14,984
-  [zero_shot] 12,164/14,984
-  [zero_shot] 12,244/14,984
-  [zero_shot] 12,324/14,984
-  [zero_shot] 12,404/14,984
-  [zero_shot] 12,484/14,984
-  [zero_shot] 12,564/14,984
-  [zero_shot] 12,644/14,984
-  [zero_shot] 12,724/14,984
-  [zero_shot] 12,804/14,984
-  [zero_shot] 12,884/14,984
-  [zero_shot] 12,964/14,984
-  [zero_shot] 13,044/14,984
-  [zero_shot] 13,124/14,984
-  [zero_shot] 13,204/14,984
-  [zero_shot] 13,284/14,984
-  [zero_shot] 13,364/14,984
-  [zero_shot] 13,444/14,984
-  [zero_shot] 13,524/14,984
-  [zero_shot] 13,604/14,984
-  [zero_shot] 13,684/14,984
-  [zero_shot] 13,764/14,984
-  [zero_shot] 13,844/14,984
-  [zero_shot] 13,924/14,984
-  [zero_shot] 14,004/14,984
-  [zero_shot] 14,084/14,984
-  [zero_shot] 14,164/14,984
-  [zero_shot] 14,244/14,984
-  [zero_shot] 14,324/14,984
-  [zero_shot] 14,404/14,984
-  [zero_shot] 14,484/14,984
-  [zero_shot] 14,564/14,984
-  [zero_shot] 14,644/14,984
-  [zero_shot] 14,724/14,984
-  [zero_shot] 14,804/14,984
-  [zero_shot] 14,884/14,984
-  [zero_shot] 14,964/14,984
-Wrote /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_shot.csv
------ Stage 4/6 finished in 491.0s -----
+Using existing /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_shot.csv
+----- Stage 4/6 finished in 0.0s -----
 
 ===== STAGE 5/6: POSTPROCESS PREDICTIONS =====
 Predictions read:    14,984 (zero_shot)
@@ -255,92 +60,92 @@ Wrote /home/gdhakal/gensec-asr/data/predictions/predictions_cleaned.csv
 ----- Stage 5/6 finished in 0.2s -----
 
 ===== STAGE 6/6: EVALUATE =====
-Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260827_132549
+Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260827_133455
 GenSEC evaluation
 ========================================================================
 Test utterances: 14,984
 
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
-whisper_1best                  61.69%     5.49%   25,470   12,556   10,045
-gensec_zero_shot               50.89%    14.36%   23,219   10,439    5,996
-gensec_zero_shot_cleaned       50.89%    14.36%   23,219   10,439    5,996
-oracle_nbest                   50.29%    11.20%   21,695   11,456    6,037
-oracle_compositional           40.85%     0.00%        0   31,830        0
+whisper_1best                  61.60%     5.62%   25,399   12,556   10,045
+gensec_zero_shot               50.79%    14.74%   23,141   10,439    5,996
+gensec_zero_shot_cleaned       50.79%    14.74%   23,141   10,439    5,996
+oracle_nbest                   50.20%    11.43%   21,618   11,452    6,044
+oracle_compositional           40.73%     0.00%        0   31,737        0
 
-gensec_zero_shot vs whisper_1best: +17.51% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +17.55% relative WER reduction (better)
 
-gensec_zero_shot_cleaned vs whisper_1best: +17.51% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: +17.55% relative WER reduction (better)
 
-oracle_nbest vs whisper_1best: +18.48% relative WER reduction (better)
+oracle_nbest vs whisper_1best: +18.51% relative WER reduction (better)
 
-oracle_compositional vs whisper_1best: +33.79% relative WER reduction (better)
+oracle_compositional vs whisper_1best: +33.88% relative WER reduction (better)
 
 
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall        14984    17.51%   95% CI [+15.42%, +19.91%]
+  overall        14984    17.55%   95% CI [+15.44%, +19.93%]
   LT              1466    11.23%   95% CI [+8.91%, +13.39%]
-  TD             13518    18.46%   95% CI [+16.07%, +21.00%]
+  TD             13518    18.51%   95% CI [+16.10%, +21.07%]
 
-  TD - LT                  7.23%   95% CI [+6.93%, +7.63%]
-  p = 0.000 - significant at p<0.05
+  TD - LT                  7.28%   95% CI [+3.76%, +10.79%]
+  p < 0.002 - significant at p<0.05
 
 
 By group (LT = late talker, TD = typically developing)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 LT
-  whisper_1best                 1466    63.52%     3.27%
-  gensec_zero_shot              1466    56.39%     8.73%
-  gensec_zero_shot_cleaned      1466    56.39%     8.73%
-  oracle_nbest                  1466    54.70%     6.68%
+  whisper_1best                 1466    63.51%     3.27%
+  gensec_zero_shot              1466    56.38%     8.73%
+  gensec_zero_shot_cleaned      1466    56.38%     8.73%
+  oracle_nbest                  1466    54.69%     6.68%
 TD
-  whisper_1best                13518    61.42%     5.73%
-  gensec_zero_shot             13518    50.08%    14.97%
-  gensec_zero_shot_cleaned     13518    50.08%    14.97%
-  oracle_nbest                 13518    49.64%    11.69%
+  whisper_1best                13518    61.32%     5.87%
+  gensec_zero_shot             13518    49.97%    15.39%
+  gensec_zero_shot_cleaned     13518    49.97%    15.39%
+  oracle_nbest                 13518    49.54%    11.94%
 
 
 By reference length
 ------------------------------------------------------------------------
                                 utts       WER     exact
 1 word
-  whisper_1best                 2750   132.11%     9.24%
-  gensec_zero_shot              2750   121.89%    14.98%
-  gensec_zero_shot_cleaned      2750   121.89%    14.98%
-  oracle_nbest                  2750    90.65%    18.55%
+  whisper_1best                 2750   131.02%     9.75%
+  gensec_zero_shot              2750   119.89%    16.98%
+  gensec_zero_shot_cleaned      2750   119.89%    16.98%
+  oracle_nbest                  2750    89.75%    19.42%
 2 words
-  whisper_1best                 1892    99.02%     4.76%
-  gensec_zero_shot              1892    88.64%    15.22%
-  gensec_zero_shot_cleaned      1892    88.64%    15.22%
-  oracle_nbest                  1892    80.89%    10.52%
+  whisper_1best                 1892    98.78%     4.81%
+  gensec_zero_shot              1892    88.35%    15.33%
+  gensec_zero_shot_cleaned      1892    88.35%    15.33%
+  oracle_nbest                  1892    80.55%    10.73%
 3-5 words
-  whisper_1best                 4585    78.63%     4.82%
-  gensec_zero_shot              4585    65.51%    14.74%
-  gensec_zero_shot_cleaned      4585    65.51%    14.74%
-  oracle_nbest                  4585    62.88%    10.05%
+  whisper_1best                 4585    78.52%     4.89%
+  gensec_zero_shot              4585    65.46%    14.74%
+  gensec_zero_shot_cleaned      4585    65.46%    14.74%
+  oracle_nbest                  4585    62.75%    10.14%
 6-10 words
-  whisper_1best                 4276    54.28%     4.91%
-  gensec_zero_shot              4276    43.33%    15.01%
-  gensec_zero_shot_cleaned      4276    43.33%    15.01%
-  oracle_nbest                  4276    45.36%     9.78%
+  whisper_1best                 4276    54.25%     4.93%
+  gensec_zero_shot              4276    43.32%    15.04%
+  gensec_zero_shot_cleaned      4276    43.32%    15.04%
+  oracle_nbest                  4276    45.32%     9.80%
 11+ words
-  whisper_1best                 1481    42.45%     3.24%
+  whisper_1best                 1481    42.44%     3.24%
   gensec_zero_shot              1481    33.72%     8.98%
   gensec_zero_shot_cleaned      1481    33.72%     8.98%
-  oracle_nbest                  1481    36.17%     6.08%
+  oracle_nbest                  1481    36.16%     6.14%
 
 
 References of 3+ words only (comparable to published child GenSEC work)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 3+ words
-  whisper_1best                10342    57.00%     4.63%
-  gensec_zero_shot             10342    46.15%    14.03%
-  gensec_zero_shot_cleaned     10342    46.15%    14.03%
-  oracle_nbest                 10342    47.11%     9.37%
+  whisper_1best                10342    56.95%     4.67%
+  gensec_zero_shot             10342    46.14%    14.04%
+  gensec_zero_shot_cleaned     10342    46.14%    14.04%
+  oracle_nbest                 10342    47.06%     9.43%
 
 
 Worst utterances - whisper_1best
@@ -351,14 +156,14 @@ caa18248_847798_847898_201  sentence_wer=221.00
 2038beb2_1185083_1186143_315  sentence_wer=98.67
   ref: a dirty shirt
   hyp: i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need
-286c4c29_1133850_1139795_66  sentence_wer=44.20
+286c4c29_1133850_1139795_66  sentence_wer=43.20
   ref: mm mm mm mm mm
-  hyp: mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm
+  hyp: mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm
 4ad311a3_73398_75780_7  sentence_wer=41.50
   ref: c cookies
   hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
 6aa69f93_675226_675326_171  sentence_wer=32.00
-  ref: hm
+  ref: mm
   hyp: oh and i just wanted to let you know that i really like you and i just wanted to share a little bit about me and the whole story with you guys
 21371139_362301_364604_42  sentence_wer=30.60
   ref: we were eating and eating
@@ -479,7 +284,7 @@ ce153372_112981_126240_6  sentence_wer=9.50
   hyp: make sure that he got into my bed tonight and he said i said ross
 
 Wrote /home/gdhakal/gensec-asr/evaluation_results/wer_report.txt
------ Stage 6/6 finished in 11.6s -----
+----- Stage 6/6 finished in 12.3s -----
 
 ===== GENSEC PIPELINE COMPLETE =====
-Finished: Thu Aug 27 13:34:56 CDT 2026
+Finished: Thu Aug 27 15:01:05 CDT 2026

@@ -1,0 +1,79 @@
+{
+  "whisper_1best": {
+    "substitutions": 25470,
+    "deletions": 12556,
+    "insertions": 10045,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 48071,
+    "wer": 0.6169117835784502,
+    "exact_match_rate": 0.0549252536038441
+  },
+  "gensec_zero_shot": {
+    "substitutions": 23219,
+    "deletions": 10439,
+    "insertions": 5996,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 39654,
+    "wer": 0.5088935088935089,
+    "exact_match_rate": 0.14355312333155365
+  },
+  "gensec_zero_shot_cleaned": {
+    "substitutions": 23219,
+    "deletions": 10439,
+    "insertions": 5996,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 39654,
+    "wer": 0.5088935088935089,
+    "exact_match_rate": 0.14355312333155365
+  },
+  "oracle_nbest": {
+    "substitutions": 21695,
+    "deletions": 11456,
+    "insertions": 6037,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 39188,
+    "wer": 0.5029131695798362,
+    "exact_match_rate": 0.11198611852642819
+  },
+  "oracle_compositional": {
+    "substitutions": 0,
+    "deletions": 31830,
+    "insertions": 0,
+    "reference_words": 77922,
+    "utterances": 14984,
+    "total_errors": 31830,
+    "wer": 0.4084854084854085,
+    "exact_match_rate": 0.0
+  },
+  "significance": {
+    "overall": {
+      "utterances": 14984,
+      "reduction": 0.17509517172515654,
+      "ci_low": 0.1541648868005126,
+      "ci_high": 0.19905174859180613
+    },
+    "LT": {
+      "utterances": 1466,
+      "reduction": 0.11230453324909177,
+      "ci_low": 0.08912269843725824,
+      "ci_high": 0.13385457388584832
+    },
+    "TD": {
+      "utterances": 13518,
+      "reduction": 0.1846190704360326,
+      "ci_low": 0.16068132030423118,
+      "ci_high": 0.21001115385490884
+    },
+    "TD_minus_LT": {
+      "difference": 0.07231453718694082,
+      "ci_low": 0.06932083713142108,
+      "ci_high": 0.07625456097704161,
+      "p_value": 0.0,
+      "significant": true
+    }
+  }
+}

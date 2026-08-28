@@ -4,85 +4,85 @@ Test utterances: 14,984
 
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
-whisper_1best                  61.60%     5.62%   25,399   12,556   10,045
-gensec_zero_shot               50.79%    14.74%   23,141   10,439    5,996
-gensec_zero_shot_cleaned       50.79%    14.74%   23,141   10,439    5,996
-oracle_nbest                   50.20%    11.43%   21,618   11,452    6,044
-oracle_compositional           40.73%     0.00%        0   31,737        0
+whisper_1best                  61.69%     5.49%   25,470   12,556   10,045
+gensec_zero_shot               50.89%    14.36%   23,219   10,439    5,996
+gensec_zero_shot_cleaned       50.89%    14.36%   23,219   10,439    5,996
+oracle_nbest                   50.29%    11.20%   21,695   11,456    6,037
+oracle_compositional           40.85%     0.00%        0   31,830        0
 
-gensec_zero_shot vs whisper_1best: +17.55% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +17.51% relative WER reduction (better)
 
-gensec_zero_shot_cleaned vs whisper_1best: +17.55% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: +17.51% relative WER reduction (better)
 
-oracle_nbest vs whisper_1best: +18.51% relative WER reduction (better)
+oracle_nbest vs whisper_1best: +18.48% relative WER reduction (better)
 
-oracle_compositional vs whisper_1best: +33.88% relative WER reduction (better)
+oracle_compositional vs whisper_1best: +33.79% relative WER reduction (better)
 
 
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall        14984    17.55%   95% CI [+15.44%, +19.93%]
+  overall        14984    17.51%   95% CI [+15.42%, +19.91%]
   LT              1466    11.23%   95% CI [+8.91%, +13.39%]
-  TD             13518    18.51%   95% CI [+16.10%, +21.07%]
+  TD             13518    18.46%   95% CI [+16.07%, +21.00%]
 
-  TD - LT                  7.28%   95% CI [+3.76%, +10.79%]
-  p < 0.002 - significant at p<0.05
+  TD - LT                  7.23%   95% CI [+6.93%, +7.63%]
+  p = 0.000 - significant at p<0.05
 
 
 By group (LT = late talker, TD = typically developing)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 LT
-  whisper_1best                 1466    63.51%     3.27%
-  gensec_zero_shot              1466    56.38%     8.73%
-  gensec_zero_shot_cleaned      1466    56.38%     8.73%
-  oracle_nbest                  1466    54.69%     6.68%
+  whisper_1best                 1466    63.52%     3.27%
+  gensec_zero_shot              1466    56.39%     8.73%
+  gensec_zero_shot_cleaned      1466    56.39%     8.73%
+  oracle_nbest                  1466    54.70%     6.68%
 TD
-  whisper_1best                13518    61.32%     5.87%
-  gensec_zero_shot             13518    49.97%    15.39%
-  gensec_zero_shot_cleaned     13518    49.97%    15.39%
-  oracle_nbest                 13518    49.54%    11.94%
+  whisper_1best                13518    61.42%     5.73%
+  gensec_zero_shot             13518    50.08%    14.97%
+  gensec_zero_shot_cleaned     13518    50.08%    14.97%
+  oracle_nbest                 13518    49.64%    11.69%
 
 
 By reference length
 ------------------------------------------------------------------------
                                 utts       WER     exact
 1 word
-  whisper_1best                 2750   131.02%     9.75%
-  gensec_zero_shot              2750   119.89%    16.98%
-  gensec_zero_shot_cleaned      2750   119.89%    16.98%
-  oracle_nbest                  2750    89.75%    19.42%
+  whisper_1best                 2750   132.11%     9.24%
+  gensec_zero_shot              2750   121.89%    14.98%
+  gensec_zero_shot_cleaned      2750   121.89%    14.98%
+  oracle_nbest                  2750    90.65%    18.55%
 2 words
-  whisper_1best                 1892    98.78%     4.81%
-  gensec_zero_shot              1892    88.35%    15.33%
-  gensec_zero_shot_cleaned      1892    88.35%    15.33%
-  oracle_nbest                  1892    80.55%    10.73%
+  whisper_1best                 1892    99.02%     4.76%
+  gensec_zero_shot              1892    88.64%    15.22%
+  gensec_zero_shot_cleaned      1892    88.64%    15.22%
+  oracle_nbest                  1892    80.89%    10.52%
 3-5 words
-  whisper_1best                 4585    78.52%     4.89%
-  gensec_zero_shot              4585    65.46%    14.74%
-  gensec_zero_shot_cleaned      4585    65.46%    14.74%
-  oracle_nbest                  4585    62.75%    10.14%
+  whisper_1best                 4585    78.63%     4.82%
+  gensec_zero_shot              4585    65.51%    14.74%
+  gensec_zero_shot_cleaned      4585    65.51%    14.74%
+  oracle_nbest                  4585    62.88%    10.05%
 6-10 words
-  whisper_1best                 4276    54.25%     4.93%
-  gensec_zero_shot              4276    43.32%    15.04%
-  gensec_zero_shot_cleaned      4276    43.32%    15.04%
-  oracle_nbest                  4276    45.32%     9.80%
+  whisper_1best                 4276    54.28%     4.91%
+  gensec_zero_shot              4276    43.33%    15.01%
+  gensec_zero_shot_cleaned      4276    43.33%    15.01%
+  oracle_nbest                  4276    45.36%     9.78%
 11+ words
-  whisper_1best                 1481    42.44%     3.24%
+  whisper_1best                 1481    42.45%     3.24%
   gensec_zero_shot              1481    33.72%     8.98%
   gensec_zero_shot_cleaned      1481    33.72%     8.98%
-  oracle_nbest                  1481    36.16%     6.14%
+  oracle_nbest                  1481    36.17%     6.08%
 
 
 References of 3+ words only (comparable to published child GenSEC work)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 3+ words
-  whisper_1best                10342    56.95%     4.67%
-  gensec_zero_shot             10342    46.14%    14.04%
-  gensec_zero_shot_cleaned     10342    46.14%    14.04%
-  oracle_nbest                 10342    47.06%     9.43%
+  whisper_1best                10342    57.00%     4.63%
+  gensec_zero_shot             10342    46.15%    14.03%
+  gensec_zero_shot_cleaned     10342    46.15%    14.03%
+  oracle_nbest                 10342    47.11%     9.37%
 
 
 Worst utterances - whisper_1best
@@ -93,14 +93,14 @@ caa18248_847798_847898_201  sentence_wer=221.00
 2038beb2_1185083_1186143_315  sentence_wer=98.67
   ref: a dirty shirt
   hyp: i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need
-286c4c29_1133850_1139795_66  sentence_wer=43.20
+286c4c29_1133850_1139795_66  sentence_wer=44.20
   ref: mm mm mm mm mm
-  hyp: mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm
+  hyp: mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm mmm
 4ad311a3_73398_75780_7  sentence_wer=41.50
   ref: c cookies
   hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
 6aa69f93_675226_675326_171  sentence_wer=32.00
-  ref: mm
+  ref: hm
   hyp: oh and i just wanted to let you know that i really like you and i just wanted to share a little bit about me and the whole story with you guys
 21371139_362301_364604_42  sentence_wer=30.60
   ref: we were eating and eating
