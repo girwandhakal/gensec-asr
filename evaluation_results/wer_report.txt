@@ -1,221 +1,212 @@
 GenSEC evaluation
 ========================================================================
-Test utterances: 14,984
+Test utterances: 19
 
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
-whisper_1best                  61.60%     5.62%   25,399   12,556   10,045
-gensec_zero_shot               50.79%    14.74%   23,141   10,439    5,996
-gensec_zero_shot_cleaned       50.79%    14.74%   23,141   10,439    5,996
-oracle_nbest                   50.20%    11.43%   21,618   11,452    6,044
-oracle_compositional           40.73%     0.00%        0   31,737        0
+whisper_1best                 349.15%     5.26%       37        6      163
+gensec_zero_shot              150.85%     5.26%       33        7       49
+gensec_zero_shot_cleaned      150.85%     5.26%       33        7       49
+oracle_nbest                  310.17%     5.26%       33        7      143
+oracle_compositional           67.80%     0.00%        0       40        0
 
-gensec_zero_shot vs whisper_1best: +17.55% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +56.80% relative WER reduction (better)
 
-gensec_zero_shot_cleaned vs whisper_1best: +17.55% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: +56.80% relative WER reduction (better)
 
-oracle_nbest vs whisper_1best: +18.51% relative WER reduction (better)
+oracle_nbest vs whisper_1best: +11.17% relative WER reduction (better)
 
-oracle_compositional vs whisper_1best: +33.88% relative WER reduction (better)
+oracle_compositional vs whisper_1best: +80.58% relative WER reduction (better)
 
 
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall        14984    17.55%   95% CI [+15.44%, +19.93%]
-  LT              1466    11.23%   95% CI [+8.91%, +13.39%]
-  TD             13518    18.51%   95% CI [+16.10%, +21.07%]
-
-  TD - LT                  7.28%   95% CI [+3.76%, +10.79%]
-  p < 0.002 - significant at p<0.05
+  overall           19    56.80%   95% CI [+40.88%, +63.64%]
+  TD                18    57.92%   95% CI [+44.14%, +64.52%]
 
 
 By group (LT = late talker, TD = typically developing)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 LT
-  whisper_1best                 1466    63.51%     3.27%
-  gensec_zero_shot              1466    56.38%     8.73%
-  gensec_zero_shot_cleaned      1466    56.38%     8.73%
-  oracle_nbest                  1466    54.69%     6.68%
+  whisper_1best                    1   100.00%     0.00%
+  gensec_zero_shot                 1   100.00%     0.00%
+  gensec_zero_shot_cleaned         1   100.00%     0.00%
+  oracle_nbest                     1   100.00%     0.00%
 TD
-  whisper_1best                13518    61.32%     5.87%
-  gensec_zero_shot             13518    49.97%    15.39%
-  gensec_zero_shot_cleaned     13518    49.97%    15.39%
-  oracle_nbest                 13518    49.54%    11.94%
+  whisper_1best                   18   367.27%     5.56%
+  gensec_zero_shot                18   154.55%     5.56%
+  gensec_zero_shot_cleaned        18   154.55%     5.56%
+  oracle_nbest                    18   325.45%     5.56%
 
 
 By reference length
 ------------------------------------------------------------------------
                                 utts       WER     exact
 1 word
-  whisper_1best                 2750   131.02%     9.75%
-  gensec_zero_shot              2750   119.89%    16.98%
-  gensec_zero_shot_cleaned      2750   119.89%    16.98%
-  oracle_nbest                  2750    89.75%    19.42%
+  whisper_1best                    5   920.00%     0.00%
+  gensec_zero_shot                 5   400.00%     0.00%
+  gensec_zero_shot_cleaned         5   400.00%     0.00%
+  oracle_nbest                     5   900.00%     0.00%
 2 words
-  whisper_1best                 1892    98.78%     4.81%
-  gensec_zero_shot              1892    88.35%    15.33%
-  gensec_zero_shot_cleaned      1892    88.35%    15.33%
-  oracle_nbest                  1892    80.55%    10.73%
+  whisper_1best                    1   750.00%     0.00%
+  gensec_zero_shot                 1   200.00%     0.00%
+  gensec_zero_shot_cleaned         1   200.00%     0.00%
+  oracle_nbest                     1   750.00%     0.00%
 3-5 words
-  whisper_1best                 4585    78.52%     4.89%
-  gensec_zero_shot              4585    65.46%    14.74%
-  gensec_zero_shot_cleaned      4585    65.46%    14.74%
-  oracle_nbest                  4585    62.75%    10.14%
+  whisper_1best                   12   291.11%     8.33%
+  gensec_zero_shot                12   122.22%     8.33%
+  gensec_zero_shot_cleaned        12   122.22%     8.33%
+  oracle_nbest                    12   242.22%     8.33%
 6-10 words
-  whisper_1best                 4276    54.25%     4.93%
-  gensec_zero_shot              4276    43.32%    15.04%
-  gensec_zero_shot_cleaned      4276    43.32%    15.04%
-  oracle_nbest                  4276    45.32%     9.80%
-11+ words
-  whisper_1best                 1481    42.44%     3.24%
-  gensec_zero_shot              1481    33.72%     8.98%
-  gensec_zero_shot_cleaned      1481    33.72%     8.98%
-  oracle_nbest                  1481    36.16%     6.14%
+  whisper_1best                    1   200.00%     0.00%
+  gensec_zero_shot                 1   142.86%     0.00%
+  gensec_zero_shot_cleaned         1   142.86%     0.00%
+  oracle_nbest                     1   200.00%     0.00%
 
 
 References of 3+ words only (comparable to published child GenSEC work)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 3+ words
-  whisper_1best                10342    56.95%     4.67%
-  gensec_zero_shot             10342    46.14%    14.04%
-  gensec_zero_shot_cleaned     10342    46.14%    14.04%
-  oracle_nbest                 10342    47.06%     9.43%
+  whisper_1best                   13   278.85%     7.69%
+  gensec_zero_shot                13   125.00%     7.69%
+  gensec_zero_shot_cleaned        13   125.00%     7.69%
+  oracle_nbest                    13   236.54%     7.69%
 
 
 Worst utterances - whisper_1best
 ------------------------------------------------------------------------
-caa18248_847798_847898_201  sentence_wer=221.00
-  ref: huh
-  hyp: oh and also i just realized i just got a new channel and it is called love and hope and i just realized that right now that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000 subs and i just realized that i have 15 000
-2038beb2_1185083_1186143_315  sentence_wer=98.67
-  ref: a dirty shirt
-  hyp: i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need help i need
-286c4c29_1133850_1139795_66  sentence_wer=43.20
-  ref: mm mm mm mm mm
-  hyp: mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm
-4ad311a3_73398_75780_7  sentence_wer=41.50
-  ref: c cookies
-  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
-6aa69f93_675226_675326_171  sentence_wer=32.00
-  ref: mm
-  hyp: oh and i just wanted to let you know that i really like you and i just wanted to share a little bit about me and the whole story with you guys
-21371139_362301_364604_42  sentence_wer=30.60
-  ref: we were eating and eating
-  hyp: we were eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and
-aa9c983b_149275_167526_17  sentence_wer=28.00
-  ref: then
-  hyp: then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms
-e27739fd_2129082_2131504_621  sentence_wer=22.89
-  ref: blah blah blah blah blah blah blah blah blah
-  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-6bb5b2b3_116072_138642_7  sentence_wer=19.33
-  ref: i think not
-  hyp: he responded i think not uh and so it wasnt in response to one of his own statements he had set him up for but it was just in response something i said and for the first time he was doing not as the object of the verb um im sure well see a lot more of it starting now um
-d034267d_335967_336108_141  sentence_wer=18.00
-  ref: yep
-  hyp: i dont really know but i do know that they are living a very special and wonderful life
+46d74f56_65195_75008_7  sentence_wer=23.33
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+7b1f9af0_551364_551864_88  sentence_wer=15.00
+  ref: chooz
+  hyp: today we have two cups of water and two cups of water with two cups
+f50c8312_224733_225233_66  sentence_wer=15.00
+  ref: s
+  hyp: i dont really know but i guess theres probably like five or six of them
+c440f0dd_866494_866674_49  sentence_wer=8.00
+  ref: yeah
+  hyp: well i dont really know why thats important
+1c197acf_803290_803771_207  sentence_wer=7.50
+  ref: itchy eye
+  hyp: i dont really know but i guess theres probably like five or six of them
+bc229bd5_995973_996073_194  sentence_wer=7.00
+  ref: yeah
+  hyp: i dont really know why thats important
+247ae489_758838_759959_209  sentence_wer=5.67
+  ref: six plus three
+  hyp: i dont know but theres probably two or three cars coming up from the other side of the
+cf8d72db_1754196_1754996_557  sentence_wer=5.00
+  ref: she was black
+  hyp: tills next year tells you when the time is right tells you when the clock
+cd00464a_1517946_1520649_117  sentence_wer=2.20
+  ref: did i did filthy yesterday
+  hyp: you got washers on your back today you got washers here
+56384d1a_1135075_1139986_250  sentence_wer=2.00
+  ref: when i trace it i put pictures
+  hyp: my trail is to have the pictures of the first one everybody wants the trail
 
 
 Worst utterances - gensec_zero_shot
 ------------------------------------------------------------------------
-aa9c983b_149275_167526_17  sentence_wer=16.00
-  ref: then
-  hyp: then then after then there's i want them to the two the the beautiful i heard that
-56be58e0_1548168_1557994_204  sentence_wer=12.00
-  ref: oh
-  hyp: i might need something in the other room no one hasta drink
-884b4c25_309985_321577_39  sentence_wer=11.67
-  ref: and that's it
-  hyp: i'm also very interested ben in how kids tell me stories after i give them some special instructions so you know what i would like you to do now that you've told me the story
-0c7b9136_6522465_6529249_102  sentence_wer=8.67
-  ref: what is this
-  hyp: what we could do is we could put something behind i know that would be best time i think you did there kind of keep it in place
-36017a08_343460_348870_7  sentence_wer=8.00
-  ref: daddy
-  hyp: so that i had had may hafta be
-3e1b73d5_233172_239859_4  sentence_wer=8.00
-  ref: so mark
-  hyp: to make sure that he got into my bed tonight and he said i said ross
-49204e25_204854_223075_38  sentence_wer=8.00
-  ref: nickie
-  hyp: n nose nifty oh and then your nose
-ce153372_112981_126240_6  sentence_wer=7.50
-  ref: oh please
-  hyp: and he said oh please and handed it back to me clearly solicitous because it's my birthday
-379dbb55_900347_902704_40  sentence_wer=7.00
-  ref: firecrackers
-  hyp: open like she was by her crackers
-56384d1a_871081_874006_177  sentence_wer=7.00
-  ref: now
-  hyp: now i'll put it on this other hand
+46d74f56_65195_75008_7  sentence_wer=7.33
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie ice cream cookies cookies chocolate cookies cookies cookies toffees cookies cookies doughnuts cookies fajitas cookies
+7b1f9af0_551364_551864_88  sentence_wer=6.00
+  ref: chooz
+  hyp: today we have two cups of
+c440f0dd_866494_866674_49  sentence_wer=5.00
+  ref: yeah
+  hyp: well i was just about
+bc229bd5_995973_996073_194  sentence_wer=4.00
+  ref: yeah
+  hyp: i dont really know
+f50c8312_224733_225233_66  sentence_wer=4.00
+  ref: s
+  hyp: i dont really know
+247ae489_758838_759959_209  sentence_wer=2.33
+  ref: six plus three
+  hyp: i dont know but theres probably two
+1c197acf_803290_803771_207  sentence_wer=2.00
+  ref: itchy eye
+  hyp: i dont really know
+cf8d72db_1754196_1754996_557  sentence_wer=1.67
+  ref: she was black
+  hyp: year tells you when the
+56384d1a_1135075_1139986_250  sentence_wer=1.43
+  ref: when i trace it i put pictures
+  hyp: in my choice they have the pictures of the first one
+300272b5_358041_358442_91  sentence_wer=1.00
+  ref: seven
+  hyp: steven
 
 
 Worst utterances - gensec_zero_shot_cleaned
 ------------------------------------------------------------------------
-aa9c983b_149275_167526_17  sentence_wer=16.00
-  ref: then
-  hyp: then then after then there's i want them to the two the the beautiful i heard that
-56be58e0_1548168_1557994_204  sentence_wer=12.00
-  ref: oh
-  hyp: i might need something in the other room no one hasta drink
-884b4c25_309985_321577_39  sentence_wer=11.67
-  ref: and that's it
-  hyp: i'm also very interested ben in how kids tell me stories after i give them some special instructions so you know what i would like you to do now that you've told me the story
-0c7b9136_6522465_6529249_102  sentence_wer=8.67
-  ref: what is this
-  hyp: what we could do is we could put something behind i know that would be best time i think you did there kind of keep it in place
-36017a08_343460_348870_7  sentence_wer=8.00
-  ref: daddy
-  hyp: so that i had had may hafta be
-3e1b73d5_233172_239859_4  sentence_wer=8.00
-  ref: so mark
-  hyp: to make sure that he got into my bed tonight and he said i said ross
-49204e25_204854_223075_38  sentence_wer=8.00
-  ref: nickie
-  hyp: n nose nifty oh and then your nose
-ce153372_112981_126240_6  sentence_wer=7.50
-  ref: oh please
-  hyp: and he said oh please and handed it back to me clearly solicitous because it's my birthday
-379dbb55_900347_902704_40  sentence_wer=7.00
-  ref: firecrackers
-  hyp: open like she was by her crackers
-56384d1a_871081_874006_177  sentence_wer=7.00
-  ref: now
-  hyp: now i'll put it on this other hand
+46d74f56_65195_75008_7  sentence_wer=7.33
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie ice cream cookies cookies chocolate cookies cookies cookies toffees cookies cookies doughnuts cookies fajitas cookies
+7b1f9af0_551364_551864_88  sentence_wer=6.00
+  ref: chooz
+  hyp: today we have two cups of
+c440f0dd_866494_866674_49  sentence_wer=5.00
+  ref: yeah
+  hyp: well i was just about
+bc229bd5_995973_996073_194  sentence_wer=4.00
+  ref: yeah
+  hyp: i dont really know
+f50c8312_224733_225233_66  sentence_wer=4.00
+  ref: s
+  hyp: i dont really know
+247ae489_758838_759959_209  sentence_wer=2.33
+  ref: six plus three
+  hyp: i dont know but theres probably two
+1c197acf_803290_803771_207  sentence_wer=2.00
+  ref: itchy eye
+  hyp: i dont really know
+cf8d72db_1754196_1754996_557  sentence_wer=1.67
+  ref: she was black
+  hyp: year tells you when the
+56384d1a_1135075_1139986_250  sentence_wer=1.43
+  ref: when i trace it i put pictures
+  hyp: in my choice they have the pictures of the first one
+300272b5_358041_358442_91  sentence_wer=1.00
+  ref: seven
+  hyp: steven
 
 
 Worst utterances - oracle_nbest
 ------------------------------------------------------------------------
-aa9c983b_149275_167526_17  sentence_wer=25.00
-  ref: then
-  hyp: well then then after then theres uh i wanted to um the two that the the beautiful well then its fine and then and then then
-e27739fd_2129082_2131504_621  sentence_wer=22.11
-  ref: blah blah blah blah blah blah blah blah blah
-  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-6bb5b2b3_116072_138642_7  sentence_wer=19.00
-  ref: i think not
-  hyp: he responded i think not uh and so it wasnt in response to one of his own statements we had set him up for but it was just in response something i said for the first time but i used not as the object of the verb um im sure well see a lot more of it starting now um
-c7fb7885_871195_879365_81  sentence_wer=15.50
-  ref: and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew
-  hyp: and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and go
-884b4c25_309985_321577_39  sentence_wer=13.00
-  ref: and that's it
-  hyp: also very interested ben in how kids tell me stories after i give them some special instructions so you know what id like you to do now that youve told me the story im going to ask you a
-ca1af806_643828_673178_86  sentence_wer=11.50
-  ref: then i'll take my white doggie
-  hyp: and roth said well roth said then ill take my white doggie and uh and things interesting about this is the use of then uh he uses then as in terms of the notion of a logical consequence that if i cant have this then such and such will happen in other words i really wanted to have the uh white cat but since i cant have that then ill have the white dog
-6bb5b2b3_1025223_1042452_102  sentence_wer=10.50
-  ref: you can see that
-  hyp: he said you can see that which is true which is true i could see that marci wasnt helping he was just messing around running around and rossian said you can see that as a proof of marci not helping so evident just look at him
-ce153372_112981_126240_6  sentence_wer=9.50
-  ref: oh please
-  hyp: and he said oh please and handed it back to me oh the cherry um clearly solicitous because its my birthday
-0c7b9136_6522465_6529249_102  sentence_wer=8.67
-  ref: what is this
-  hyp: what we could do is we could put something behind i know that would be best time i think you did there kind of keep it in place
-3e1b73d5_233172_239859_4  sentence_wer=7.50
-  ref: so mark
-  hyp: make sure that he got into my bed tonight and he said i said ross
+46d74f56_65195_75008_7  sentence_wer=23.00
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+f50c8312_224733_225233_66  sentence_wer=15.00
+  ref: s
+  hyp: i dont really know but i guess theres probably like five or six of them
+7b1f9af0_551364_551864_88  sentence_wer=14.00
+  ref: chooz
+  hyp: today we have totally different kinds of food and drinks that we can drink
+c440f0dd_866494_866674_49  sentence_wer=8.00
+  ref: yeah
+  hyp: well i dont really know why thats important
+1c197acf_803290_803771_207  sentence_wer=7.50
+  ref: itchy eye
+  hyp: i dont really know but i guess theres probably like five or six of them
+bc229bd5_995973_996073_194  sentence_wer=7.00
+  ref: yeah
+  hyp: i dont really know why thats important
+247ae489_758838_759959_209  sentence_wer=5.67
+  ref: six plus three
+  hyp: i dont know but theres probably two or three cars coming up from the other side of the
+56384d1a_1135075_1139986_250  sentence_wer=2.00
+  ref: when i trace it i put pictures
+  hyp: my trail is to have the pictures of the first one everybody wants the trail
+300272b5_358041_358442_91  sentence_wer=1.00
+  ref: seven
+  hyp: steven
+cf8d72db_1754196_1754996_557  sentence_wer=1.00
+  ref: she was black
+  hyp: tills next
