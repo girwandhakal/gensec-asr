@@ -40,7 +40,13 @@ def load_model(model_id: str):
         model_id,
         torch_dtype=dtype,
         low_cpu_mem_usage=True,
+        attn_implementation="sdpa" if device == "cuda" else "eager",
     ).to(device)
+    # Legacy forced_decoder_ids from this checkpoint's generation_config
+    # conflicts with the explicit task="transcribe" passed at call time;
+    # transformers already prefers the explicit arg, this just silences the
+    # per-batch warning about it.
+    model.generation_config.forced_decoder_ids = None
     model.eval()
 
     print(f"Model:  {model_id}")
