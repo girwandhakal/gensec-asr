@@ -177,6 +177,20 @@ def generate_nbest(config: dict) -> None:
         results = json.loads(output_path.read_text(encoding="utf-8"))
         print(f"Resuming from {len(results):,} clips already transcribed")
 
+        # A clip recorded with fewer than min_hypotheses distinct candidates
+        # is not real signal about that clip - it is what a collapsed decode
+        # (e.g. the early_stopping diversity bug fixed in 51e6780) looks like
+        # on disk. Skipping it on resume would keep that stale result forever,
+        # since resuming only looks at whether the key exists. Drop it back
+        # into the work queue instead so a settings change actually reaches
+        # every previously-broken clip without anyone deleting the JSON by hand.
+        stale = [uid for uid, entry in results.items()
+                 if len(entry.get("nbest", [])) < config["min_hypotheses"]]
+        for uid in stale:
+            del results[uid]
+        if stale:
+            print(f"Discarding {len(stale):,} stale/collapsed entries for regeneration")
+
     clips = sorted(config["media_dir"].rglob("*" + config["audio_extension"]))
     if config["asr_limit"]:
         clips = clips[:config["asr_limit"]]
