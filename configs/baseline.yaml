@@ -32,7 +32,16 @@ num_return_sequences: 5
 # was. The 3 spare beams restore exploration room; early_stopping is off so
 # search doesn't cut that exploration short again. Runtime stays bounded by
 # the max_new_tokens budget below, not by early_stopping.
-asr_do_sample: false           # true restores the sampling ablation below
+asr_do_sample: true            # false switches to beam search (see decode_arguments) - reverted
+                                # 2026-08-31: the only real full-corpus result with a sane WER
+                                # (5867a60, gensec_zero_shot 50.8%) was scored on data this
+                                # sampling path generated (75,340/139,348 kept, 54.1%). Beam
+                                # search has since run to full completion twice at the settings
+                                # in decode_arguments() and collapsed to a single hypothesis on
+                                # 99.9% of clips both times - not a resume artifact, reproduced
+                                # fresh. Diverse beam search (asr_beam_groups) was identified as
+                                # the likely fix but never tested; revisit before trying beam
+                                # search again.
 asr_num_beams: 8
 asr_beam_groups: 1             # >1 switches on diverse beam search
 asr_diversity_penalty: 0.5     # only used when asr_beam_groups > 1
