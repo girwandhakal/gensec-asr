@@ -1,6 +1,6 @@
 ===== GENSEC PIPELINE STARTED =====
 Repository: /home/gdhakal/gensec-asr
-Started: Fri Aug 28 08:34:41 CDT 2026
+Started: Sat Aug 29 22:57:47 CDT 2026
 ===== DEPENDENCY CHECK =====
 Dependencies are already installed.
 CUDA available: True
@@ -19,7 +19,7 @@ References kept:          140,268
 Group split:              {'TD': 128983, 'LT': 11285}
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_reference.json
 Wrote /home/gdhakal/gensec-asr/data/utterance_metadata.json
------ Stage 1/6 finished in 9.2s -----
+----- Stage 1/6 finished in 5.6s -----
 
 ===== STAGE 2/6: GENERATE WHISPER N-BEST =====
 Clips found: 142,824 | to transcribe: 142,824
@@ -27,291 +27,290 @@ Clips found: 142,824 | to transcribe: 142,824
   warnings.warn(
 Model:  rishabhjain16/whisper_medium_to_myst55h
 Device: cuda (NVIDIA H100 80GB HBM3)
-You have passed task=transcribe, but also have set `forced_decoder_ids` to [[1, None], [2, 50359], [3, 50363]] which creates a conflict. `forced_decoder_ids` will be ignored in favor of task=transcribe.
-[504/142,824] 1.93 clips/sec
-[1,000/142,824] 2.02 clips/sec
-[1,504/142,824] 2.10 clips/sec
-[2,000/142,824] 2.12 clips/sec
-[2,504/142,824] 2.13 clips/sec
-[3,000/142,824] 2.13 clips/sec
-[3,504/142,824] 2.14 clips/sec
-[4,000/142,824] 2.13 clips/sec
-[4,504/142,824] 2.14 clips/sec
-[5,000/142,824] 2.14 clips/sec
-[5,504/142,824] 2.14 clips/sec
-[6,000/142,824] 2.14 clips/sec
-[6,504/142,824] 2.14 clips/sec
-[7,000/142,824] 2.14 clips/sec
-[7,504/142,824] 2.14 clips/sec
-[8,000/142,824] 2.14 clips/sec
-[8,504/142,824] 2.13 clips/sec
-[9,000/142,824] 2.13 clips/sec
-[9,504/142,824] 2.12 clips/sec
-[10,000/142,824] 2.12 clips/sec
-[10,504/142,824] 2.11 clips/sec
-[11,000/142,824] 2.11 clips/sec
-[11,504/142,824] 2.11 clips/sec
-[12,000/142,824] 2.10 clips/sec
-[12,504/142,824] 2.09 clips/sec
-[13,000/142,824] 2.09 clips/sec
-[13,504/142,824] 2.09 clips/sec
-[14,000/142,824] 2.08 clips/sec
-[14,504/142,824] 2.07 clips/sec
-[15,000/142,824] 2.06 clips/sec
-[15,504/142,824] 2.06 clips/sec
-[16,000/142,824] 2.06 clips/sec
-[16,504/142,824] 2.06 clips/sec
-[17,000/142,824] 2.05 clips/sec
-[17,504/142,824] 2.05 clips/sec
-[18,000/142,824] 2.05 clips/sec
-[18,504/142,824] 2.05 clips/sec
-[19,000/142,824] 2.04 clips/sec
-[19,504/142,824] 2.04 clips/sec
-[20,000/142,824] 2.04 clips/sec
-[20,504/142,824] 2.03 clips/sec
-[21,000/142,824] 2.03 clips/sec
-[21,504/142,824] 2.03 clips/sec
-[22,000/142,824] 2.03 clips/sec
-[22,504/142,824] 2.02 clips/sec
-[23,000/142,824] 2.02 clips/sec
-[23,504/142,824] 2.02 clips/sec
-[24,000/142,824] 2.02 clips/sec
-[24,504/142,824] 2.02 clips/sec
-[25,000/142,824] 2.01 clips/sec
-[25,504/142,824] 2.01 clips/sec
-[26,000/142,824] 2.01 clips/sec
-[26,504/142,824] 2.01 clips/sec
-[27,000/142,824] 2.01 clips/sec
-[27,504/142,824] 2.01 clips/sec
-[28,000/142,824] 2.01 clips/sec
-[28,504/142,824] 2.01 clips/sec
-[29,000/142,824] 2.01 clips/sec
-[29,504/142,824] 2.01 clips/sec
-[30,000/142,824] 2.01 clips/sec
-[30,504/142,824] 2.01 clips/sec
-[31,000/142,824] 2.01 clips/sec
-[31,504/142,824] 2.01 clips/sec
-[32,000/142,824] 2.01 clips/sec
-[32,504/142,824] 2.01 clips/sec
-[33,000/142,824] 2.01 clips/sec
-[33,504/142,824] 2.01 clips/sec
-[34,000/142,824] 2.01 clips/sec
-[34,504/142,824] 2.01 clips/sec
-[35,000/142,824] 2.01 clips/sec
-[35,504/142,824] 2.01 clips/sec
-[36,000/142,824] 2.01 clips/sec
-[36,504/142,824] 2.01 clips/sec
-[37,000/142,824] 2.01 clips/sec
-[37,504/142,824] 2.01 clips/sec
-[38,000/142,824] 2.01 clips/sec
-[38,504/142,824] 2.01 clips/sec
-[39,000/142,824] 2.01 clips/sec
-[39,504/142,824] 2.01 clips/sec
-[40,000/142,824] 2.01 clips/sec
-[40,504/142,824] 2.00 clips/sec
-[41,000/142,824] 2.00 clips/sec
-[41,504/142,824] 2.00 clips/sec
-[42,000/142,824] 2.00 clips/sec
-[42,504/142,824] 2.00 clips/sec
-[43,000/142,824] 2.00 clips/sec
-[43,504/142,824] 2.00 clips/sec
-[44,000/142,824] 2.00 clips/sec
-[44,504/142,824] 2.00 clips/sec
-[45,000/142,824] 2.00 clips/sec
-[45,504/142,824] 2.00 clips/sec
-[46,000/142,824] 2.00 clips/sec
-[46,504/142,824] 2.00 clips/sec
-[47,000/142,824] 2.00 clips/sec
-[47,504/142,824] 2.00 clips/sec
-[48,000/142,824] 2.00 clips/sec
-[48,504/142,824] 2.00 clips/sec
-[49,000/142,824] 2.00 clips/sec
-[49,504/142,824] 2.00 clips/sec
-[50,000/142,824] 1.99 clips/sec
-[50,504/142,824] 1.99 clips/sec
-[51,000/142,824] 1.99 clips/sec
-[51,504/142,824] 1.99 clips/sec
-[52,000/142,824] 1.99 clips/sec
-[52,504/142,824] 1.99 clips/sec
-[53,000/142,824] 1.99 clips/sec
-[53,504/142,824] 1.99 clips/sec
-[54,000/142,824] 1.99 clips/sec
-[54,504/142,824] 1.98 clips/sec
-[55,000/142,824] 1.98 clips/sec
-[55,504/142,824] 1.98 clips/sec
-[56,000/142,824] 1.98 clips/sec
-[56,504/142,824] 1.98 clips/sec
-[57,000/142,824] 1.98 clips/sec
-[57,504/142,824] 1.97 clips/sec
-[58,000/142,824] 1.97 clips/sec
-[58,504/142,824] 1.97 clips/sec
-[59,000/142,824] 1.97 clips/sec
-[59,504/142,824] 1.97 clips/sec
-[60,000/142,824] 1.97 clips/sec
-[60,504/142,824] 1.97 clips/sec
-[61,000/142,824] 1.97 clips/sec
-[61,504/142,824] 1.97 clips/sec
-[62,000/142,824] 1.96 clips/sec
-[62,504/142,824] 1.96 clips/sec
-[63,000/142,824] 1.96 clips/sec
-[63,504/142,824] 1.96 clips/sec
-[64,000/142,824] 1.96 clips/sec
-[64,504/142,824] 1.96 clips/sec
-[65,000/142,824] 1.96 clips/sec
-[65,504/142,824] 1.96 clips/sec
-[66,000/142,824] 1.96 clips/sec
-[66,504/142,824] 1.96 clips/sec
-[67,000/142,824] 1.95 clips/sec
-[67,504/142,824] 1.95 clips/sec
-[68,000/142,824] 1.95 clips/sec
-[68,504/142,824] 1.95 clips/sec
-[69,000/142,824] 1.95 clips/sec
-[69,504/142,824] 1.95 clips/sec
-[70,000/142,824] 1.95 clips/sec
-[70,504/142,824] 1.95 clips/sec
-[71,000/142,824] 1.95 clips/sec
-[71,504/142,824] 1.94 clips/sec
-[72,000/142,824] 1.94 clips/sec
-[72,504/142,824] 1.94 clips/sec
-[73,000/142,824] 1.94 clips/sec
-[73,504/142,824] 1.94 clips/sec
-[74,000/142,824] 1.94 clips/sec
-[74,504/142,824] 1.94 clips/sec
-[75,000/142,824] 1.94 clips/sec
-[75,504/142,824] 1.93 clips/sec
-[76,000/142,824] 1.93 clips/sec
-[76,504/142,824] 1.93 clips/sec
-[77,000/142,824] 1.93 clips/sec
-[77,504/142,824] 1.93 clips/sec
-[78,000/142,824] 1.93 clips/sec
-[78,504/142,824] 1.93 clips/sec
-[79,000/142,824] 1.93 clips/sec
-[79,504/142,824] 1.92 clips/sec
-[80,000/142,824] 1.92 clips/sec
-[80,504/142,824] 1.92 clips/sec
-[81,000/142,824] 1.92 clips/sec
-[81,504/142,824] 1.92 clips/sec
-[82,000/142,824] 1.91 clips/sec
-[82,504/142,824] 1.91 clips/sec
-[83,000/142,824] 1.91 clips/sec
-[83,504/142,824] 1.91 clips/sec
-[84,000/142,824] 1.91 clips/sec
-[84,504/142,824] 1.91 clips/sec
-[85,000/142,824] 1.91 clips/sec
-[85,504/142,824] 1.90 clips/sec
-[86,000/142,824] 1.88 clips/sec
-[86,504/142,824] 1.86 clips/sec
-[87,000/142,824] 1.83 clips/sec
-[87,504/142,824] 1.80 clips/sec
-[88,000/142,824] 1.76 clips/sec
-[88,504/142,824] 1.71 clips/sec
-[89,000/142,824] 1.67 clips/sec
-[89,504/142,824] 1.63 clips/sec
-[90,000/142,824] 1.61 clips/sec
-[90,504/142,824] 1.58 clips/sec
-[91,000/142,824] 1.53 clips/sec
-[91,504/142,824] 1.48 clips/sec
-[92,000/142,824] 1.45 clips/sec
-[92,504/142,824] 1.44 clips/sec
-[93,000/142,824] 1.41 clips/sec
-[93,504/142,824] 1.35 clips/sec
-[94,000/142,824] 1.32 clips/sec
-[94,504/142,824] 1.29 clips/sec
-[95,000/142,824] 1.26 clips/sec
-[95,504/142,824] 1.25 clips/sec
-[96,000/142,824] 1.22 clips/sec
-[96,504/142,824] 1.21 clips/sec
-[97,000/142,824] 1.19 clips/sec
-[97,504/142,824] 1.18 clips/sec
-[98,000/142,824] 1.17 clips/sec
-[98,504/142,824] 1.17 clips/sec
-[99,000/142,824] 1.16 clips/sec
-[99,504/142,824] 1.15 clips/sec
-[100,000/142,824] 1.15 clips/sec
-[100,504/142,824] 1.15 clips/sec
-[101,000/142,824] 1.15 clips/sec
-[101,504/142,824] 1.15 clips/sec
-[102,000/142,824] 1.14 clips/sec
-[102,504/142,824] 1.14 clips/sec
-[103,000/142,824] 1.14 clips/sec
-[103,504/142,824] 1.14 clips/sec
-[104,000/142,824] 1.14 clips/sec
-[104,504/142,824] 1.14 clips/sec
-[105,000/142,824] 1.14 clips/sec
-[105,504/142,824] 1.14 clips/sec
-[106,000/142,824] 1.14 clips/sec
-[106,504/142,824] 1.14 clips/sec
-[107,000/142,824] 1.14 clips/sec
-[107,504/142,824] 1.14 clips/sec
-[108,000/142,824] 1.14 clips/sec
-[108,504/142,824] 1.14 clips/sec
-[109,000/142,824] 1.14 clips/sec
-[109,504/142,824] 1.14 clips/sec
-[110,000/142,824] 1.14 clips/sec
-[110,504/142,824] 1.15 clips/sec
-[111,000/142,824] 1.15 clips/sec
-[111,504/142,824] 1.15 clips/sec
-[112,000/142,824] 1.15 clips/sec
-[112,504/142,824] 1.15 clips/sec
-[113,000/142,824] 1.15 clips/sec
-[113,504/142,824] 1.15 clips/sec
-[114,000/142,824] 1.16 clips/sec
-[114,504/142,824] 1.16 clips/sec
-[115,000/142,824] 1.16 clips/sec
-[115,504/142,824] 1.16 clips/sec
-[116,000/142,824] 1.16 clips/sec
-[116,504/142,824] 1.16 clips/sec
-[117,000/142,824] 1.16 clips/sec
-[117,504/142,824] 1.16 clips/sec
-[118,000/142,824] 1.16 clips/sec
-[118,504/142,824] 1.17 clips/sec
-[119,000/142,824] 1.17 clips/sec
-[119,504/142,824] 1.17 clips/sec
-[120,000/142,824] 1.17 clips/sec
-[120,504/142,824] 1.17 clips/sec
-[121,000/142,824] 1.17 clips/sec
-[121,504/142,824] 1.17 clips/sec
-[122,000/142,824] 1.17 clips/sec
-[122,504/142,824] 1.17 clips/sec
-[123,000/142,824] 1.17 clips/sec
-[123,504/142,824] 1.18 clips/sec
-[124,000/142,824] 1.18 clips/sec
-[124,504/142,824] 1.18 clips/sec
-[125,000/142,824] 1.18 clips/sec
-[125,504/142,824] 1.18 clips/sec
-[126,000/142,824] 1.18 clips/sec
-[126,504/142,824] 1.18 clips/sec
-[127,000/142,824] 1.18 clips/sec
-[127,504/142,824] 1.18 clips/sec
-[128,000/142,824] 1.18 clips/sec
-[128,504/142,824] 1.18 clips/sec
-[129,000/142,824] 1.18 clips/sec
-[129,504/142,824] 1.18 clips/sec
-[130,000/142,824] 1.18 clips/sec
-[130,504/142,824] 1.18 clips/sec
-[131,000/142,824] 1.18 clips/sec
-[131,504/142,824] 1.18 clips/sec
-[132,000/142,824] 1.18 clips/sec
-[132,504/142,824] 1.18 clips/sec
-[133,000/142,824] 1.18 clips/sec
-[133,504/142,824] 1.18 clips/sec
-[134,000/142,824] 1.18 clips/sec
-[134,504/142,824] 1.18 clips/sec
-[135,000/142,824] 1.18 clips/sec
-[135,504/142,824] 1.18 clips/sec
-[136,000/142,824] 1.18 clips/sec
-[136,504/142,824] 1.18 clips/sec
-[137,000/142,824] 1.18 clips/sec
-[137,504/142,824] 1.18 clips/sec
-[138,000/142,824] 1.18 clips/sec
-[138,504/142,824] 1.18 clips/sec
-[139,000/142,824] 1.18 clips/sec
+[504/142,824] 1.97 clips/sec
+[1,000/142,824] 2.12 clips/sec
+[1,504/142,824] 2.16 clips/sec
+[2,000/142,824] 2.17 clips/sec
+[2,504/142,824] 2.18 clips/sec
+[3,000/142,824] 2.19 clips/sec
+[3,504/142,824] 2.19 clips/sec
+[4,000/142,824] 2.20 clips/sec
+[4,504/142,824] 2.20 clips/sec
+[5,000/142,824] 2.20 clips/sec
+[5,504/142,824] 2.19 clips/sec
+[6,000/142,824] 2.19 clips/sec
+[6,504/142,824] 2.19 clips/sec
+[7,000/142,824] 2.18 clips/sec
+[7,504/142,824] 2.18 clips/sec
+[8,000/142,824] 2.18 clips/sec
+[8,504/142,824] 2.15 clips/sec
+[9,000/142,824] 2.15 clips/sec
+[9,504/142,824] 2.15 clips/sec
+[10,000/142,824] 2.14 clips/sec
+[10,504/142,824] 2.14 clips/sec
+[11,000/142,824] 2.14 clips/sec
+[11,504/142,824] 2.14 clips/sec
+[12,000/142,824] 2.13 clips/sec
+[12,504/142,824] 2.13 clips/sec
+[13,000/142,824] 2.12 clips/sec
+[13,504/142,824] 2.12 clips/sec
+[14,000/142,824] 2.11 clips/sec
+[14,504/142,824] 2.11 clips/sec
+[15,000/142,824] 2.11 clips/sec
+[15,504/142,824] 2.10 clips/sec
+[16,000/142,824] 2.10 clips/sec
+[16,504/142,824] 2.10 clips/sec
+[17,000/142,824] 2.10 clips/sec
+[17,504/142,824] 2.09 clips/sec
+[18,000/142,824] 2.09 clips/sec
+[18,504/142,824] 2.09 clips/sec
+[19,000/142,824] 2.09 clips/sec
+[19,504/142,824] 2.08 clips/sec
+[20,000/142,824] 2.08 clips/sec
+[20,504/142,824] 2.08 clips/sec
+[21,000/142,824] 2.08 clips/sec
+[21,504/142,824] 2.08 clips/sec
+[22,000/142,824] 2.07 clips/sec
+[22,504/142,824] 2.07 clips/sec
+[23,000/142,824] 2.07 clips/sec
+[23,504/142,824] 2.07 clips/sec
+[24,000/142,824] 2.07 clips/sec
+[24,504/142,824] 2.07 clips/sec
+[25,000/142,824] 2.07 clips/sec
+[25,504/142,824] 2.07 clips/sec
+[26,000/142,824] 2.06 clips/sec
+[26,504/142,824] 2.06 clips/sec
+[27,000/142,824] 2.06 clips/sec
+[27,504/142,824] 2.06 clips/sec
+[28,000/142,824] 2.06 clips/sec
+[28,504/142,824] 2.06 clips/sec
+[29,000/142,824] 2.06 clips/sec
+[29,504/142,824] 2.06 clips/sec
+[30,000/142,824] 2.06 clips/sec
+[30,504/142,824] 2.06 clips/sec
+[31,000/142,824] 2.06 clips/sec
+[31,504/142,824] 2.06 clips/sec
+[32,000/142,824] 2.06 clips/sec
+[32,504/142,824] 2.06 clips/sec
+[33,000/142,824] 2.06 clips/sec
+[33,504/142,824] 2.06 clips/sec
+[34,000/142,824] 2.06 clips/sec
+[34,504/142,824] 2.06 clips/sec
+[35,000/142,824] 2.06 clips/sec
+[35,504/142,824] 2.06 clips/sec
+[36,000/142,824] 2.06 clips/sec
+[36,504/142,824] 2.05 clips/sec
+[37,000/142,824] 2.05 clips/sec
+[37,504/142,824] 2.05 clips/sec
+[38,000/142,824] 2.05 clips/sec
+[38,504/142,824] 2.05 clips/sec
+[39,000/142,824] 2.05 clips/sec
+[39,504/142,824] 2.05 clips/sec
+[40,000/142,824] 2.05 clips/sec
+[40,504/142,824] 2.05 clips/sec
+[41,000/142,824] 2.05 clips/sec
+[41,504/142,824] 2.05 clips/sec
+[42,000/142,824] 2.05 clips/sec
+[42,504/142,824] 2.05 clips/sec
+[43,000/142,824] 2.04 clips/sec
+[43,504/142,824] 2.04 clips/sec
+[44,000/142,824] 2.04 clips/sec
+[44,504/142,824] 2.04 clips/sec
+[45,000/142,824] 2.04 clips/sec
+[45,504/142,824] 2.04 clips/sec
+[46,000/142,824] 2.04 clips/sec
+[46,504/142,824] 2.04 clips/sec
+[47,000/142,824] 2.04 clips/sec
+[47,504/142,824] 2.04 clips/sec
+[48,000/142,824] 2.03 clips/sec
+[48,504/142,824] 2.03 clips/sec
+[49,000/142,824] 2.04 clips/sec
+[49,504/142,824] 2.04 clips/sec
+[50,000/142,824] 2.04 clips/sec
+[50,504/142,824] 2.03 clips/sec
+[51,000/142,824] 2.03 clips/sec
+[51,504/142,824] 2.03 clips/sec
+[52,000/142,824] 2.03 clips/sec
+[52,504/142,824] 2.03 clips/sec
+[53,000/142,824] 2.03 clips/sec
+[53,504/142,824] 2.03 clips/sec
+[54,000/142,824] 2.03 clips/sec
+[54,504/142,824] 2.03 clips/sec
+[55,000/142,824] 2.03 clips/sec
+[55,504/142,824] 2.03 clips/sec
+[56,000/142,824] 2.03 clips/sec
+[56,504/142,824] 2.03 clips/sec
+[57,000/142,824] 2.03 clips/sec
+[57,504/142,824] 2.03 clips/sec
+[58,000/142,824] 2.02 clips/sec
+[58,504/142,824] 2.02 clips/sec
+[59,000/142,824] 2.02 clips/sec
+[59,504/142,824] 2.02 clips/sec
+[60,000/142,824] 2.02 clips/sec
+[60,504/142,824] 2.02 clips/sec
+[61,000/142,824] 2.02 clips/sec
+[61,504/142,824] 2.02 clips/sec
+[62,000/142,824] 2.02 clips/sec
+[62,504/142,824] 2.02 clips/sec
+[63,000/142,824] 2.02 clips/sec
+[63,504/142,824] 2.02 clips/sec
+[64,000/142,824] 2.02 clips/sec
+[64,504/142,824] 2.01 clips/sec
+[65,000/142,824] 2.01 clips/sec
+[65,504/142,824] 2.01 clips/sec
+[66,000/142,824] 2.01 clips/sec
+[66,504/142,824] 2.01 clips/sec
+[67,000/142,824] 2.01 clips/sec
+[67,504/142,824] 2.01 clips/sec
+[68,000/142,824] 2.01 clips/sec
+[68,504/142,824] 2.01 clips/sec
+[69,000/142,824] 2.01 clips/sec
+[69,504/142,824] 2.01 clips/sec
+[70,000/142,824] 2.01 clips/sec
+[70,504/142,824] 2.01 clips/sec
+[71,000/142,824] 2.01 clips/sec
+[71,504/142,824] 2.00 clips/sec
+[72,000/142,824] 2.00 clips/sec
+[72,504/142,824] 2.00 clips/sec
+[73,000/142,824] 2.00 clips/sec
+[73,504/142,824] 2.00 clips/sec
+[74,000/142,824] 2.00 clips/sec
+[74,504/142,824] 2.00 clips/sec
+[75,000/142,824] 2.00 clips/sec
+[75,504/142,824] 2.00 clips/sec
+[76,000/142,824] 2.00 clips/sec
+[76,504/142,824] 1.99 clips/sec
+[77,000/142,824] 1.99 clips/sec
+[77,504/142,824] 1.99 clips/sec
+[78,000/142,824] 1.99 clips/sec
+[78,504/142,824] 1.99 clips/sec
+[79,000/142,824] 1.99 clips/sec
+[79,504/142,824] 1.99 clips/sec
+[80,000/142,824] 1.99 clips/sec
+[80,504/142,824] 1.99 clips/sec
+[81,000/142,824] 1.99 clips/sec
+[81,504/142,824] 1.98 clips/sec
+[82,000/142,824] 1.98 clips/sec
+[82,504/142,824] 1.98 clips/sec
+[83,000/142,824] 1.98 clips/sec
+[83,504/142,824] 1.98 clips/sec
+[84,000/142,824] 1.98 clips/sec
+[84,504/142,824] 1.98 clips/sec
+[85,000/142,824] 1.98 clips/sec
+[85,504/142,824] 1.97 clips/sec
+[86,000/142,824] 1.97 clips/sec
+[86,504/142,824] 1.97 clips/sec
+[87,000/142,824] 1.97 clips/sec
+[87,504/142,824] 1.97 clips/sec
+[88,000/142,824] 1.97 clips/sec
+[88,504/142,824] 1.97 clips/sec
+[89,000/142,824] 1.97 clips/sec
+[89,504/142,824] 1.97 clips/sec
+[90,000/142,824] 1.97 clips/sec
+[90,504/142,824] 1.97 clips/sec
+[91,000/142,824] 1.96 clips/sec
+[91,504/142,824] 1.96 clips/sec
+[92,000/142,824] 1.96 clips/sec
+[92,504/142,824] 1.96 clips/sec
+[93,000/142,824] 1.96 clips/sec
+[93,504/142,824] 1.96 clips/sec
+[94,000/142,824] 1.96 clips/sec
+[94,504/142,824] 1.96 clips/sec
+[95,000/142,824] 1.96 clips/sec
+[95,504/142,824] 1.95 clips/sec
+[96,000/142,824] 1.95 clips/sec
+[96,504/142,824] 1.95 clips/sec
+[97,000/142,824] 1.95 clips/sec
+[97,504/142,824] 1.95 clips/sec
+[98,000/142,824] 1.95 clips/sec
+[98,504/142,824] 1.95 clips/sec
+[99,000/142,824] 1.94 clips/sec
+[99,504/142,824] 1.94 clips/sec
+[100,000/142,824] 1.94 clips/sec
+[100,504/142,824] 1.94 clips/sec
+[101,000/142,824] 1.94 clips/sec
+[101,504/142,824] 1.94 clips/sec
+[102,000/142,824] 1.94 clips/sec
+[102,504/142,824] 1.93 clips/sec
+[103,000/142,824] 1.93 clips/sec
+[103,504/142,824] 1.93 clips/sec
+[104,000/142,824] 1.93 clips/sec
+[104,504/142,824] 1.93 clips/sec
+[105,000/142,824] 1.93 clips/sec
+[105,504/142,824] 1.92 clips/sec
+[106,000/142,824] 1.92 clips/sec
+[106,504/142,824] 1.92 clips/sec
+[107,000/142,824] 1.92 clips/sec
+[107,504/142,824] 1.92 clips/sec
+[108,000/142,824] 1.91 clips/sec
+[108,504/142,824] 1.91 clips/sec
+[109,000/142,824] 1.91 clips/sec
+[109,504/142,824] 1.91 clips/sec
+[110,000/142,824] 1.91 clips/sec
+[110,504/142,824] 1.91 clips/sec
+[111,000/142,824] 1.90 clips/sec
+[111,504/142,824] 1.90 clips/sec
+[112,000/142,824] 1.90 clips/sec
+[112,504/142,824] 1.90 clips/sec
+[113,000/142,824] 1.90 clips/sec
+[113,504/142,824] 1.90 clips/sec
+[114,000/142,824] 1.89 clips/sec
+[114,504/142,824] 1.89 clips/sec
+[115,000/142,824] 1.89 clips/sec
+[115,504/142,824] 1.89 clips/sec
+[116,000/142,824] 1.89 clips/sec
+[116,504/142,824] 1.88 clips/sec
+[117,000/142,824] 1.88 clips/sec
+[117,504/142,824] 1.88 clips/sec
+[118,000/142,824] 1.88 clips/sec
+[118,504/142,824] 1.88 clips/sec
+[119,000/142,824] 1.87 clips/sec
+[119,504/142,824] 1.87 clips/sec
+[120,000/142,824] 1.87 clips/sec
+[120,504/142,824] 1.87 clips/sec
+[121,000/142,824] 1.87 clips/sec
+[121,504/142,824] 1.87 clips/sec
+[122,000/142,824] 1.86 clips/sec
+[122,504/142,824] 1.86 clips/sec
+[123,000/142,824] 1.86 clips/sec
+[123,504/142,824] 1.86 clips/sec
+[124,000/142,824] 1.85 clips/sec
+[124,504/142,824] 1.85 clips/sec
+[125,000/142,824] 1.85 clips/sec
+[125,504/142,824] 1.85 clips/sec
+[126,000/142,824] 1.85 clips/sec
+[126,504/142,824] 1.84 clips/sec
+[127,000/142,824] 1.84 clips/sec
+[127,504/142,824] 1.84 clips/sec
+[128,000/142,824] 1.84 clips/sec
+[128,504/142,824] 1.83 clips/sec
+[129,000/142,824] 1.83 clips/sec
+[129,504/142,824] 1.83 clips/sec
+[130,000/142,824] 1.82 clips/sec
+[130,504/142,824] 1.82 clips/sec
+[131,000/142,824] 1.82 clips/sec
+[131,504/142,824] 1.81 clips/sec
+[132,000/142,824] 1.81 clips/sec
+[132,504/142,824] 1.81 clips/sec
+[133,000/142,824] 1.80 clips/sec
+[133,504/142,824] 1.80 clips/sec
+[134,000/142,824] 1.80 clips/sec
+[134,504/142,824] 1.79 clips/sec
+[135,000/142,824] 1.79 clips/sec
+[135,504/142,824] 1.79 clips/sec
+[136,000/142,824] 1.78 clips/sec
+[136,504/142,824] 1.78 clips/sec
+[137,000/142,824] 1.77 clips/sec
+[137,504/142,824] 1.77 clips/sec
+[138,000/142,824] 1.76 clips/sec
+[138,504/142,824] 1.75 clips/sec
+[139,000/142,824] 1.75 clips/sec
 Transcribed:        139,438
 Skipped (duration): 3,386
 Failed:             0
-Time:               1986.4 min
+Time:               1342.4 min
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_nbest.json
------ Stage 2/6 finished in 119205.8s -----
+----- Stage 2/6 finished in 80561.3s -----
 
 ===== STAGE 3/6: BUILD GENSEC DATASET =====
 Utterances seen: 139,348
@@ -322,57 +321,27 @@ Dropped:         139,254
 Hypotheses per kept example:
   2: 94
 Wrote /home/gdhakal/gensec-asr/data/processed_gensec.json
------ Stage 3/6 finished in 1.2s -----
+----- Stage 3/6 finished in 1.1s -----
 
 ===== STAGE 4/6: TRAIN AND RUN INFERENCE =====
 Examples after normalizing: 94 of 94
 Train: 75 | Test: 19
 /bighome/gdhakal/.conda/envs/gensec_env/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
   warnings.warn(
-Map:   0%|          | 0/75 [00:00<?, ? examples/s]Map: 100%|██████████| 75/75 [00:00<00:00, 1418.36 examples/s]
-Fine-tune on 73 | validate on 2
-Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
-  0%|          | 0/50 [00:00<?, ?it/s]  2%|▏         | 1/50 [00:02<01:53,  2.32s/it]  6%|▌         | 3/50 [00:02<00:30,  1.56it/s] 10%|█         | 5/50 [00:02<00:15,  2.94it/s] 14%|█▍        | 7/50 [00:02<00:09,  4.54it/s] 18%|█▊        | 9/50 [00:02<00:06,  6.35it/s]
-  0%|          | 0/1 [00:00<?, ?it/s][A                                              
-                                     [A{'eval_loss': 3.27545166015625, 'eval_runtime': 0.0168, 'eval_samples_per_second': 119.183, 'eval_steps_per_second': 59.592, 'epoch': 1.0}
- 20%|██        | 10/50 [00:02<00:06,  6.35it/s]
-100%|██████████| 1/1 [00:00<00:00, 3363.52it/s][A
-                                               [A 22%|██▏       | 11/50 [00:06<00:29,  1.32it/s] 26%|██▌       | 13/50 [00:06<00:19,  1.91it/s] 30%|███       | 15/50 [00:06<00:13,  2.69it/s] 34%|███▍      | 17/50 [00:06<00:08,  3.69it/s] 38%|███▊      | 19/50 [00:06<00:06,  4.91it/s]
-  0%|          | 0/1 [00:00<?, ?it/s][A                                               
-                                     [A{'eval_loss': 3.1715087890625, 'eval_runtime': 0.0164, 'eval_samples_per_second': 121.586, 'eval_steps_per_second': 60.793, 'epoch': 2.0}
- 40%|████      | 20/50 [00:07<00:06,  4.91it/s]
-100%|██████████| 1/1 [00:00<00:00, 3894.43it/s][A
-                                               [A 42%|████▏     | 21/50 [00:10<00:21,  1.36it/s] 46%|████▌     | 23/50 [00:10<00:14,  1.89it/s] 50%|█████     | 25/50 [00:11<00:09,  2.60it/s] 54%|█████▍    | 27/50 [00:11<00:06,  3.52it/s] 58%|█████▊    | 29/50 [00:11<00:04,  4.67it/s]
-  0%|          | 0/1 [00:00<?, ?it/s][A                                               
-                                     [A{'eval_loss': 3.12091064453125, 'eval_runtime': 0.0163, 'eval_samples_per_second': 122.761, 'eval_steps_per_second': 61.38, 'epoch': 3.0}
- 60%|██████    | 30/50 [00:11<00:04,  4.67it/s]
-100%|██████████| 1/1 [00:00<00:00, 3418.34it/s][A
-                                               [A 62%|██████▏   | 31/50 [00:15<00:13,  1.40it/s] 66%|██████▌   | 33/50 [00:15<00:08,  1.93it/s] 70%|███████   | 35/50 [00:15<00:05,  2.65it/s] 74%|███████▍  | 37/50 [00:15<00:03,  3.56it/s] 78%|███████▊  | 39/50 [00:15<00:02,  4.71it/s]
-  0%|          | 0/1 [00:00<?, ?it/s][A                                               
-                                     [A{'eval_loss': 3.09619140625, 'eval_runtime': 0.0165, 'eval_samples_per_second': 121.551, 'eval_steps_per_second': 60.776, 'epoch': 4.0}
- 80%|████████  | 40/50 [00:15<00:02,  4.71it/s]
-100%|██████████| 1/1 [00:00<00:00, 3883.61it/s][A
-                                               [A 82%|████████▏ | 41/50 [00:18<00:06,  1.49it/s] 86%|████████▌ | 43/50 [00:19<00:03,  2.06it/s] 90%|█████████ | 45/50 [00:19<00:01,  2.80it/s] 94%|█████████▍| 47/50 [00:19<00:00,  3.76it/s] 98%|█████████▊| 49/50 [00:19<00:00,  4.96it/s]
-  0%|          | 0/1 [00:00<?, ?it/s][A                                               
-                                     [A{'eval_loss': 3.07830810546875, 'eval_runtime': 0.0169, 'eval_samples_per_second': 118.683, 'eval_steps_per_second': 59.341, 'epoch': 5.0}
-100%|██████████| 50/50 [00:22<00:00,  4.96it/s]
-100%|██████████| 1/1 [00:00<00:00, 3536.51it/s][A
-                                               [A                                               {'train_runtime': 26.3409, 'train_samples_per_second': 13.857, 'train_steps_per_second': 1.898, 'train_loss': 2.7924676513671876, 'epoch': 5.0}
-100%|██████████| 50/50 [00:26<00:00,  4.96it/s]100%|██████████| 50/50 [00:26<00:00,  1.90it/s]
-Saved model to /home/gdhakal/gensec-asr/work_directory/final_checkpoint
+Using existing fine-tune: /home/gdhakal/gensec-asr/work_directory/final_checkpoint
 ===== inference: zero_shot =====
   [zero_shot] 4/19
 Wrote /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_shot.csv
------ Stage 4/6 finished in 63.5s -----
+----- Stage 4/6 finished in 34.3s -----
 
 ===== STAGE 5/6: POSTPROCESS PREDICTIONS =====
 Predictions read:    19 (zero_shot)
 Predictions changed: 0
 Wrote /home/gdhakal/gensec-asr/data/predictions/predictions_cleaned.csv
------ Stage 5/6 finished in 0.3s -----
+----- Stage 5/6 finished in 0.0s -----
 
 ===== STAGE 6/6: EVALUATE =====
-Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260827_150104
+Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260829_174347
 GenSEC evaluation
 ========================================================================
 Test utterances: 19
@@ -380,14 +349,14 @@ Test utterances: 19
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
 whisper_1best                 349.15%     5.26%       37        6      163
-gensec_zero_shot              150.85%     5.26%       33        7       49
-gensec_zero_shot_cleaned      150.85%     5.26%       33        7       49
+gensec_zero_shot              127.12%     5.26%       34        7       34
+gensec_zero_shot_cleaned      127.12%     5.26%       34        7       34
 oracle_nbest                  310.17%     5.26%       33        7      143
 oracle_compositional           67.80%     0.00%        0       40        0
 
-gensec_zero_shot vs whisper_1best: +56.80% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +63.59% relative WER reduction (better)
 
-gensec_zero_shot_cleaned vs whisper_1best: +56.80% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: +63.59% relative WER reduction (better)
 
 oracle_nbest vs whisper_1best: +11.17% relative WER reduction (better)
 
@@ -397,8 +366,8 @@ oracle_compositional vs whisper_1best: +80.58% relative WER reduction (better)
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall           19    56.80%   95% CI [+40.88%, +63.64%]
-  TD                18    57.92%   95% CI [+44.14%, +64.52%]
+  overall           19    63.59%   95% CI [+40.88%, +76.66%]
+  TD                18    64.85%   95% CI [+44.14%, +77.51%]
 
 
 By group (LT = late talker, TD = typically developing)
@@ -411,8 +380,8 @@ LT
   oracle_nbest                     1   100.00%     0.00%
 TD
   whisper_1best                   18   367.27%     5.56%
-  gensec_zero_shot                18   154.55%     5.56%
-  gensec_zero_shot_cleaned        18   154.55%     5.56%
+  gensec_zero_shot                18   129.09%     5.56%
+  gensec_zero_shot_cleaned        18   129.09%     5.56%
   oracle_nbest                    18   325.45%     5.56%
 
 
@@ -431,8 +400,8 @@ By reference length
   oracle_nbest                     1   750.00%     0.00%
 3-5 words
   whisper_1best                   12   291.11%     8.33%
-  gensec_zero_shot                12   122.22%     8.33%
-  gensec_zero_shot_cleaned        12   122.22%     8.33%
+  gensec_zero_shot                12    91.11%     8.33%
+  gensec_zero_shot_cleaned        12    91.11%     8.33%
   oracle_nbest                    12   242.22%     8.33%
 6-10 words
   whisper_1best                    1   200.00%     0.00%
@@ -446,8 +415,8 @@ References of 3+ words only (comparable to published child GenSEC work)
                                 utts       WER     exact
 3+ words
   whisper_1best                   13   278.85%     7.69%
-  gensec_zero_shot                13   125.00%     7.69%
-  gensec_zero_shot_cleaned        13   125.00%     7.69%
+  gensec_zero_shot                13    98.08%     7.69%
+  gensec_zero_shot_cleaned        13    98.08%     7.69%
   oracle_nbest                    13   236.54%     7.69%
 
 
@@ -487,9 +456,6 @@ cd00464a_1517946_1520649_117  sentence_wer=2.20
 
 Worst utterances - gensec_zero_shot
 ------------------------------------------------------------------------
-46d74f56_65195_75008_7  sentence_wer=7.33
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie ice cream cookies cookies chocolate cookies cookies cookies toffees cookies cookies doughnuts cookies fajitas cookies
 7b1f9af0_551364_551864_88  sentence_wer=6.00
   ref: chooz
   hyp: today we have two cups of
@@ -502,6 +468,9 @@ bc229bd5_995973_996073_194  sentence_wer=4.00
 f50c8312_224733_225233_66  sentence_wer=4.00
   ref: s
   hyp: i dont really know
+46d74f56_65195_75008_7  sentence_wer=2.67
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
 247ae489_758838_759959_209  sentence_wer=2.33
   ref: six plus three
   hyp: i dont know but theres probably two
@@ -521,9 +490,6 @@ cf8d72db_1754196_1754996_557  sentence_wer=1.67
 
 Worst utterances - gensec_zero_shot_cleaned
 ------------------------------------------------------------------------
-46d74f56_65195_75008_7  sentence_wer=7.33
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie ice cream cookies cookies chocolate cookies cookies cookies toffees cookies cookies doughnuts cookies fajitas cookies
 7b1f9af0_551364_551864_88  sentence_wer=6.00
   ref: chooz
   hyp: today we have two cups of
@@ -536,6 +502,9 @@ bc229bd5_995973_996073_194  sentence_wer=4.00
 f50c8312_224733_225233_66  sentence_wer=4.00
   ref: s
   hyp: i dont really know
+46d74f56_65195_75008_7  sentence_wer=2.67
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
 247ae489_758838_759959_209  sentence_wer=2.33
   ref: six plus three
   hyp: i dont know but theres probably two
@@ -590,4 +559,4 @@ Wrote /home/gdhakal/gensec-asr/evaluation_results/wer_report.txt
 ----- Stage 6/6 finished in 1.1s -----
 
 ===== GENSEC PIPELINE COMPLETE =====
-Finished: Sat Aug 29 17:43:51 CDT 2026
+Finished: Sun Aug 30 21:22:52 CDT 2026

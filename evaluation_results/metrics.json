@@ -10,23 +10,23 @@
     "exact_match_rate": 0.05263157894736842
   },
   "gensec_zero_shot": {
-    "substitutions": 33,
+    "substitutions": 34,
     "deletions": 7,
-    "insertions": 49,
+    "insertions": 34,
     "reference_words": 59,
     "utterances": 19,
-    "total_errors": 89,
-    "wer": 1.5084745762711864,
+    "total_errors": 75,
+    "wer": 1.271186440677966,
     "exact_match_rate": 0.05263157894736842
   },
   "gensec_zero_shot_cleaned": {
-    "substitutions": 33,
+    "substitutions": 34,
     "deletions": 7,
-    "insertions": 49,
+    "insertions": 34,
     "reference_words": 59,
     "utterances": 19,
-    "total_errors": 89,
-    "wer": 1.5084745762711864,
+    "total_errors": 75,
+    "wer": 1.271186440677966,
     "exact_match_rate": 0.05263157894736842
   },
   "oracle_nbest": {
@@ -52,15 +52,15 @@
   "significance": {
     "overall": {
       "utterances": 19,
-      "reduction": 0.5679611650485437,
+      "reduction": 0.6359223300970874,
       "ci_low": 0.40875912408759124,
-      "ci_high": 0.6363636363636364
+      "ci_high": 0.7665706051873199
     },
     "TD": {
       "utterances": 18,
-      "reduction": 0.5792079207920792,
+      "reduction": 0.6485148514851485,
       "ci_low": 0.4413793103448276,
-      "ci_high": 0.6451612903225806
+      "ci_high": 0.7750759878419453
     }
   }
 }

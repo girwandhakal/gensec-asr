@@ -5,14 +5,14 @@ Test utterances: 19
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
 whisper_1best                 349.15%     5.26%       37        6      163
-gensec_zero_shot              150.85%     5.26%       33        7       49
-gensec_zero_shot_cleaned      150.85%     5.26%       33        7       49
+gensec_zero_shot              127.12%     5.26%       34        7       34
+gensec_zero_shot_cleaned      127.12%     5.26%       34        7       34
 oracle_nbest                  310.17%     5.26%       33        7      143
 oracle_compositional           67.80%     0.00%        0       40        0
 
-gensec_zero_shot vs whisper_1best: +56.80% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +63.59% relative WER reduction (better)
 
-gensec_zero_shot_cleaned vs whisper_1best: +56.80% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: +63.59% relative WER reduction (better)
 
 oracle_nbest vs whisper_1best: +11.17% relative WER reduction (better)
 
@@ -22,8 +22,8 @@ oracle_compositional vs whisper_1best: +80.58% relative WER reduction (better)
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall           19    56.80%   95% CI [+40.88%, +63.64%]
-  TD                18    57.92%   95% CI [+44.14%, +64.52%]
+  overall           19    63.59%   95% CI [+40.88%, +76.66%]
+  TD                18    64.85%   95% CI [+44.14%, +77.51%]
 
 
 By group (LT = late talker, TD = typically developing)
@@ -36,8 +36,8 @@ LT
   oracle_nbest                     1   100.00%     0.00%
 TD
   whisper_1best                   18   367.27%     5.56%
-  gensec_zero_shot                18   154.55%     5.56%
-  gensec_zero_shot_cleaned        18   154.55%     5.56%
+  gensec_zero_shot                18   129.09%     5.56%
+  gensec_zero_shot_cleaned        18   129.09%     5.56%
   oracle_nbest                    18   325.45%     5.56%
 
 
@@ -56,8 +56,8 @@ By reference length
   oracle_nbest                     1   750.00%     0.00%
 3-5 words
   whisper_1best                   12   291.11%     8.33%
-  gensec_zero_shot                12   122.22%     8.33%
-  gensec_zero_shot_cleaned        12   122.22%     8.33%
+  gensec_zero_shot                12    91.11%     8.33%
+  gensec_zero_shot_cleaned        12    91.11%     8.33%
   oracle_nbest                    12   242.22%     8.33%
 6-10 words
   whisper_1best                    1   200.00%     0.00%
@@ -71,8 +71,8 @@ References of 3+ words only (comparable to published child GenSEC work)
                                 utts       WER     exact
 3+ words
   whisper_1best                   13   278.85%     7.69%
-  gensec_zero_shot                13   125.00%     7.69%
-  gensec_zero_shot_cleaned        13   125.00%     7.69%
+  gensec_zero_shot                13    98.08%     7.69%
+  gensec_zero_shot_cleaned        13    98.08%     7.69%
   oracle_nbest                    13   236.54%     7.69%
 
 
@@ -112,9 +112,6 @@ cd00464a_1517946_1520649_117  sentence_wer=2.20
 
 Worst utterances - gensec_zero_shot
 ------------------------------------------------------------------------
-46d74f56_65195_75008_7  sentence_wer=7.33
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie ice cream cookies cookies chocolate cookies cookies cookies toffees cookies cookies doughnuts cookies fajitas cookies
 7b1f9af0_551364_551864_88  sentence_wer=6.00
   ref: chooz
   hyp: today we have two cups of
@@ -127,6 +124,9 @@ bc229bd5_995973_996073_194  sentence_wer=4.00
 f50c8312_224733_225233_66  sentence_wer=4.00
   ref: s
   hyp: i dont really know
+46d74f56_65195_75008_7  sentence_wer=2.67
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
 247ae489_758838_759959_209  sentence_wer=2.33
   ref: six plus three
   hyp: i dont know but theres probably two
@@ -146,9 +146,6 @@ cf8d72db_1754196_1754996_557  sentence_wer=1.67
 
 Worst utterances - gensec_zero_shot_cleaned
 ------------------------------------------------------------------------
-46d74f56_65195_75008_7  sentence_wer=7.33
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie ice cream cookies cookies chocolate cookies cookies cookies toffees cookies cookies doughnuts cookies fajitas cookies
 7b1f9af0_551364_551864_88  sentence_wer=6.00
   ref: chooz
   hyp: today we have two cups of
@@ -161,6 +158,9 @@ bc229bd5_995973_996073_194  sentence_wer=4.00
 f50c8312_224733_225233_66  sentence_wer=4.00
   ref: s
   hyp: i dont really know
+46d74f56_65195_75008_7  sentence_wer=2.67
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
 247ae489_758838_759959_209  sentence_wer=2.33
   ref: six plus three
   hyp: i dont know but theres probably two
