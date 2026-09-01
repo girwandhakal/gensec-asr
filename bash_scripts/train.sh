@@ -24,13 +24,19 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=48:00:00
-#SBATCH --output=/home/gdhakal/gensec-asr/gensec_training.txt
-#SBATCH --error=/home/gdhakal/gensec-asr/gensec_training.txt
+#SBATCH --output=/bighome/gdhakal/gensec-asr/gensec_training.txt
+#SBATCH --error=/bighome/gdhakal/gensec-asr/gensec_training.txt
 #SBATCH --open-mode=truncate
 
 set -euo pipefail
 
-PROJECT_ROOT="${GENSEC_PROJECT_ROOT:-/home/gdhakal/gensec-asr}"
+# /home is autofs-mounted and only reliably available on the login node - a
+# compute node can't chdir into it (2026-09-01: every job failed silently,
+# 1 second in, before the script printed anything past "Started:", because
+# Slurm's own chdir into the submit directory failed on the allocated node
+# and fell back to /tmp). /bighome is the cluster's shared storage that is
+# actually mounted on compute nodes; the media dir below already lived there.
+PROJECT_ROOT="${GENSEC_PROJECT_ROOT:-/bighome/gdhakal/gensec-asr}"
 CONFIG_FILE="$PROJECT_ROOT/configs/baseline.yaml"
 LOG_FILE="$PROJECT_ROOT/gensec_training.txt"
 
