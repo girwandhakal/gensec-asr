@@ -214,6 +214,7 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     final_checkpoint = config["work_dir"] / "final_checkpoint"
     trainer.save_model(str(final_checkpoint))
     tokenizer.save_pretrained(str(final_checkpoint))
+    (final_checkpoint / "train_rows.txt").write_text(str(len(train_frame)), encoding="utf-8")
     print(f"Saved model to {final_checkpoint}")
 
     return model
@@ -350,12 +351,27 @@ def main(config: dict | None = None) -> None:
     # Stage 4 is two expensive halves and only the second one is cheap to
     # repeat. Inference dying - on an OOM, or a walltime - used to throw away a
     # finished fine-tune, because the stage only skips on the predictions file.
-    # Delete final_checkpoint/ to force a retrain on a grown dataset.
+    # That reuse used to key on the checkpoint directory merely existing, which
+    # silently ran a stale fine-tune against a train split that had since grown
+    # or been rebuilt (2026-08-31: stage 2/3 reworked the n-best data and the
+    # train split changed from 59,937 to 67,249 rows, but inference still ran
+    # the 2026-08-26 checkpoint trained on the old split - a real train/test
+    # mismatch, not a decoding regression). Stamp the row count the checkpoint
+    # was trained on and retrain whenever the current split doesn't match it.
     final_checkpoint = config["work_dir"] / "final_checkpoint"
-    if final_checkpoint.is_dir():
-        print(f"Using existing fine-tune: {final_checkpoint}")
+    stamp_path = final_checkpoint / "train_rows.txt"
+    stamp = stamp_path.read_text(encoding="utf-8").strip() if stamp_path.is_file() else None
+
+    if final_checkpoint.is_dir() and stamp == str(len(train_frame)):
+        print(f"Using existing fine-tune: {final_checkpoint} (trained on {stamp} rows)")
         model = AutoModelForSeq2SeqLM.from_pretrained(str(final_checkpoint))
     else:
+        if final_checkpoint.is_dir():
+            print(
+                f"Discarding fine-tune at {final_checkpoint}: trained on "
+                f"{stamp or 'an unknown number of'} rows, current split has "
+                f"{len(train_frame):,} - retraining"
+            )
         model = fine_tune(train_frame, tokenizer, config)
 
     for mode in config["inference_modes"]:
