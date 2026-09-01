@@ -1,0 +1,93 @@
+seed: 42
+
+# Audio and reference transcripts prepared by asr-dataset-pipelines.
+# The label CSV lives at the root of the media directory, so config.py derives
+# it from whichever media copy is in use rather than declaring it twice.
+hpc_media_dir: /bighome/gdhakal/child_asr/data/media
+local_media_dir: ../asr-dataset-pipelines/data/media
+reference_report_filename: media_download_report.csv
+
+# Reference transcripts are raw CHILDES CHAT markup. Whisper can never emit
+# "xxx" for unintelligible speech, so keeping it would count as errors the
+# model cannot avoid.
+remove_unintelligible: true
+
+# Stage 2: Whisper n-best generation.
+asr_model_id: rishabhjain16/whisper_medium_to_myst55h
+audio_extension: .mp3
+sample_rate: 16000
+max_clip_seconds: 30      # Whisper's window; 91 clips exceed it, longest is 75 min
+min_clip_seconds: 0.1     # 135 clips are effectively zero-length
+num_return_sequences: 5
+
+# Beam search, not sampling. Sampling returned candidates in no order at all, so
+# "1best" was an arbitrary draw rather than a best - an indefensible baseline -
+# and 44% of clips collapsed to one distinct string, which is the ceiling the
+# corrector then ran into. Beams give ranked, genuinely distinct candidates.
+#
+# num_beams > num_return_sequences on purpose: with them equal (tried on
+# 2026-08-27) and early_stopping=True, search stopped the instant all 5 beams
+# hit EOS, with no spare beams left to diverge into different word choices -
+# 98% of clips collapsed to a single distinct string, worse than sampling ever
+# was. The 3 spare beams restore exploration room; early_stopping is off so
+# search doesn't cut that exploration short again. Runtime stays bounded by
+# the max_new_tokens budget below, not by early_stopping.
+asr_do_sample: false           # true restores the sampling ablation below
+asr_num_beams: 8
+asr_beam_groups: 1             # >1 switches on diverse beam search
+asr_diversity_penalty: 0.5     # only used when asr_beam_groups > 1
+
+# Sampling parameters, kept for the ablation. Ignored unless asr_do_sample.
+temperature: 0.6
+top_p: 0.95
+top_k: 50
+
+asr_batch_size: 8             # 8 beams x 8 clips; the cross-attention cache is the limit
+
+# Whisper decodes toward its 448-token limit even on a 2-second clip. Sampling
+# hid that (each draw stopped at its own EOS); beam search does not, and
+# uncapped it ran stage 2 at 0.13 clips/sec - twelve days for the corpus.
+asr_tokens_per_second: 8
+asr_token_margin: 16          # floor, and headroom above the spoken content
+asr_save_every: 500       # checkpoint the n-best JSON this often, so the job resumes
+asr_limit: null           # set to an integer for a quick smoke test
+
+# Stage 3: dataset construction.
+max_hypotheses: 5         # beam search returns 5 ranked candidates; show the model all of them
+min_hypotheses: 2
+
+# Stage 4: the correction model.
+gensec_model_id: google/flan-t5-base
+max_source_length: 512
+max_target_length: 128
+num_train_epochs: 5
+learning_rate: 3.0e-5
+train_batch_size: 8
+eval_batch_size: 16
+generation_batch_size: 4       # beam search is far heavier per row than eval; keep this small
+num_beams: 8
+
+# Repetition control at generation time. References average 5.2 words, so an
+# unbounded 128-token decode is pure room for a loop to run in.
+no_repeat_ngram_size: 3        # 0 disables
+repetition_penalty: 1.2        # 1.0 disables
+generation_length_slack: 1.5   # cap output at this multiple of the longest input hypothesis
+
+# The harder cap: what the clip could physically hold. Whisper writes whole
+# sentences onto near-silent audio - the worst rows of 2026-08-27 were 100 ms
+# clips against one-word references - and no hypothesis-derived bound catches
+# that. 8 tokens/s is deliberately generous against ~3 words/s of child speech.
+generation_tokens_per_second: 8
+generation_min_tokens: 6       # floor. 4 cut 262 predictions mid-word ("i don'"), all on sub-1s clips
+test_size: 0.2
+eval_size: 0.02                # held out of the fine-tune for a per-epoch loss check
+inference_modes: [zero_shot]   # also available: one_shot, few_shot
+few_shot_examples: 5
+icl_demo_hypotheses: 3         # hypotheses shown per in-context demonstration
+
+# Stage 6: how many resamples behind the LT/TD confidence intervals.
+bootstrap_iterations: 1000
+
+data_dir: data
+work_dir: work_directory
+results_dir: evaluation_results

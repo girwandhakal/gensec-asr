@@ -1,0 +1,66 @@
+{
+  "whisper_1best": {
+    "substitutions": 37,
+    "deletions": 6,
+    "insertions": 163,
+    "reference_words": 59,
+    "utterances": 19,
+    "total_errors": 206,
+    "wer": 3.4915254237288136,
+    "exact_match_rate": 0.05263157894736842
+  },
+  "gensec_zero_shot": {
+    "substitutions": 34,
+    "deletions": 7,
+    "insertions": 34,
+    "reference_words": 59,
+    "utterances": 19,
+    "total_errors": 75,
+    "wer": 1.271186440677966,
+    "exact_match_rate": 0.05263157894736842
+  },
+  "gensec_zero_shot_cleaned": {
+    "substitutions": 34,
+    "deletions": 7,
+    "insertions": 34,
+    "reference_words": 59,
+    "utterances": 19,
+    "total_errors": 75,
+    "wer": 1.271186440677966,
+    "exact_match_rate": 0.05263157894736842
+  },
+  "oracle_nbest": {
+    "substitutions": 33,
+    "deletions": 7,
+    "insertions": 143,
+    "reference_words": 59,
+    "utterances": 19,
+    "total_errors": 183,
+    "wer": 3.1016949152542375,
+    "exact_match_rate": 0.05263157894736842
+  },
+  "oracle_compositional": {
+    "substitutions": 0,
+    "deletions": 40,
+    "insertions": 0,
+    "reference_words": 59,
+    "utterances": 19,
+    "total_errors": 40,
+    "wer": 0.6779661016949152,
+    "exact_match_rate": 0.0
+  },
+  "significance": {
+    "overall": {
+      "utterances": 19,
+      "reduction": 0.6359223300970874,
+      "ci_low": 0.40875912408759124,
+      "ci_high": 0.7665706051873199
+    },
+    "TD": {
+      "utterances": 18,
+      "reduction": 0.6485148514851485,
+      "ci_low": 0.4413793103448276,
+      "ci_high": 0.7750759878419453
+    }
+  }
+}

@@ -1,6 +1,6 @@
 ===== GENSEC PIPELINE STARTED =====
 Repository: /home/gdhakal/gensec-asr
-Started: Sat Aug 29 22:57:47 CDT 2026
+Started: Mon Aug 31 16:41:25 CDT 2026
 ===== DEPENDENCY CHECK =====
 Dependencies are already installed.
 CUDA available: True
@@ -19,544 +19,616 @@ References kept:          140,268
 Group split:              {'TD': 128983, 'LT': 11285}
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_reference.json
 Wrote /home/gdhakal/gensec-asr/data/utterance_metadata.json
------ Stage 1/6 finished in 5.6s -----
+----- Stage 1/6 finished in 5.5s -----
 
 ===== STAGE 2/6: GENERATE WHISPER N-BEST =====
-Clips found: 142,824 | to transcribe: 142,824
+Resuming from 139,348 clips already transcribed
+Discarding 62,652 stale/collapsed entries for regeneration
+Clips found: 142,824 | to transcribe: 66,061
 /bighome/gdhakal/.conda/envs/gensec_env/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
   warnings.warn(
 Model:  rishabhjain16/whisper_medium_to_myst55h
 Device: cuda (NVIDIA H100 80GB HBM3)
-[504/142,824] 1.97 clips/sec
-[1,000/142,824] 2.12 clips/sec
-[1,504/142,824] 2.16 clips/sec
-[2,000/142,824] 2.17 clips/sec
-[2,504/142,824] 2.18 clips/sec
-[3,000/142,824] 2.19 clips/sec
-[3,504/142,824] 2.19 clips/sec
-[4,000/142,824] 2.20 clips/sec
-[4,504/142,824] 2.20 clips/sec
-[5,000/142,824] 2.20 clips/sec
-[5,504/142,824] 2.19 clips/sec
-[6,000/142,824] 2.19 clips/sec
-[6,504/142,824] 2.19 clips/sec
-[7,000/142,824] 2.18 clips/sec
-[7,504/142,824] 2.18 clips/sec
-[8,000/142,824] 2.18 clips/sec
-[8,504/142,824] 2.15 clips/sec
-[9,000/142,824] 2.15 clips/sec
-[9,504/142,824] 2.15 clips/sec
-[10,000/142,824] 2.14 clips/sec
-[10,504/142,824] 2.14 clips/sec
-[11,000/142,824] 2.14 clips/sec
-[11,504/142,824] 2.14 clips/sec
-[12,000/142,824] 2.13 clips/sec
-[12,504/142,824] 2.13 clips/sec
-[13,000/142,824] 2.12 clips/sec
-[13,504/142,824] 2.12 clips/sec
-[14,000/142,824] 2.11 clips/sec
-[14,504/142,824] 2.11 clips/sec
-[15,000/142,824] 2.11 clips/sec
-[15,504/142,824] 2.10 clips/sec
-[16,000/142,824] 2.10 clips/sec
-[16,504/142,824] 2.10 clips/sec
-[17,000/142,824] 2.10 clips/sec
-[17,504/142,824] 2.09 clips/sec
-[18,000/142,824] 2.09 clips/sec
-[18,504/142,824] 2.09 clips/sec
-[19,000/142,824] 2.09 clips/sec
-[19,504/142,824] 2.08 clips/sec
-[20,000/142,824] 2.08 clips/sec
-[20,504/142,824] 2.08 clips/sec
-[21,000/142,824] 2.08 clips/sec
-[21,504/142,824] 2.08 clips/sec
-[22,000/142,824] 2.07 clips/sec
-[22,504/142,824] 2.07 clips/sec
-[23,000/142,824] 2.07 clips/sec
-[23,504/142,824] 2.07 clips/sec
-[24,000/142,824] 2.07 clips/sec
-[24,504/142,824] 2.07 clips/sec
-[25,000/142,824] 2.07 clips/sec
-[25,504/142,824] 2.07 clips/sec
-[26,000/142,824] 2.06 clips/sec
-[26,504/142,824] 2.06 clips/sec
-[27,000/142,824] 2.06 clips/sec
-[27,504/142,824] 2.06 clips/sec
-[28,000/142,824] 2.06 clips/sec
-[28,504/142,824] 2.06 clips/sec
-[29,000/142,824] 2.06 clips/sec
-[29,504/142,824] 2.06 clips/sec
-[30,000/142,824] 2.06 clips/sec
-[30,504/142,824] 2.06 clips/sec
-[31,000/142,824] 2.06 clips/sec
-[31,504/142,824] 2.06 clips/sec
-[32,000/142,824] 2.06 clips/sec
-[32,504/142,824] 2.06 clips/sec
-[33,000/142,824] 2.06 clips/sec
-[33,504/142,824] 2.06 clips/sec
-[34,000/142,824] 2.06 clips/sec
-[34,504/142,824] 2.06 clips/sec
-[35,000/142,824] 2.06 clips/sec
-[35,504/142,824] 2.06 clips/sec
-[36,000/142,824] 2.06 clips/sec
-[36,504/142,824] 2.05 clips/sec
-[37,000/142,824] 2.05 clips/sec
-[37,504/142,824] 2.05 clips/sec
-[38,000/142,824] 2.05 clips/sec
-[38,504/142,824] 2.05 clips/sec
-[39,000/142,824] 2.05 clips/sec
-[39,504/142,824] 2.05 clips/sec
-[40,000/142,824] 2.05 clips/sec
-[40,504/142,824] 2.05 clips/sec
-[41,000/142,824] 2.05 clips/sec
-[41,504/142,824] 2.05 clips/sec
-[42,000/142,824] 2.05 clips/sec
-[42,504/142,824] 2.05 clips/sec
-[43,000/142,824] 2.04 clips/sec
-[43,504/142,824] 2.04 clips/sec
-[44,000/142,824] 2.04 clips/sec
-[44,504/142,824] 2.04 clips/sec
-[45,000/142,824] 2.04 clips/sec
-[45,504/142,824] 2.04 clips/sec
-[46,000/142,824] 2.04 clips/sec
-[46,504/142,824] 2.04 clips/sec
-[47,000/142,824] 2.04 clips/sec
-[47,504/142,824] 2.04 clips/sec
-[48,000/142,824] 2.03 clips/sec
-[48,504/142,824] 2.03 clips/sec
-[49,000/142,824] 2.04 clips/sec
-[49,504/142,824] 2.04 clips/sec
-[50,000/142,824] 2.04 clips/sec
-[50,504/142,824] 2.03 clips/sec
-[51,000/142,824] 2.03 clips/sec
-[51,504/142,824] 2.03 clips/sec
-[52,000/142,824] 2.03 clips/sec
-[52,504/142,824] 2.03 clips/sec
-[53,000/142,824] 2.03 clips/sec
-[53,504/142,824] 2.03 clips/sec
-[54,000/142,824] 2.03 clips/sec
-[54,504/142,824] 2.03 clips/sec
-[55,000/142,824] 2.03 clips/sec
-[55,504/142,824] 2.03 clips/sec
-[56,000/142,824] 2.03 clips/sec
-[56,504/142,824] 2.03 clips/sec
-[57,000/142,824] 2.03 clips/sec
-[57,504/142,824] 2.03 clips/sec
-[58,000/142,824] 2.02 clips/sec
-[58,504/142,824] 2.02 clips/sec
-[59,000/142,824] 2.02 clips/sec
-[59,504/142,824] 2.02 clips/sec
-[60,000/142,824] 2.02 clips/sec
-[60,504/142,824] 2.02 clips/sec
-[61,000/142,824] 2.02 clips/sec
-[61,504/142,824] 2.02 clips/sec
-[62,000/142,824] 2.02 clips/sec
-[62,504/142,824] 2.02 clips/sec
-[63,000/142,824] 2.02 clips/sec
-[63,504/142,824] 2.02 clips/sec
-[64,000/142,824] 2.02 clips/sec
-[64,504/142,824] 2.01 clips/sec
-[65,000/142,824] 2.01 clips/sec
-[65,504/142,824] 2.01 clips/sec
-[66,000/142,824] 2.01 clips/sec
-[66,504/142,824] 2.01 clips/sec
-[67,000/142,824] 2.01 clips/sec
-[67,504/142,824] 2.01 clips/sec
-[68,000/142,824] 2.01 clips/sec
-[68,504/142,824] 2.01 clips/sec
-[69,000/142,824] 2.01 clips/sec
-[69,504/142,824] 2.01 clips/sec
-[70,000/142,824] 2.01 clips/sec
-[70,504/142,824] 2.01 clips/sec
-[71,000/142,824] 2.01 clips/sec
-[71,504/142,824] 2.00 clips/sec
-[72,000/142,824] 2.00 clips/sec
-[72,504/142,824] 2.00 clips/sec
-[73,000/142,824] 2.00 clips/sec
-[73,504/142,824] 2.00 clips/sec
-[74,000/142,824] 2.00 clips/sec
-[74,504/142,824] 2.00 clips/sec
-[75,000/142,824] 2.00 clips/sec
-[75,504/142,824] 2.00 clips/sec
-[76,000/142,824] 2.00 clips/sec
-[76,504/142,824] 1.99 clips/sec
-[77,000/142,824] 1.99 clips/sec
-[77,504/142,824] 1.99 clips/sec
-[78,000/142,824] 1.99 clips/sec
-[78,504/142,824] 1.99 clips/sec
-[79,000/142,824] 1.99 clips/sec
-[79,504/142,824] 1.99 clips/sec
-[80,000/142,824] 1.99 clips/sec
-[80,504/142,824] 1.99 clips/sec
-[81,000/142,824] 1.99 clips/sec
-[81,504/142,824] 1.98 clips/sec
-[82,000/142,824] 1.98 clips/sec
-[82,504/142,824] 1.98 clips/sec
-[83,000/142,824] 1.98 clips/sec
-[83,504/142,824] 1.98 clips/sec
-[84,000/142,824] 1.98 clips/sec
-[84,504/142,824] 1.98 clips/sec
-[85,000/142,824] 1.98 clips/sec
-[85,504/142,824] 1.97 clips/sec
-[86,000/142,824] 1.97 clips/sec
-[86,504/142,824] 1.97 clips/sec
-[87,000/142,824] 1.97 clips/sec
-[87,504/142,824] 1.97 clips/sec
-[88,000/142,824] 1.97 clips/sec
-[88,504/142,824] 1.97 clips/sec
-[89,000/142,824] 1.97 clips/sec
-[89,504/142,824] 1.97 clips/sec
-[90,000/142,824] 1.97 clips/sec
-[90,504/142,824] 1.97 clips/sec
-[91,000/142,824] 1.96 clips/sec
-[91,504/142,824] 1.96 clips/sec
-[92,000/142,824] 1.96 clips/sec
-[92,504/142,824] 1.96 clips/sec
-[93,000/142,824] 1.96 clips/sec
-[93,504/142,824] 1.96 clips/sec
-[94,000/142,824] 1.96 clips/sec
-[94,504/142,824] 1.96 clips/sec
-[95,000/142,824] 1.96 clips/sec
-[95,504/142,824] 1.95 clips/sec
-[96,000/142,824] 1.95 clips/sec
-[96,504/142,824] 1.95 clips/sec
-[97,000/142,824] 1.95 clips/sec
-[97,504/142,824] 1.95 clips/sec
-[98,000/142,824] 1.95 clips/sec
-[98,504/142,824] 1.95 clips/sec
-[99,000/142,824] 1.94 clips/sec
-[99,504/142,824] 1.94 clips/sec
-[100,000/142,824] 1.94 clips/sec
-[100,504/142,824] 1.94 clips/sec
-[101,000/142,824] 1.94 clips/sec
-[101,504/142,824] 1.94 clips/sec
-[102,000/142,824] 1.94 clips/sec
-[102,504/142,824] 1.93 clips/sec
-[103,000/142,824] 1.93 clips/sec
-[103,504/142,824] 1.93 clips/sec
-[104,000/142,824] 1.93 clips/sec
-[104,504/142,824] 1.93 clips/sec
-[105,000/142,824] 1.93 clips/sec
-[105,504/142,824] 1.92 clips/sec
-[106,000/142,824] 1.92 clips/sec
-[106,504/142,824] 1.92 clips/sec
-[107,000/142,824] 1.92 clips/sec
-[107,504/142,824] 1.92 clips/sec
-[108,000/142,824] 1.91 clips/sec
-[108,504/142,824] 1.91 clips/sec
-[109,000/142,824] 1.91 clips/sec
-[109,504/142,824] 1.91 clips/sec
-[110,000/142,824] 1.91 clips/sec
-[110,504/142,824] 1.91 clips/sec
-[111,000/142,824] 1.90 clips/sec
-[111,504/142,824] 1.90 clips/sec
-[112,000/142,824] 1.90 clips/sec
-[112,504/142,824] 1.90 clips/sec
-[113,000/142,824] 1.90 clips/sec
-[113,504/142,824] 1.90 clips/sec
-[114,000/142,824] 1.89 clips/sec
-[114,504/142,824] 1.89 clips/sec
-[115,000/142,824] 1.89 clips/sec
-[115,504/142,824] 1.89 clips/sec
-[116,000/142,824] 1.89 clips/sec
-[116,504/142,824] 1.88 clips/sec
-[117,000/142,824] 1.88 clips/sec
-[117,504/142,824] 1.88 clips/sec
-[118,000/142,824] 1.88 clips/sec
-[118,504/142,824] 1.88 clips/sec
-[119,000/142,824] 1.87 clips/sec
-[119,504/142,824] 1.87 clips/sec
-[120,000/142,824] 1.87 clips/sec
-[120,504/142,824] 1.87 clips/sec
-[121,000/142,824] 1.87 clips/sec
-[121,504/142,824] 1.87 clips/sec
-[122,000/142,824] 1.86 clips/sec
-[122,504/142,824] 1.86 clips/sec
-[123,000/142,824] 1.86 clips/sec
-[123,504/142,824] 1.86 clips/sec
-[124,000/142,824] 1.85 clips/sec
-[124,504/142,824] 1.85 clips/sec
-[125,000/142,824] 1.85 clips/sec
-[125,504/142,824] 1.85 clips/sec
-[126,000/142,824] 1.85 clips/sec
-[126,504/142,824] 1.84 clips/sec
-[127,000/142,824] 1.84 clips/sec
-[127,504/142,824] 1.84 clips/sec
-[128,000/142,824] 1.84 clips/sec
-[128,504/142,824] 1.83 clips/sec
-[129,000/142,824] 1.83 clips/sec
-[129,504/142,824] 1.83 clips/sec
-[130,000/142,824] 1.82 clips/sec
-[130,504/142,824] 1.82 clips/sec
-[131,000/142,824] 1.82 clips/sec
-[131,504/142,824] 1.81 clips/sec
-[132,000/142,824] 1.81 clips/sec
-[132,504/142,824] 1.81 clips/sec
-[133,000/142,824] 1.80 clips/sec
-[133,504/142,824] 1.80 clips/sec
-[134,000/142,824] 1.80 clips/sec
-[134,504/142,824] 1.79 clips/sec
-[135,000/142,824] 1.79 clips/sec
-[135,504/142,824] 1.79 clips/sec
-[136,000/142,824] 1.78 clips/sec
-[136,504/142,824] 1.78 clips/sec
-[137,000/142,824] 1.77 clips/sec
-[137,504/142,824] 1.77 clips/sec
-[138,000/142,824] 1.76 clips/sec
-[138,504/142,824] 1.75 clips/sec
-[139,000/142,824] 1.75 clips/sec
-Transcribed:        139,438
+[504/66,061] 7.97 clips/sec
+[1,000/66,061] 12.01 clips/sec
+[1,504/66,061] 14.52 clips/sec
+[2,000/66,061] 16.12 clips/sec
+[2,504/66,061] 17.19 clips/sec
+[3,000/66,061] 18.14 clips/sec
+[3,504/66,061] 18.82 clips/sec
+[4,000/66,061] 19.36 clips/sec
+[4,504/66,061] 19.79 clips/sec
+[5,000/66,061] 20.14 clips/sec
+[5,504/66,061] 20.40 clips/sec
+[6,000/66,061] 20.60 clips/sec
+[6,504/66,061] 20.83 clips/sec
+[7,000/66,061] 20.99 clips/sec
+[7,504/66,061] 21.12 clips/sec
+[8,000/66,061] 21.24 clips/sec
+[8,504/66,061] 21.36 clips/sec
+[9,000/66,061] 21.46 clips/sec
+[9,504/66,061] 21.55 clips/sec
+[10,000/66,061] 21.67 clips/sec
+[10,504/66,061] 21.74 clips/sec
+[11,000/66,061] 21.84 clips/sec
+[11,504/66,061] 21.90 clips/sec
+[12,000/66,061] 21.97 clips/sec
+[12,504/66,061] 22.03 clips/sec
+[13,000/66,061] 22.08 clips/sec
+[13,504/66,061] 22.09 clips/sec
+[14,000/66,061] 22.06 clips/sec
+[14,504/66,061] 22.02 clips/sec
+[15,000/66,061] 21.96 clips/sec
+[15,504/66,061] 21.91 clips/sec
+[16,000/66,061] 21.87 clips/sec
+[16,504/66,061] 21.83 clips/sec
+[17,000/66,061] 21.78 clips/sec
+[17,504/66,061] 21.73 clips/sec
+[18,000/66,061] 21.69 clips/sec
+[18,504/66,061] 21.63 clips/sec
+[19,000/66,061] 21.56 clips/sec
+[19,504/66,061] 21.50 clips/sec
+[20,000/66,061] 21.43 clips/sec
+[20,504/66,061] 21.38 clips/sec
+[21,000/66,061] 21.33 clips/sec
+[21,504/66,061] 21.28 clips/sec
+[22,000/66,061] 21.24 clips/sec
+[22,504/66,061] 21.19 clips/sec
+[23,000/66,061] 21.16 clips/sec
+[23,504/66,061] 21.11 clips/sec
+[24,000/66,061] 21.07 clips/sec
+[24,504/66,061] 21.03 clips/sec
+[25,000/66,061] 20.99 clips/sec
+[25,504/66,061] 20.95 clips/sec
+[26,000/66,061] 20.90 clips/sec
+[26,504/66,061] 20.85 clips/sec
+[27,000/66,061] 20.81 clips/sec
+[27,504/66,061] 20.76 clips/sec
+[28,000/66,061] 20.71 clips/sec
+[28,504/66,061] 20.63 clips/sec
+[29,000/66,061] 20.56 clips/sec
+[29,504/66,061] 20.48 clips/sec
+[30,000/66,061] 20.40 clips/sec
+[30,504/66,061] 20.30 clips/sec
+[31,000/66,061] 20.20 clips/sec
+[31,504/66,061] 20.11 clips/sec
+[32,000/66,061] 20.01 clips/sec
+[32,504/66,061] 19.91 clips/sec
+[33,000/66,061] 19.81 clips/sec
+[33,504/66,061] 19.71 clips/sec
+[34,000/66,061] 19.62 clips/sec
+[34,504/66,061] 19.52 clips/sec
+[35,000/66,061] 19.44 clips/sec
+[35,504/66,061] 19.35 clips/sec
+[36,000/66,061] 19.26 clips/sec
+[36,504/66,061] 19.17 clips/sec
+[37,000/66,061] 19.09 clips/sec
+[37,504/66,061] 19.01 clips/sec
+[38,000/66,061] 18.93 clips/sec
+[38,504/66,061] 18.85 clips/sec
+[39,000/66,061] 18.78 clips/sec
+[39,504/66,061] 18.71 clips/sec
+[40,000/66,061] 18.63 clips/sec
+[40,504/66,061] 18.57 clips/sec
+[41,000/66,061] 18.51 clips/sec
+[41,504/66,061] 18.45 clips/sec
+[42,000/66,061] 18.39 clips/sec
+[42,504/66,061] 18.33 clips/sec
+[43,000/66,061] 18.27 clips/sec
+[43,504/66,061] 18.21 clips/sec
+[44,000/66,061] 18.16 clips/sec
+[44,504/66,061] 18.11 clips/sec
+[45,000/66,061] 18.05 clips/sec
+[45,504/66,061] 17.99 clips/sec
+[46,000/66,061] 17.94 clips/sec
+[46,504/66,061] 17.89 clips/sec
+[47,000/66,061] 17.83 clips/sec
+[47,504/66,061] 17.77 clips/sec
+[48,000/66,061] 17.71 clips/sec
+[48,504/66,061] 17.65 clips/sec
+[49,000/66,061] 17.58 clips/sec
+[49,504/66,061] 17.51 clips/sec
+[50,000/66,061] 17.43 clips/sec
+[50,504/66,061] 17.36 clips/sec
+[51,000/66,061] 17.29 clips/sec
+[51,504/66,061] 17.22 clips/sec
+[52,000/66,061] 17.15 clips/sec
+[52,504/66,061] 17.08 clips/sec
+[53,000/66,061] 17.01 clips/sec
+[53,504/66,061] 16.92 clips/sec
+[54,000/66,061] 16.86 clips/sec
+[54,504/66,061] 16.79 clips/sec
+[55,000/66,061] 16.73 clips/sec
+[55,504/66,061] 16.66 clips/sec
+[56,000/66,061] 16.60 clips/sec
+[56,504/66,061] 16.54 clips/sec
+[57,000/66,061] 16.47 clips/sec
+[57,504/66,061] 16.40 clips/sec
+[58,000/66,061] 16.37 clips/sec
+[58,504/66,061] 16.34 clips/sec
+[59,000/66,061] 16.31 clips/sec
+[59,504/66,061] 16.28 clips/sec
+[60,000/66,061] 16.25 clips/sec
+[60,504/66,061] 16.21 clips/sec
+[61,000/66,061] 16.18 clips/sec
+[61,504/66,061] 16.14 clips/sec
+[62,000/66,061] 16.09 clips/sec
+[62,504/66,061] 16.03 clips/sec
+Transcribed:        62,675
 Skipped (duration): 3,386
 Failed:             0
-Time:               1342.4 min
+Time:               65.6 min
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_nbest.json
------ Stage 2/6 finished in 80561.3s -----
+----- Stage 2/6 finished in 3955.3s -----
 
 ===== STAGE 3/6: BUILD GENSEC DATASET =====
 Utterances seen: 139,348
-Kept:            94 (0.1%)
-Dropped:         139,254
-  fewer_than_min_unique_hypotheses: 136,909
+Kept:            84,586 (60.7%)
+Dropped:         54,762
+  fewer_than_min_unique_hypotheses: 52,417
   no_reference_transcript: 2,345
 Hypotheses per kept example:
-  2: 94
+  2: 40,936
+  3: 22,142
+  4: 13,891
+  5: 7,617
 Wrote /home/gdhakal/gensec-asr/data/processed_gensec.json
------ Stage 3/6 finished in 1.1s -----
+----- Stage 3/6 finished in 1.5s -----
 
 ===== STAGE 4/6: TRAIN AND RUN INFERENCE =====
-Examples after normalizing: 94 of 94
-Train: 75 | Test: 19
+Examples after normalizing: 84,062 of 84,586
+Train: 67,249 | Test: 16,813
 /bighome/gdhakal/.conda/envs/gensec_env/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
   warnings.warn(
 Using existing fine-tune: /home/gdhakal/gensec-asr/work_directory/final_checkpoint
 ===== inference: zero_shot =====
-  [zero_shot] 4/19
+  [zero_shot] 4/16,813
+  [zero_shot] 84/16,813
+  [zero_shot] 164/16,813
+  [zero_shot] 244/16,813
+  [zero_shot] 324/16,813
+  [zero_shot] 404/16,813
+  [zero_shot] 484/16,813
+  [zero_shot] 564/16,813
+  [zero_shot] 644/16,813
+  [zero_shot] 724/16,813
+  [zero_shot] 804/16,813
+  [zero_shot] 884/16,813
+  [zero_shot] 964/16,813
+  [zero_shot] 1,044/16,813
+  [zero_shot] 1,124/16,813
+  [zero_shot] 1,204/16,813
+  [zero_shot] 1,284/16,813
+  [zero_shot] 1,364/16,813
+  [zero_shot] 1,444/16,813
+  [zero_shot] 1,524/16,813
+  [zero_shot] 1,604/16,813
+  [zero_shot] 1,684/16,813
+  [zero_shot] 1,764/16,813
+  [zero_shot] 1,844/16,813
+  [zero_shot] 1,924/16,813
+  [zero_shot] 2,004/16,813
+  [zero_shot] 2,084/16,813
+  [zero_shot] 2,164/16,813
+  [zero_shot] 2,244/16,813
+  [zero_shot] 2,324/16,813
+  [zero_shot] 2,404/16,813
+  [zero_shot] 2,484/16,813
+  [zero_shot] 2,564/16,813
+  [zero_shot] 2,644/16,813
+  [zero_shot] 2,724/16,813
+  [zero_shot] 2,804/16,813
+  [zero_shot] 2,884/16,813
+  [zero_shot] 2,964/16,813
+  [zero_shot] 3,044/16,813
+  [zero_shot] 3,124/16,813
+  [zero_shot] 3,204/16,813
+  [zero_shot] 3,284/16,813
+  [zero_shot] 3,364/16,813
+  [zero_shot] 3,444/16,813
+  [zero_shot] 3,524/16,813
+  [zero_shot] 3,604/16,813
+  [zero_shot] 3,684/16,813
+  [zero_shot] 3,764/16,813
+  [zero_shot] 3,844/16,813
+  [zero_shot] 3,924/16,813
+  [zero_shot] 4,004/16,813
+  [zero_shot] 4,084/16,813
+  [zero_shot] 4,164/16,813
+  [zero_shot] 4,244/16,813
+  [zero_shot] 4,324/16,813
+  [zero_shot] 4,404/16,813
+  [zero_shot] 4,484/16,813
+  [zero_shot] 4,564/16,813
+  [zero_shot] 4,644/16,813
+  [zero_shot] 4,724/16,813
+  [zero_shot] 4,804/16,813
+  [zero_shot] 4,884/16,813
+  [zero_shot] 4,964/16,813
+  [zero_shot] 5,044/16,813
+  [zero_shot] 5,124/16,813
+  [zero_shot] 5,204/16,813
+Token indices sequence length is longer than the specified maximum sequence length for this model (548 > 512). Running this sequence through the model will result in indexing errors
+  [zero_shot] 5,284/16,813
+  [zero_shot] 5,364/16,813
+  [zero_shot] 5,444/16,813
+  [zero_shot] 5,524/16,813
+  [zero_shot] 5,604/16,813
+  [zero_shot] 5,684/16,813
+  [zero_shot] 5,764/16,813
+  [zero_shot] 5,844/16,813
+  [zero_shot] 5,924/16,813
+  [zero_shot] 6,004/16,813
+  [zero_shot] 6,084/16,813
+  [zero_shot] 6,164/16,813
+  [zero_shot] 6,244/16,813
+  [zero_shot] 6,324/16,813
+  [zero_shot] 6,404/16,813
+  [zero_shot] 6,484/16,813
+  [zero_shot] 6,564/16,813
+  [zero_shot] 6,644/16,813
+  [zero_shot] 6,724/16,813
+  [zero_shot] 6,804/16,813
+  [zero_shot] 6,884/16,813
+  [zero_shot] 6,964/16,813
+  [zero_shot] 7,044/16,813
+  [zero_shot] 7,124/16,813
+  [zero_shot] 7,204/16,813
+  [zero_shot] 7,284/16,813
+  [zero_shot] 7,364/16,813
+  [zero_shot] 7,444/16,813
+  [zero_shot] 7,524/16,813
+  [zero_shot] 7,604/16,813
+  [zero_shot] 7,684/16,813
+  [zero_shot] 7,764/16,813
+  [zero_shot] 7,844/16,813
+  [zero_shot] 7,924/16,813
+  [zero_shot] 8,004/16,813
+  [zero_shot] 8,084/16,813
+  [zero_shot] 8,164/16,813
+  [zero_shot] 8,244/16,813
+  [zero_shot] 8,324/16,813
+  [zero_shot] 8,404/16,813
+  [zero_shot] 8,484/16,813
+  [zero_shot] 8,564/16,813
+  [zero_shot] 8,644/16,813
+  [zero_shot] 8,724/16,813
+  [zero_shot] 8,804/16,813
+  [zero_shot] 8,884/16,813
+  [zero_shot] 8,964/16,813
+  [zero_shot] 9,044/16,813
+  [zero_shot] 9,124/16,813
+  [zero_shot] 9,204/16,813
+  [zero_shot] 9,284/16,813
+  [zero_shot] 9,364/16,813
+  [zero_shot] 9,444/16,813
+  [zero_shot] 9,524/16,813
+  [zero_shot] 9,604/16,813
+  [zero_shot] 9,684/16,813
+  [zero_shot] 9,764/16,813
+  [zero_shot] 9,844/16,813
+  [zero_shot] 9,924/16,813
+  [zero_shot] 10,004/16,813
+  [zero_shot] 10,084/16,813
+  [zero_shot] 10,164/16,813
+  [zero_shot] 10,244/16,813
+  [zero_shot] 10,324/16,813
+  [zero_shot] 10,404/16,813
+  [zero_shot] 10,484/16,813
+  [zero_shot] 10,564/16,813
+  [zero_shot] 10,644/16,813
+  [zero_shot] 10,724/16,813
+  [zero_shot] 10,804/16,813
+  [zero_shot] 10,884/16,813
+  [zero_shot] 10,964/16,813
+  [zero_shot] 11,044/16,813
+  [zero_shot] 11,124/16,813
+  [zero_shot] 11,204/16,813
+  [zero_shot] 11,284/16,813
+  [zero_shot] 11,364/16,813
+  [zero_shot] 11,444/16,813
+  [zero_shot] 11,524/16,813
+  [zero_shot] 11,604/16,813
+  [zero_shot] 11,684/16,813
+  [zero_shot] 11,764/16,813
+  [zero_shot] 11,844/16,813
+  [zero_shot] 11,924/16,813
+  [zero_shot] 12,004/16,813
+  [zero_shot] 12,084/16,813
+  [zero_shot] 12,164/16,813
+  [zero_shot] 12,244/16,813
+  [zero_shot] 12,324/16,813
+  [zero_shot] 12,404/16,813
+  [zero_shot] 12,484/16,813
+  [zero_shot] 12,564/16,813
+  [zero_shot] 12,644/16,813
+  [zero_shot] 12,724/16,813
+  [zero_shot] 12,804/16,813
+  [zero_shot] 12,884/16,813
+  [zero_shot] 12,964/16,813
+  [zero_shot] 13,044/16,813
+  [zero_shot] 13,124/16,813
+  [zero_shot] 13,204/16,813
+  [zero_shot] 13,284/16,813
+  [zero_shot] 13,364/16,813
+  [zero_shot] 13,444/16,813
+  [zero_shot] 13,524/16,813
+  [zero_shot] 13,604/16,813
+  [zero_shot] 13,684/16,813
+  [zero_shot] 13,764/16,813
+  [zero_shot] 13,844/16,813
+  [zero_shot] 13,924/16,813
+  [zero_shot] 14,004/16,813
+  [zero_shot] 14,084/16,813
+  [zero_shot] 14,164/16,813
+  [zero_shot] 14,244/16,813
+  [zero_shot] 14,324/16,813
+  [zero_shot] 14,404/16,813
+  [zero_shot] 14,484/16,813
+  [zero_shot] 14,564/16,813
+  [zero_shot] 14,644/16,813
+  [zero_shot] 14,724/16,813
+  [zero_shot] 14,804/16,813
+  [zero_shot] 14,884/16,813
+  [zero_shot] 14,964/16,813
+  [zero_shot] 15,044/16,813
+  [zero_shot] 15,124/16,813
+  [zero_shot] 15,204/16,813
+  [zero_shot] 15,284/16,813
+  [zero_shot] 15,364/16,813
+  [zero_shot] 15,444/16,813
+  [zero_shot] 15,524/16,813
+  [zero_shot] 15,604/16,813
+  [zero_shot] 15,684/16,813
+  [zero_shot] 15,764/16,813
+  [zero_shot] 15,844/16,813
+  [zero_shot] 15,924/16,813
+  [zero_shot] 16,004/16,813
+  [zero_shot] 16,084/16,813
+  [zero_shot] 16,164/16,813
+  [zero_shot] 16,244/16,813
+  [zero_shot] 16,324/16,813
+  [zero_shot] 16,404/16,813
+  [zero_shot] 16,484/16,813
+  [zero_shot] 16,564/16,813
+  [zero_shot] 16,644/16,813
+  [zero_shot] 16,724/16,813
+  [zero_shot] 16,804/16,813
 Wrote /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_shot.csv
------ Stage 4/6 finished in 34.3s -----
+----- Stage 4/6 finished in 591.3s -----
 
 ===== STAGE 5/6: POSTPROCESS PREDICTIONS =====
-Predictions read:    19 (zero_shot)
+Predictions read:    16,813 (zero_shot)
 Predictions changed: 0
 Wrote /home/gdhakal/gensec-asr/data/predictions/predictions_cleaned.csv
------ Stage 5/6 finished in 0.0s -----
+----- Stage 5/6 finished in 0.2s -----
 
 ===== STAGE 6/6: EVALUATE =====
-Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260829_174347
+Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260830_212242
 GenSEC evaluation
 ========================================================================
-Test utterances: 19
+Test utterances: 16,813
 
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
-whisper_1best                 349.15%     5.26%       37        6      163
-gensec_zero_shot              127.12%     5.26%       34        7       34
-gensec_zero_shot_cleaned      127.12%     5.26%       34        7       34
-oracle_nbest                  310.17%     5.26%       33        7      143
-oracle_compositional           67.80%     0.00%        0       40        0
+whisper_1best                  59.06%     6.17%   27,791   13,225    9,990
+gensec_zero_shot               61.27%     5.90%   28,390   14,535    9,989
+gensec_zero_shot_cleaned       61.27%     5.90%   28,390   14,535    9,989
+oracle_nbest                   48.63%    12.48%   23,522   12,221    6,254
+oracle_compositional           39.80%     0.00%        0   34,368        0
 
-gensec_zero_shot vs whisper_1best: +63.59% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: -3.74% relative WER reduction (worse)
 
-gensec_zero_shot_cleaned vs whisper_1best: +63.59% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: -3.74% relative WER reduction (worse)
 
-oracle_nbest vs whisper_1best: +11.17% relative WER reduction (better)
+oracle_nbest vs whisper_1best: +17.66% relative WER reduction (better)
 
-oracle_compositional vs whisper_1best: +80.58% relative WER reduction (better)
+oracle_compositional vs whisper_1best: +32.62% relative WER reduction (better)
 
 
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall           19    63.59%   95% CI [+40.88%, +76.66%]
-  TD                18    64.85%   95% CI [+44.14%, +77.51%]
+  overall        16813    -3.74%   95% CI [-5.82%, -1.24%]
+  LT              1580    -5.39%   95% CI [-7.78%, -3.17%]
+  TD             15233    -3.50%   95% CI [-5.87%, -0.83%]
+
+  TD - LT                  1.88%   95% CI [-1.37%, +5.37%]
+  p = 0.272 - NOT significant at p<0.05
 
 
 By group (LT = late talker, TD = typically developing)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 LT
-  whisper_1best                    1   100.00%     0.00%
-  gensec_zero_shot                 1   100.00%     0.00%
-  gensec_zero_shot_cleaned         1   100.00%     0.00%
-  oracle_nbest                     1   100.00%     0.00%
+  whisper_1best                 1580    61.21%     4.18%
+  gensec_zero_shot              1580    64.51%     3.92%
+  gensec_zero_shot_cleaned      1580    64.51%     3.92%
+  oracle_nbest                  1580    52.22%     7.72%
 TD
-  whisper_1best                   18   367.27%     5.56%
-  gensec_zero_shot                18   129.09%     5.56%
-  gensec_zero_shot_cleaned        18   129.09%     5.56%
-  oracle_nbest                    18   325.45%     5.56%
+  whisper_1best                15233    58.77%     6.37%
+  gensec_zero_shot             15233    60.83%     6.11%
+  gensec_zero_shot_cleaned     15233    60.83%     6.11%
+  oracle_nbest                 15233    48.14%    12.98%
 
 
 By reference length
 ------------------------------------------------------------------------
                                 utts       WER     exact
 1 word
-  whisper_1best                    5   920.00%     0.00%
-  gensec_zero_shot                 5   400.00%     0.00%
-  gensec_zero_shot_cleaned         5   400.00%     0.00%
-  oracle_nbest                     5   900.00%     0.00%
+  whisper_1best                 3133   123.43%    10.44%
+  gensec_zero_shot              3133   175.14%     5.01%
+  gensec_zero_shot_cleaned      3133   175.14%     5.01%
+  oracle_nbest                  3133    89.24%    20.71%
 2 words
-  whisper_1best                    1   750.00%     0.00%
-  gensec_zero_shot                 1   200.00%     0.00%
-  gensec_zero_shot_cleaned         1   200.00%     0.00%
-  oracle_nbest                     1   750.00%     0.00%
+  whisper_1best                 2213    95.37%     5.51%
+  gensec_zero_shot              2213   105.83%     5.15%
+  gensec_zero_shot_cleaned      2213   105.83%     5.15%
+  oracle_nbest                  2213    78.92%    11.84%
 3-5 words
-  whisper_1best                   12   291.11%     8.33%
-  gensec_zero_shot                12    91.11%     8.33%
-  gensec_zero_shot_cleaned        12    91.11%     8.33%
-  oracle_nbest                    12   242.22%     8.33%
+  whisper_1best                 5133    75.31%     5.24%
+  gensec_zero_shot              5133    73.28%     7.13%
+  gensec_zero_shot_cleaned      5133    73.28%     7.13%
+  oracle_nbest                  5133    60.92%    10.93%
 6-10 words
-  whisper_1best                    1   200.00%     0.00%
-  gensec_zero_shot                 1   142.86%     0.00%
-  gensec_zero_shot_cleaned         1   142.86%     0.00%
-  oracle_nbest                     1   200.00%     0.00%
+  whisper_1best                 4736    51.75%     5.66%
+  gensec_zero_shot              4736    51.73%     6.25%
+  gensec_zero_shot_cleaned      4736    51.73%     6.25%
+  oracle_nbest                  4736    43.22%    11.02%
+11+ words
+  whisper_1best                 1598    40.00%     3.19%
+  gensec_zero_shot              1598    41.10%     3.69%
+  gensec_zero_shot_cleaned      1598    41.10%     3.69%
+  oracle_nbest                  1598    34.60%     6.57%
 
 
 References of 3+ words only (comparable to published child GenSEC work)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 3+ words
-  whisper_1best                   13   278.85%     7.69%
-  gensec_zero_shot                13    98.08%     7.69%
-  gensec_zero_shot_cleaned        13    98.08%     7.69%
-  oracle_nbest                    13   236.54%     7.69%
+  whisper_1best                11467    54.46%     5.13%
+  gensec_zero_shot             11467    54.24%     6.29%
+  gensec_zero_shot_cleaned     11467    54.24%     6.29%
+  oracle_nbest                 11467    45.31%    10.36%
 
 
 Worst utterances - whisper_1best
 ------------------------------------------------------------------------
-46d74f56_65195_75008_7  sentence_wer=23.33
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
-7b1f9af0_551364_551864_88  sentence_wer=15.00
-  ref: chooz
-  hyp: today we have two cups of water and two cups of water with two cups
-f50c8312_224733_225233_66  sentence_wer=15.00
-  ref: s
-  hyp: i dont really know but i guess theres probably like five or six of them
-c440f0dd_866494_866674_49  sentence_wer=8.00
-  ref: yeah
-  hyp: well i dont really know why thats important
-1c197acf_803290_803771_207  sentence_wer=7.50
-  ref: itchy eye
-  hyp: i dont really know but i guess theres probably like five or six of them
-bc229bd5_995973_996073_194  sentence_wer=7.00
-  ref: yeah
-  hyp: i dont really know why thats important
-247ae489_758838_759959_209  sentence_wer=5.67
-  ref: six plus three
-  hyp: i dont know but theres probably two or three cars coming up from the other side of the
-cf8d72db_1754196_1754996_557  sentence_wer=5.00
-  ref: she was black
-  hyp: tills next year tells you when the time is right tells you when the clock
-cd00464a_1517946_1520649_117  sentence_wer=2.20
-  ref: did i did filthy yesterday
-  hyp: you got washers on your back today you got washers here
-56384d1a_1135075_1139986_250  sentence_wer=2.00
-  ref: when i trace it i put pictures
-  hyp: my trail is to have the pictures of the first one everybody wants the trail
+caa18248_731002_733904_160  sentence_wer=79.75
+  ref: i see a lion
+  hyp: i see a lion and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk too
+21371139_362301_364604_42  sentence_wer=30.60
+  ref: we were eating and eating
+  hyp: we were eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and
+aa9c983b_149275_167526_17  sentence_wer=28.00
+  ref: then
+  hyp: then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms
+e27739fd_2129082_2131504_621  sentence_wer=22.89
+  ref: blah blah blah blah blah blah blah blah blah
+  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
+1d3638e0_2202055_2206937_470  sentence_wer=21.00
+  ref: mm
+  hyp: for telling us everything you were thinking you really helped us out by giving having such a great amount of weight
+6bb5b2b3_116072_138642_7  sentence_wer=19.33
+  ref: i think not
+  hyp: he responded i think not uh and so it wasnt in response to one of his own statements he had set him up for but it was just in response something i said and for the first time he was doing not as the object of the verb um im sure well see a lot more of it starting now um
+6bb5b2b3_619873_642791_74  sentence_wer=17.00
+  ref: besides it's fancy
+  hyp: uh besides ex fancy and what he meant was this is a good book anyway good isnt it this is a good book isnt it in any case ex fancy he shouldnt have said besides ex fancy cause he wasnt making a claim in the first case he was making a rhetorical question
+c7fb7885_871195_879365_81  sentence_wer=16.59
+  ref: and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew
+  hyp: and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and go
+7312c6d7_5177289_5206455_75  sentence_wer=15.50
+  ref: then they come over
+  hyp: and if we are falling in love with human again yeah for sure well have her come up and well show her how it works she has the time okay lets do number six write a good sentence that tells what the bird is doing did you get that hurricane last night no i dont think so i heard it the hurricane had
+a7f26114_348141_348241_107  sentence_wer=13.00
+  ref: ten
+  hyp: i dont really know but i do know that in a way theres
 
 
 Worst utterances - gensec_zero_shot
 ------------------------------------------------------------------------
-7b1f9af0_551364_551864_88  sentence_wer=6.00
-  ref: chooz
-  hyp: today we have two cups of
-c440f0dd_866494_866674_49  sentence_wer=5.00
-  ref: yeah
-  hyp: well i was just about
-bc229bd5_995973_996073_194  sentence_wer=4.00
-  ref: yeah
-  hyp: i dont really know
-f50c8312_224733_225233_66  sentence_wer=4.00
-  ref: s
-  hyp: i dont really know
-46d74f56_65195_75008_7  sentence_wer=2.67
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
-247ae489_758838_759959_209  sentence_wer=2.33
-  ref: six plus three
-  hyp: i dont know but theres probably two
-1c197acf_803290_803771_207  sentence_wer=2.00
-  ref: itchy eye
-  hyp: i dont really know
-cf8d72db_1754196_1754996_557  sentence_wer=1.67
-  ref: she was black
-  hyp: year tells you when the
-56384d1a_1135075_1139986_250  sentence_wer=1.43
-  ref: when i trace it i put pictures
-  hyp: in my choice they have the pictures of the first one
-300272b5_358041_358442_91  sentence_wer=1.00
-  ref: seven
-  hyp: steven
+aa9c983b_149275_167526_17  sentence_wer=26.00
+  ref: then
+  hyp: well then then after then does uh i wanted to um the two that the oh yeah i heard that yeah okay and then and then then
+1d3638e0_2202055_2206937_470  sentence_wer=21.00
+  ref: mm
+  hyp: for telling us everything you were thinking you really helped us out by giving having such a great amount of time
+7312c6d7_5177289_5206455_75  sentence_wer=19.50
+  ref: then they come over
+  hyp: and if we are falling in love with human again yeah for sure well have her come up and well show her how it works she has the time okay lets do number six write a good sentence that tells what the bird is doing did you get that hurricane last night no i dont think so i heard it the hurricane passed over a large part of the city of london and it was too late for the bird
+6bb5b2b3_116072_138642_7  sentence_wer=18.67
+  ref: i think not
+  hyp: he responded i think not uh and so it wasnt in response to one of his own statements we had set him up but it was just in response something i said for the first time but i used not as the object of the verb um im sure well see a lot more of it starting now um
+56be58e0_1548168_1557994_204  sentence_wer=12.00
+  ref: oh
+  hyp: i might have to get it running no one has to drink
+0471970b_704338_706239_215  sentence_wer=10.00
+  ref: mm
+  hyp: i want to take a look at the next picture
+eb5b5cb4_209422_212604_54  sentence_wer=10.00
+  ref: twenty
+  hyp: sixteen thats why i told you to wait a minute
+c054b8b2_885833_887534_240  sentence_wer=9.00
+  ref: mm
+  hyp: is there anything else you want me to say
+74608203_1538204_1542669_298  sentence_wer=9.00
+  ref: hernandez
+  hyp: do you want to just try sounding it out
+60523977_877935_886419_8  sentence_wer=8.33
+  ref: don't do that
+  hyp: what kind of canada red 3 you can look at up ready 4 it's gonna be 5 hold it right alright here we go alright
 
 
 Worst utterances - gensec_zero_shot_cleaned
 ------------------------------------------------------------------------
-7b1f9af0_551364_551864_88  sentence_wer=6.00
-  ref: chooz
-  hyp: today we have two cups of
-c440f0dd_866494_866674_49  sentence_wer=5.00
-  ref: yeah
-  hyp: well i was just about
-bc229bd5_995973_996073_194  sentence_wer=4.00
-  ref: yeah
-  hyp: i dont really know
-f50c8312_224733_225233_66  sentence_wer=4.00
-  ref: s
-  hyp: i dont really know
-46d74f56_65195_75008_7  sentence_wer=2.67
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
-247ae489_758838_759959_209  sentence_wer=2.33
-  ref: six plus three
-  hyp: i dont know but theres probably two
-1c197acf_803290_803771_207  sentence_wer=2.00
-  ref: itchy eye
-  hyp: i dont really know
-cf8d72db_1754196_1754996_557  sentence_wer=1.67
-  ref: she was black
-  hyp: year tells you when the
-56384d1a_1135075_1139986_250  sentence_wer=1.43
-  ref: when i trace it i put pictures
-  hyp: in my choice they have the pictures of the first one
-300272b5_358041_358442_91  sentence_wer=1.00
-  ref: seven
-  hyp: steven
+aa9c983b_149275_167526_17  sentence_wer=26.00
+  ref: then
+  hyp: well then then after then does uh i wanted to um the two that the oh yeah i heard that yeah okay and then and then then
+1d3638e0_2202055_2206937_470  sentence_wer=21.00
+  ref: mm
+  hyp: for telling us everything you were thinking you really helped us out by giving having such a great amount of time
+7312c6d7_5177289_5206455_75  sentence_wer=19.50
+  ref: then they come over
+  hyp: and if we are falling in love with human again yeah for sure well have her come up and well show her how it works she has the time okay lets do number six write a good sentence that tells what the bird is doing did you get that hurricane last night no i dont think so i heard it the hurricane passed over a large part of the city of london and it was too late for the bird
+6bb5b2b3_116072_138642_7  sentence_wer=18.67
+  ref: i think not
+  hyp: he responded i think not uh and so it wasnt in response to one of his own statements we had set him up but it was just in response something i said for the first time but i used not as the object of the verb um im sure well see a lot more of it starting now um
+56be58e0_1548168_1557994_204  sentence_wer=12.00
+  ref: oh
+  hyp: i might have to get it running no one has to drink
+0471970b_704338_706239_215  sentence_wer=10.00
+  ref: mm
+  hyp: i want to take a look at the next picture
+eb5b5cb4_209422_212604_54  sentence_wer=10.00
+  ref: twenty
+  hyp: sixteen thats why i told you to wait a minute
+c054b8b2_885833_887534_240  sentence_wer=9.00
+  ref: mm
+  hyp: is there anything else you want me to say
+74608203_1538204_1542669_298  sentence_wer=9.00
+  ref: hernandez
+  hyp: do you want to just try sounding it out
+60523977_877935_886419_8  sentence_wer=8.33
+  ref: don't do that
+  hyp: what kind of canada red 3 you can look at up ready 4 it's gonna be 5 hold it right alright here we go alright
 
 
 Worst utterances - oracle_nbest
 ------------------------------------------------------------------------
-46d74f56_65195_75008_7  sentence_wer=23.00
-  ref: c cookie cream
-  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
-f50c8312_224733_225233_66  sentence_wer=15.00
-  ref: s
-  hyp: i dont really know but i guess theres probably like five or six of them
-7b1f9af0_551364_551864_88  sentence_wer=14.00
-  ref: chooz
-  hyp: today we have totally different kinds of food and drinks that we can drink
-c440f0dd_866494_866674_49  sentence_wer=8.00
-  ref: yeah
-  hyp: well i dont really know why thats important
-1c197acf_803290_803771_207  sentence_wer=7.50
-  ref: itchy eye
-  hyp: i dont really know but i guess theres probably like five or six of them
-bc229bd5_995973_996073_194  sentence_wer=7.00
-  ref: yeah
-  hyp: i dont really know why thats important
-247ae489_758838_759959_209  sentence_wer=5.67
-  ref: six plus three
-  hyp: i dont know but theres probably two or three cars coming up from the other side of the
-56384d1a_1135075_1139986_250  sentence_wer=2.00
-  ref: when i trace it i put pictures
-  hyp: my trail is to have the pictures of the first one everybody wants the trail
-300272b5_358041_358442_91  sentence_wer=1.00
-  ref: seven
-  hyp: steven
-cf8d72db_1754196_1754996_557  sentence_wer=1.00
-  ref: she was black
-  hyp: tills next
+aa9c983b_149275_167526_17  sentence_wer=25.00
+  ref: then
+  hyp: well then then after then theres uh i wanted to um the two that the the beautiful well then its fine and then and then then
+e27739fd_2129082_2131504_621  sentence_wer=22.11
+  ref: blah blah blah blah blah blah blah blah blah
+  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
+6bb5b2b3_116072_138642_7  sentence_wer=19.00
+  ref: i think not
+  hyp: he responded i think not uh and so it wasnt in response to one of his own statements we had set him up for but it was just in response something i said for the first time but i used not as the object of the verb um im sure well see a lot more of it starting now um
+1d3638e0_2202055_2206937_470  sentence_wer=18.00
+  ref: mm
+  hyp: for telling us everything you were thinking you really helped us out by giving having such a great
+6bb5b2b3_619873_642791_74  sentence_wer=17.00
+  ref: besides it's fancy
+  hyp: uh besides ex fancy and what he meant was this is a good book anyway good isnt it this is a good book isnt it in any case ex fancy he shouldnt have said besides ex fancy cause he wasnt making a claim in the first case he was making a rhetorical question
+c7fb7885_871195_879365_81  sentence_wer=15.50
+  ref: and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew
+  hyp: and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and go
+7312c6d7_5177289_5206455_75  sentence_wer=13.75
+  ref: then they come over
+  hyp: sure well have her come up and well show her how it works she has the time okay thats fine with me okay lets do number six write a good sentence that tells what the bird is doing did you get that from last night no i dont think so i heard that the hurricane passed over
+ca1af806_7699_25161_2  sentence_wer=9.57
+  ref: because we were playing with the camel
+  hyp: cause we were playing with the camel and he said what he meant was that he thought he had a right to all the he wanted to get as many animals as he could and he figured that he had a right to the animal that he was playing with just a little bit ago theyre trying to accumulate animals down the bottom of the bed in what they call their toy shop
+74608203_1538204_1542669_298  sentence_wer=9.00
+  ref: hernandez
+  hyp: do you want to just try sounding it out
+c054b8b2_885833_887534_240  sentence_wer=8.00
+  ref: mm
+  hyp: is anything else you want me to do
 
 Wrote /home/gdhakal/gensec-asr/evaluation_results/wer_report.txt
------ Stage 6/6 finished in 1.1s -----
+----- Stage 6/6 finished in 13.3s -----
 
 ===== GENSEC PIPELINE COMPLETE =====
-Finished: Sun Aug 30 21:22:52 CDT 2026
+Finished: Mon Aug 31 17:58:57 CDT 2026

@@ -1,0 +1,212 @@
+GenSEC evaluation
+========================================================================
+Test utterances: 19
+
+system                             WER     exact        S        D        I
+------------------------------------------------------------------------
+whisper_1best                 349.15%     5.26%       37        6      163
+gensec_zero_shot              127.12%     5.26%       34        7       34
+gensec_zero_shot_cleaned      127.12%     5.26%       34        7       34
+oracle_nbest                  310.17%     5.26%       33        7      143
+oracle_compositional           67.80%     0.00%        0       40        0
+
+gensec_zero_shot vs whisper_1best: +63.59% relative WER reduction (better)
+
+gensec_zero_shot_cleaned vs whisper_1best: +63.59% relative WER reduction (better)
+
+oracle_nbest vs whisper_1best: +11.17% relative WER reduction (better)
+
+oracle_compositional vs whisper_1best: +80.58% relative WER reduction (better)
+
+
+Significance (1,000 bootstrap resamples of the utterance set)
+------------------------------------------------------------------------
+gensec_zero_shot vs whisper_1best
+  overall           19    63.59%   95% CI [+40.88%, +76.66%]
+  TD                18    64.85%   95% CI [+44.14%, +77.51%]
+
+
+By group (LT = late talker, TD = typically developing)
+------------------------------------------------------------------------
+                                utts       WER     exact
+LT
+  whisper_1best                    1   100.00%     0.00%
+  gensec_zero_shot                 1   100.00%     0.00%
+  gensec_zero_shot_cleaned         1   100.00%     0.00%
+  oracle_nbest                     1   100.00%     0.00%
+TD
+  whisper_1best                   18   367.27%     5.56%
+  gensec_zero_shot                18   129.09%     5.56%
+  gensec_zero_shot_cleaned        18   129.09%     5.56%
+  oracle_nbest                    18   325.45%     5.56%
+
+
+By reference length
+------------------------------------------------------------------------
+                                utts       WER     exact
+1 word
+  whisper_1best                    5   920.00%     0.00%
+  gensec_zero_shot                 5   400.00%     0.00%
+  gensec_zero_shot_cleaned         5   400.00%     0.00%
+  oracle_nbest                     5   900.00%     0.00%
+2 words
+  whisper_1best                    1   750.00%     0.00%
+  gensec_zero_shot                 1   200.00%     0.00%
+  gensec_zero_shot_cleaned         1   200.00%     0.00%
+  oracle_nbest                     1   750.00%     0.00%
+3-5 words
+  whisper_1best                   12   291.11%     8.33%
+  gensec_zero_shot                12    91.11%     8.33%
+  gensec_zero_shot_cleaned        12    91.11%     8.33%
+  oracle_nbest                    12   242.22%     8.33%
+6-10 words
+  whisper_1best                    1   200.00%     0.00%
+  gensec_zero_shot                 1   142.86%     0.00%
+  gensec_zero_shot_cleaned         1   142.86%     0.00%
+  oracle_nbest                     1   200.00%     0.00%
+
+
+References of 3+ words only (comparable to published child GenSEC work)
+------------------------------------------------------------------------
+                                utts       WER     exact
+3+ words
+  whisper_1best                   13   278.85%     7.69%
+  gensec_zero_shot                13    98.08%     7.69%
+  gensec_zero_shot_cleaned        13    98.08%     7.69%
+  oracle_nbest                    13   236.54%     7.69%
+
+
+Worst utterances - whisper_1best
+------------------------------------------------------------------------
+46d74f56_65195_75008_7  sentence_wer=23.33
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+7b1f9af0_551364_551864_88  sentence_wer=15.00
+  ref: chooz
+  hyp: today we have two cups of water and two cups of water with two cups
+f50c8312_224733_225233_66  sentence_wer=15.00
+  ref: s
+  hyp: i dont really know but i guess theres probably like five or six of them
+c440f0dd_866494_866674_49  sentence_wer=8.00
+  ref: yeah
+  hyp: well i dont really know why thats important
+1c197acf_803290_803771_207  sentence_wer=7.50
+  ref: itchy eye
+  hyp: i dont really know but i guess theres probably like five or six of them
+bc229bd5_995973_996073_194  sentence_wer=7.00
+  ref: yeah
+  hyp: i dont really know why thats important
+247ae489_758838_759959_209  sentence_wer=5.67
+  ref: six plus three
+  hyp: i dont know but theres probably two or three cars coming up from the other side of the
+cf8d72db_1754196_1754996_557  sentence_wer=5.00
+  ref: she was black
+  hyp: tills next year tells you when the time is right tells you when the clock
+cd00464a_1517946_1520649_117  sentence_wer=2.20
+  ref: did i did filthy yesterday
+  hyp: you got washers on your back today you got washers here
+56384d1a_1135075_1139986_250  sentence_wer=2.00
+  ref: when i trace it i put pictures
+  hyp: my trail is to have the pictures of the first one everybody wants the trail
+
+
+Worst utterances - gensec_zero_shot
+------------------------------------------------------------------------
+7b1f9af0_551364_551864_88  sentence_wer=6.00
+  ref: chooz
+  hyp: today we have two cups of
+c440f0dd_866494_866674_49  sentence_wer=5.00
+  ref: yeah
+  hyp: well i was just about
+bc229bd5_995973_996073_194  sentence_wer=4.00
+  ref: yeah
+  hyp: i dont really know
+f50c8312_224733_225233_66  sentence_wer=4.00
+  ref: s
+  hyp: i dont really know
+46d74f56_65195_75008_7  sentence_wer=2.67
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
+247ae489_758838_759959_209  sentence_wer=2.33
+  ref: six plus three
+  hyp: i dont know but theres probably two
+1c197acf_803290_803771_207  sentence_wer=2.00
+  ref: itchy eye
+  hyp: i dont really know
+cf8d72db_1754196_1754996_557  sentence_wer=1.67
+  ref: she was black
+  hyp: year tells you when the
+56384d1a_1135075_1139986_250  sentence_wer=1.43
+  ref: when i trace it i put pictures
+  hyp: in my choice they have the pictures of the first one
+300272b5_358041_358442_91  sentence_wer=1.00
+  ref: seven
+  hyp: steven
+
+
+Worst utterances - gensec_zero_shot_cleaned
+------------------------------------------------------------------------
+7b1f9af0_551364_551864_88  sentence_wer=6.00
+  ref: chooz
+  hyp: today we have two cups of
+c440f0dd_866494_866674_49  sentence_wer=5.00
+  ref: yeah
+  hyp: well i was just about
+bc229bd5_995973_996073_194  sentence_wer=4.00
+  ref: yeah
+  hyp: i dont really know
+f50c8312_224733_225233_66  sentence_wer=4.00
+  ref: s
+  hyp: i dont really know
+46d74f56_65195_75008_7  sentence_wer=2.67
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookies cookies cookie cookies cookie cookie
+247ae489_758838_759959_209  sentence_wer=2.33
+  ref: six plus three
+  hyp: i dont know but theres probably two
+1c197acf_803290_803771_207  sentence_wer=2.00
+  ref: itchy eye
+  hyp: i dont really know
+cf8d72db_1754196_1754996_557  sentence_wer=1.67
+  ref: she was black
+  hyp: year tells you when the
+56384d1a_1135075_1139986_250  sentence_wer=1.43
+  ref: when i trace it i put pictures
+  hyp: in my choice they have the pictures of the first one
+300272b5_358041_358442_91  sentence_wer=1.00
+  ref: seven
+  hyp: steven
+
+
+Worst utterances - oracle_nbest
+------------------------------------------------------------------------
+46d74f56_65195_75008_7  sentence_wer=23.00
+  ref: c cookie cream
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+f50c8312_224733_225233_66  sentence_wer=15.00
+  ref: s
+  hyp: i dont really know but i guess theres probably like five or six of them
+7b1f9af0_551364_551864_88  sentence_wer=14.00
+  ref: chooz
+  hyp: today we have totally different kinds of food and drinks that we can drink
+c440f0dd_866494_866674_49  sentence_wer=8.00
+  ref: yeah
+  hyp: well i dont really know why thats important
+1c197acf_803290_803771_207  sentence_wer=7.50
+  ref: itchy eye
+  hyp: i dont really know but i guess theres probably like five or six of them
+bc229bd5_995973_996073_194  sentence_wer=7.00
+  ref: yeah
+  hyp: i dont really know why thats important
+247ae489_758838_759959_209  sentence_wer=5.67
+  ref: six plus three
+  hyp: i dont know but theres probably two or three cars coming up from the other side of the
+56384d1a_1135075_1139986_250  sentence_wer=2.00
+  ref: when i trace it i put pictures
+  hyp: my trail is to have the pictures of the first one everybody wants the trail
+300272b5_358041_358442_91  sentence_wer=1.00
+  ref: seven
+  hyp: steven
+cf8d72db_1754196_1754996_557  sentence_wer=1.00
+  ref: she was black
+  hyp: tills next
