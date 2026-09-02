@@ -318,6 +318,27 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
         predictions = tokenizer.batch_decode(generated, skip_special_tokens=True)
 
         for example, (prompt, demos, hyps, tokens), prediction in zip(batch, built, predictions):
+            cleaned_pred = collapse_whitespace(prediction)
+            words = cleaned_pred.split()
+
+            # Per-utterance physical speech limit guard: a clip cannot contain more words
+            # than physically possible at maximum child speech rate (~4 words/sec).
+            sec = clip_seconds(example["id"])
+            if sec is not None and sec > 0:
+                max_words = max(2, math.ceil(sec * 4.0) + 1)
+                if len(words) > max_words:
+                    words = words[:max_words]
+                    cleaned_pred = " ".join(words)
+
+            # Short-utterance hallucination gate:
+            # Seq2seq LMs tend to expand short 1-2 word utterances into whole sentences.
+            # If all candidate hypotheses are <= 2 words, reject any prediction that
+            # inflates beyond 3 words and fall back to the Whisper 1-best.
+            max_hyp_len = max((len(h.split()) for h in example["input"]), default=0)
+            if max_hyp_len <= 2 and len(words) > 3:
+                one_best = example["input"][0] if example["input"] else cleaned_pred
+                cleaned_pred = one_best
+
             rows.append({
                 "id": example["id"],
                 "input": " | ".join(example["input"]),
@@ -325,7 +346,7 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 "retained_icl_examples": demos,
                 "retained_input_hypotheses": hyps,
                 "truth": example["output"],
-                "prediction": collapse_whitespace(prediction),
+                "prediction": cleaned_pred,
             })
 
         if start % (batch_size * 20) == 0:

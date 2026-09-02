@@ -25,7 +25,7 @@ MANUAL_REPLACEMENTS = {
     "ore": "or",
 }
 
-MIN_PHRASE_WORDS = 3
+MIN_PHRASE_WORDS = 1
 MAX_PHRASE_WORDS = 8
 
 
@@ -34,14 +34,32 @@ def apply_replacements(words: list[str]) -> list[str]:
 
 
 def collapse_repeated_phrases(words: list[str]) -> list[str]:
-    """Drop a phrase that immediately repeats itself, e.g. 'in a cup in a cup'."""
+    """Drop any repeated phrase or loop (e.g. 'and a hawk and a hawk', 'eating and eating').
+
+    For phrases of any size (1 up to MAX_PHRASE_WORDS), if the exact same sequence
+    repeats immediately, we collapse successive duplicates down to at most 2
+    (or 1 for longer phrases) to preserve natural child speech while eradicating
+    catastrophic hallucination loops.
+    """
     result = list(words)
 
     for size in range(MAX_PHRASE_WORDS, MIN_PHRASE_WORDS - 1, -1):
         index = 0
         while index + 2 * size <= len(result):
-            if result[index:index + size] == result[index + size:index + 2 * size]:
-                del result[index + size:index + 2 * size]
+            phrase = result[index:index + size]
+            # Count consecutive occurrences of this phrase
+            match_count = 1
+            while (
+                index + (match_count + 1) * size <= len(result)
+                and result[index + match_count * size:index + (match_count + 1) * size] == phrase
+            ):
+                match_count += 1
+
+            if match_count > 1:
+                # Keep 2 repetitions for 1-word or 2-word phrases if 2, else 1
+                keep_count = 2 if (size <= 2 and match_count == 2) else 1
+                del result[index + keep_count * size:index + match_count * size]
+                index += keep_count * size
             else:
                 index += 1
 
@@ -49,13 +67,9 @@ def collapse_repeated_phrases(words: list[str]) -> list[str]:
 
 
 def collapse_repeated_word(words: list[str]) -> list[str]:
-    """A prediction that is one word over and over is worth exactly one word.
-
-    Runs before the phrase pass, which would otherwise halve a long run into
-    something short enough to look like genuine child repetition.
-    """
-    if len(words) > MIN_PHRASE_WORDS and len(set(words)) == 1:
-        return words[:1]
+    """A prediction that is one word repeated more than 3 times is collapsed to at most two words."""
+    if len(words) > 3 and len(set(words)) == 1:
+        return words[:2]
     return words
 
 

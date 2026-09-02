@@ -22,13 +22,32 @@ UNSPOKEN_RE = re.compile(r"\b0\S*")               # 0det marks something not sai
 PUNCTUATION_RE = re.compile(r"[^\w\s']")
 
 
+MOJIBAKE_MAP = {
+    "â€™": "'",
+    "â€˜": "'",
+    "â€œ": '"',
+    "â€\x9d": '"',
+    "â€": '"',
+    "â€“": "-",
+    "â€”": "-",
+    "â tms": "'s",
+    "â tm": "'",
+}
+
+
+def fix_mojibake(text: str) -> str:
+    for broken, fixed in MOJIBAKE_MAP.items():
+        text = text.replace(broken, fixed)
+    return text
+
+
 def collapse_whitespace(text: str) -> str:
     return WHITESPACE_RE.sub(" ", text).strip()
 
 
 def normalize_chat(text: str, remove_unintelligible: bool = True) -> str:
     """Reduce one CHAT-formatted utterance to plain lowercase words."""
-    text = unicodedata.normalize("NFKC", str(text or "")).replace("’", "'")
+    text = fix_mojibake(unicodedata.normalize("NFKC", str(text or ""))).replace("’", "'")
 
     # Bracketed codes can nest, so keep stripping until nothing changes.
     while True:
@@ -56,8 +75,9 @@ def normalize_chat(text: str, remove_unintelligible: bool = True) -> str:
 
 
 def clean_whisper_text(text: str) -> str:
-    """Strip Whisper's control tokens and tidy the spacing."""
-    return collapse_whitespace(WHISPER_CONTROL_TOKEN_RE.sub(" ", str(text or "")))
+    """Strip Whisper's control tokens, fix mojibake and tidy the spacing."""
+    text = fix_mojibake(unicodedata.normalize("NFKC", str(text or ""))).replace("’", "'")
+    return collapse_whitespace(WHISPER_CONTROL_TOKEN_RE.sub(" ", text))
 
 
 # One nasal hum, spelled many ways. CHAT transcribers and Whisper do not agree
@@ -78,7 +98,7 @@ def canonicalize_hums(text: str) -> str:
 
 def normalize_for_scoring(text: str, canonicalize_fillers: bool = True) -> str:
     """Lowercase, drop punctuation - applied to both sides before WER."""
-    text = unicodedata.normalize("NFKC", str(text or "")).replace("’", "'")
+    text = fix_mojibake(unicodedata.normalize("NFKC", str(text or ""))).replace("’", "'")
     text = WHISPER_CONTROL_TOKEN_RE.sub(" ", text).lower()
     text = collapse_whitespace(PUNCTUATION_RE.sub(" ", text))
     return canonicalize_hums(text) if canonicalize_fillers else text
