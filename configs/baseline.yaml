@@ -63,7 +63,7 @@ asr_limit: null           # set to an integer for a quick smoke test
 
 # Stage 3: dataset construction.
 max_hypotheses: 5         # beam search returns 5 ranked candidates; show the model all of them
-min_hypotheses: 2
+min_hypotheses: 1         # 1 keeps utterances where candidates agree so LM learns identity mapping
 
 # Stage 4: the correction model.
 gensec_model_id: google/flan-t5-base
