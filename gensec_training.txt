@@ -1,6 +1,6 @@
 ===== GENSEC PIPELINE STARTED =====
 Repository: /home/gdhakal/gensec-asr
-Started: Mon Aug 31 16:41:25 CDT 2026
+Started: Wed Sep  2 16:15:15 CDT 2026
 ===== DEPENDENCY CHECK =====
 Dependencies are already installed.
 CUDA available: True
@@ -19,392 +19,153 @@ References kept:          140,268
 Group split:              {'TD': 128983, 'LT': 11285}
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_reference.json
 Wrote /home/gdhakal/gensec-asr/data/utterance_metadata.json
------ Stage 1/6 finished in 5.5s -----
+----- Stage 1/6 finished in 5.0s -----
 
 ===== STAGE 2/6: GENERATE WHISPER N-BEST =====
-Resuming from 139,348 clips already transcribed
-Discarding 62,652 stale/collapsed entries for regeneration
-Clips found: 142,824 | to transcribe: 66,061
+Resuming from 93,897 clips already transcribed
+Discarding 6,713 stale/collapsed entries for regeneration
+Clips found: 142,824 | to transcribe: 55,568
 /bighome/gdhakal/.conda/envs/gensec_env/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
   warnings.warn(
 Model:  rishabhjain16/whisper_medium_to_myst55h
 Device: cuda (NVIDIA H100 80GB HBM3)
-[504/66,061] 7.97 clips/sec
-[1,000/66,061] 12.01 clips/sec
-[1,504/66,061] 14.52 clips/sec
-[2,000/66,061] 16.12 clips/sec
-[2,504/66,061] 17.19 clips/sec
-[3,000/66,061] 18.14 clips/sec
-[3,504/66,061] 18.82 clips/sec
-[4,000/66,061] 19.36 clips/sec
-[4,504/66,061] 19.79 clips/sec
-[5,000/66,061] 20.14 clips/sec
-[5,504/66,061] 20.40 clips/sec
-[6,000/66,061] 20.60 clips/sec
-[6,504/66,061] 20.83 clips/sec
-[7,000/66,061] 20.99 clips/sec
-[7,504/66,061] 21.12 clips/sec
-[8,000/66,061] 21.24 clips/sec
-[8,504/66,061] 21.36 clips/sec
-[9,000/66,061] 21.46 clips/sec
-[9,504/66,061] 21.55 clips/sec
-[10,000/66,061] 21.67 clips/sec
-[10,504/66,061] 21.74 clips/sec
-[11,000/66,061] 21.84 clips/sec
-[11,504/66,061] 21.90 clips/sec
-[12,000/66,061] 21.97 clips/sec
-[12,504/66,061] 22.03 clips/sec
-[13,000/66,061] 22.08 clips/sec
-[13,504/66,061] 22.09 clips/sec
-[14,000/66,061] 22.06 clips/sec
-[14,504/66,061] 22.02 clips/sec
-[15,000/66,061] 21.96 clips/sec
-[15,504/66,061] 21.91 clips/sec
-[16,000/66,061] 21.87 clips/sec
-[16,504/66,061] 21.83 clips/sec
-[17,000/66,061] 21.78 clips/sec
-[17,504/66,061] 21.73 clips/sec
-[18,000/66,061] 21.69 clips/sec
-[18,504/66,061] 21.63 clips/sec
-[19,000/66,061] 21.56 clips/sec
-[19,504/66,061] 21.50 clips/sec
-[20,000/66,061] 21.43 clips/sec
-[20,504/66,061] 21.38 clips/sec
-[21,000/66,061] 21.33 clips/sec
-[21,504/66,061] 21.28 clips/sec
-[22,000/66,061] 21.24 clips/sec
-[22,504/66,061] 21.19 clips/sec
-[23,000/66,061] 21.16 clips/sec
-[23,504/66,061] 21.11 clips/sec
-[24,000/66,061] 21.07 clips/sec
-[24,504/66,061] 21.03 clips/sec
-[25,000/66,061] 20.99 clips/sec
-[25,504/66,061] 20.95 clips/sec
-[26,000/66,061] 20.90 clips/sec
-[26,504/66,061] 20.85 clips/sec
-[27,000/66,061] 20.81 clips/sec
-[27,504/66,061] 20.76 clips/sec
-[28,000/66,061] 20.71 clips/sec
-[28,504/66,061] 20.63 clips/sec
-[29,000/66,061] 20.56 clips/sec
-[29,504/66,061] 20.48 clips/sec
-[30,000/66,061] 20.40 clips/sec
-[30,504/66,061] 20.30 clips/sec
-[31,000/66,061] 20.20 clips/sec
-[31,504/66,061] 20.11 clips/sec
-[32,000/66,061] 20.01 clips/sec
-[32,504/66,061] 19.91 clips/sec
-[33,000/66,061] 19.81 clips/sec
-[33,504/66,061] 19.71 clips/sec
-[34,000/66,061] 19.62 clips/sec
-[34,504/66,061] 19.52 clips/sec
-[35,000/66,061] 19.44 clips/sec
-[35,504/66,061] 19.35 clips/sec
-[36,000/66,061] 19.26 clips/sec
-[36,504/66,061] 19.17 clips/sec
-[37,000/66,061] 19.09 clips/sec
-[37,504/66,061] 19.01 clips/sec
-[38,000/66,061] 18.93 clips/sec
-[38,504/66,061] 18.85 clips/sec
-[39,000/66,061] 18.78 clips/sec
-[39,504/66,061] 18.71 clips/sec
-[40,000/66,061] 18.63 clips/sec
-[40,504/66,061] 18.57 clips/sec
-[41,000/66,061] 18.51 clips/sec
-[41,504/66,061] 18.45 clips/sec
-[42,000/66,061] 18.39 clips/sec
-[42,504/66,061] 18.33 clips/sec
-[43,000/66,061] 18.27 clips/sec
-[43,504/66,061] 18.21 clips/sec
-[44,000/66,061] 18.16 clips/sec
-[44,504/66,061] 18.11 clips/sec
-[45,000/66,061] 18.05 clips/sec
-[45,504/66,061] 17.99 clips/sec
-[46,000/66,061] 17.94 clips/sec
-[46,504/66,061] 17.89 clips/sec
-[47,000/66,061] 17.83 clips/sec
-[47,504/66,061] 17.77 clips/sec
-[48,000/66,061] 17.71 clips/sec
-[48,504/66,061] 17.65 clips/sec
-[49,000/66,061] 17.58 clips/sec
-[49,504/66,061] 17.51 clips/sec
-[50,000/66,061] 17.43 clips/sec
-[50,504/66,061] 17.36 clips/sec
-[51,000/66,061] 17.29 clips/sec
-[51,504/66,061] 17.22 clips/sec
-[52,000/66,061] 17.15 clips/sec
-[52,504/66,061] 17.08 clips/sec
-[53,000/66,061] 17.01 clips/sec
-[53,504/66,061] 16.92 clips/sec
-[54,000/66,061] 16.86 clips/sec
-[54,504/66,061] 16.79 clips/sec
-[55,000/66,061] 16.73 clips/sec
-[55,504/66,061] 16.66 clips/sec
-[56,000/66,061] 16.60 clips/sec
-[56,504/66,061] 16.54 clips/sec
-[57,000/66,061] 16.47 clips/sec
-[57,504/66,061] 16.40 clips/sec
-[58,000/66,061] 16.37 clips/sec
-[58,504/66,061] 16.34 clips/sec
-[59,000/66,061] 16.31 clips/sec
-[59,504/66,061] 16.28 clips/sec
-[60,000/66,061] 16.25 clips/sec
-[60,504/66,061] 16.21 clips/sec
-[61,000/66,061] 16.18 clips/sec
-[61,504/66,061] 16.14 clips/sec
-[62,000/66,061] 16.09 clips/sec
-[62,504/66,061] 16.03 clips/sec
-Transcribed:        62,675
+[504/55,568] 7.98 clips/sec
+[1,000/55,568] 12.01 clips/sec
+[1,504/55,568] 13.99 clips/sec
+[2,000/55,568] 15.28 clips/sec
+[2,504/55,568] 16.57 clips/sec
+[3,000/55,568] 16.93 clips/sec
+[3,504/55,568] 17.58 clips/sec
+[4,000/55,568] 18.02 clips/sec
+[4,504/55,568] 18.02 clips/sec
+[5,000/55,568] 18.02 clips/sec
+[5,504/55,568] 18.44 clips/sec
+[6,000/55,568] 18.45 clips/sec
+[6,504/55,568] 18.76 clips/sec
+[7,000/55,568] 19.06 clips/sec
+[7,504/55,568] 19.35 clips/sec
+[8,000/55,568] 19.61 clips/sec
+[8,504/55,568] 19.80 clips/sec
+[9,000/55,568] 20.00 clips/sec
+[9,504/55,568] 20.04 clips/sec
+[10,000/55,568] 20.18 clips/sec
+[10,504/55,568] 20.29 clips/sec
+[11,000/55,568] 20.33 clips/sec
+[11,504/55,568] 19.95 clips/sec
+[12,000/55,568] 19.83 clips/sec
+[12,504/55,568] 19.81 clips/sec
+[13,000/55,568] 19.80 clips/sec
+[13,504/55,568] 19.73 clips/sec
+[14,000/55,568] 19.63 clips/sec
+[14,504/55,568] 19.62 clips/sec
+[15,000/55,568] 19.57 clips/sec
+[15,504/55,568] 19.34 clips/sec
+[16,000/55,568] 19.36 clips/sec
+[16,504/55,568] 19.36 clips/sec
+[17,000/55,568] 19.35 clips/sec
+[17,504/55,568] 19.35 clips/sec
+[18,000/55,568] 19.28 clips/sec
+[18,504/55,568] 19.28 clips/sec
+[19,000/55,568] 19.25 clips/sec
+[19,504/55,568] 19.18 clips/sec
+[20,000/55,568] 19.18 clips/sec
+[20,504/55,568] 18.60 clips/sec
+[21,000/55,568] 18.55 clips/sec
+[21,504/55,568] 18.51 clips/sec
+[22,000/55,568] 18.43 clips/sec
+[22,504/55,568] 18.40 clips/sec
+[23,000/55,568] 18.31 clips/sec
+[23,504/55,568] 18.17 clips/sec
+[24,000/55,568] 18.10 clips/sec
+[24,504/55,568] 18.01 clips/sec
+[25,000/55,568] 17.90 clips/sec
+[25,504/55,568] 17.76 clips/sec
+[26,000/55,568] 17.61 clips/sec
+[26,504/55,568] 17.51 clips/sec
+[27,000/55,568] 17.41 clips/sec
+[27,504/55,568] 17.19 clips/sec
+[28,000/55,568] 17.10 clips/sec
+[28,504/55,568] 17.00 clips/sec
+[29,000/55,568] 16.89 clips/sec
+[29,504/55,568] 16.81 clips/sec
+[30,000/55,568] 16.66 clips/sec
+[30,504/55,568] 16.58 clips/sec
+[31,000/55,568] 16.47 clips/sec
+[31,504/55,568] 16.30 clips/sec
+[32,000/55,568] 16.22 clips/sec
+[32,504/55,568] 16.09 clips/sec
+[33,000/55,568] 16.03 clips/sec
+[33,504/55,568] 15.97 clips/sec
+[34,000/55,568] 15.91 clips/sec
+[34,504/55,568] 15.86 clips/sec
+[35,000/55,568] 15.80 clips/sec
+[35,504/55,568] 15.72 clips/sec
+[36,000/55,568] 15.57 clips/sec
+[36,504/55,568] 15.51 clips/sec
+[37,000/55,568] 15.41 clips/sec
+[37,504/55,568] 15.35 clips/sec
+[38,000/55,568] 15.27 clips/sec
+[38,504/55,568] 15.22 clips/sec
+[39,000/55,568] 15.11 clips/sec
+[39,504/55,568] 15.05 clips/sec
+[40,000/55,568] 14.93 clips/sec
+[40,504/55,568] 14.82 clips/sec
+[41,000/55,568] 14.78 clips/sec
+[41,504/55,568] 14.73 clips/sec
+[42,000/55,568] 14.55 clips/sec
+[42,504/55,568] 14.50 clips/sec
+[43,000/55,568] 14.45 clips/sec
+[43,504/55,568] 14.24 clips/sec
+[44,000/55,568] 14.18 clips/sec
+[44,504/55,568] 14.10 clips/sec
+[45,000/55,568] 14.03 clips/sec
+[45,504/55,568] 13.99 clips/sec
+[46,000/55,568] 13.95 clips/sec
+[46,504/55,568] 13.91 clips/sec
+[47,000/55,568] 13.87 clips/sec
+[47,504/55,568] 13.81 clips/sec
+[48,000/55,568] 13.71 clips/sec
+[48,504/55,568] 13.67 clips/sec
+[49,000/55,568] 13.59 clips/sec
+[49,504/55,568] 13.55 clips/sec
+[50,000/55,568] 13.49 clips/sec
+[50,504/55,568] 13.44 clips/sec
+[51,000/55,568] 13.40 clips/sec
+[51,504/55,568] 13.33 clips/sec
+[52,000/55,568] 13.28 clips/sec
+Transcribed:        52,182
 Skipped (duration): 3,386
 Failed:             0
-Time:               65.6 min
+Time:               65.9 min
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_nbest.json
------ Stage 2/6 finished in 3955.3s -----
+----- Stage 2/6 finished in 3977.5s -----
 
 ===== STAGE 3/6: BUILD GENSEC DATASET =====
 Utterances seen: 139,348
-Kept:            84,586 (60.7%)
-Dropped:         54,762
-  fewer_than_min_unique_hypotheses: 52,417
+Kept:            88,688 (63.6%)
+Dropped:         50,660
+  fewer_than_min_unique_hypotheses: 48,315
   no_reference_transcript: 2,345
 Hypotheses per kept example:
-  2: 40,936
-  3: 22,142
-  4: 13,891
-  5: 7,617
+  2: 44,638
+  3: 22,504
+  4: 13,924
+  5: 7,622
 Wrote /home/gdhakal/gensec-asr/data/processed_gensec.json
 ----- Stage 3/6 finished in 1.5s -----
 
 ===== STAGE 4/6: TRAIN AND RUN INFERENCE =====
-Examples after normalizing: 84,062 of 84,586
-Train: 67,249 | Test: 16,813
-/bighome/gdhakal/.conda/envs/gensec_env/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
-  warnings.warn(
-Using existing fine-tune: /home/gdhakal/gensec-asr/work_directory/final_checkpoint
-===== inference: zero_shot =====
-  [zero_shot] 4/16,813
-  [zero_shot] 84/16,813
-  [zero_shot] 164/16,813
-  [zero_shot] 244/16,813
-  [zero_shot] 324/16,813
-  [zero_shot] 404/16,813
-  [zero_shot] 484/16,813
-  [zero_shot] 564/16,813
-  [zero_shot] 644/16,813
-  [zero_shot] 724/16,813
-  [zero_shot] 804/16,813
-  [zero_shot] 884/16,813
-  [zero_shot] 964/16,813
-  [zero_shot] 1,044/16,813
-  [zero_shot] 1,124/16,813
-  [zero_shot] 1,204/16,813
-  [zero_shot] 1,284/16,813
-  [zero_shot] 1,364/16,813
-  [zero_shot] 1,444/16,813
-  [zero_shot] 1,524/16,813
-  [zero_shot] 1,604/16,813
-  [zero_shot] 1,684/16,813
-  [zero_shot] 1,764/16,813
-  [zero_shot] 1,844/16,813
-  [zero_shot] 1,924/16,813
-  [zero_shot] 2,004/16,813
-  [zero_shot] 2,084/16,813
-  [zero_shot] 2,164/16,813
-  [zero_shot] 2,244/16,813
-  [zero_shot] 2,324/16,813
-  [zero_shot] 2,404/16,813
-  [zero_shot] 2,484/16,813
-  [zero_shot] 2,564/16,813
-  [zero_shot] 2,644/16,813
-  [zero_shot] 2,724/16,813
-  [zero_shot] 2,804/16,813
-  [zero_shot] 2,884/16,813
-  [zero_shot] 2,964/16,813
-  [zero_shot] 3,044/16,813
-  [zero_shot] 3,124/16,813
-  [zero_shot] 3,204/16,813
-  [zero_shot] 3,284/16,813
-  [zero_shot] 3,364/16,813
-  [zero_shot] 3,444/16,813
-  [zero_shot] 3,524/16,813
-  [zero_shot] 3,604/16,813
-  [zero_shot] 3,684/16,813
-  [zero_shot] 3,764/16,813
-  [zero_shot] 3,844/16,813
-  [zero_shot] 3,924/16,813
-  [zero_shot] 4,004/16,813
-  [zero_shot] 4,084/16,813
-  [zero_shot] 4,164/16,813
-  [zero_shot] 4,244/16,813
-  [zero_shot] 4,324/16,813
-  [zero_shot] 4,404/16,813
-  [zero_shot] 4,484/16,813
-  [zero_shot] 4,564/16,813
-  [zero_shot] 4,644/16,813
-  [zero_shot] 4,724/16,813
-  [zero_shot] 4,804/16,813
-  [zero_shot] 4,884/16,813
-  [zero_shot] 4,964/16,813
-  [zero_shot] 5,044/16,813
-  [zero_shot] 5,124/16,813
-  [zero_shot] 5,204/16,813
-Token indices sequence length is longer than the specified maximum sequence length for this model (548 > 512). Running this sequence through the model will result in indexing errors
-  [zero_shot] 5,284/16,813
-  [zero_shot] 5,364/16,813
-  [zero_shot] 5,444/16,813
-  [zero_shot] 5,524/16,813
-  [zero_shot] 5,604/16,813
-  [zero_shot] 5,684/16,813
-  [zero_shot] 5,764/16,813
-  [zero_shot] 5,844/16,813
-  [zero_shot] 5,924/16,813
-  [zero_shot] 6,004/16,813
-  [zero_shot] 6,084/16,813
-  [zero_shot] 6,164/16,813
-  [zero_shot] 6,244/16,813
-  [zero_shot] 6,324/16,813
-  [zero_shot] 6,404/16,813
-  [zero_shot] 6,484/16,813
-  [zero_shot] 6,564/16,813
-  [zero_shot] 6,644/16,813
-  [zero_shot] 6,724/16,813
-  [zero_shot] 6,804/16,813
-  [zero_shot] 6,884/16,813
-  [zero_shot] 6,964/16,813
-  [zero_shot] 7,044/16,813
-  [zero_shot] 7,124/16,813
-  [zero_shot] 7,204/16,813
-  [zero_shot] 7,284/16,813
-  [zero_shot] 7,364/16,813
-  [zero_shot] 7,444/16,813
-  [zero_shot] 7,524/16,813
-  [zero_shot] 7,604/16,813
-  [zero_shot] 7,684/16,813
-  [zero_shot] 7,764/16,813
-  [zero_shot] 7,844/16,813
-  [zero_shot] 7,924/16,813
-  [zero_shot] 8,004/16,813
-  [zero_shot] 8,084/16,813
-  [zero_shot] 8,164/16,813
-  [zero_shot] 8,244/16,813
-  [zero_shot] 8,324/16,813
-  [zero_shot] 8,404/16,813
-  [zero_shot] 8,484/16,813
-  [zero_shot] 8,564/16,813
-  [zero_shot] 8,644/16,813
-  [zero_shot] 8,724/16,813
-  [zero_shot] 8,804/16,813
-  [zero_shot] 8,884/16,813
-  [zero_shot] 8,964/16,813
-  [zero_shot] 9,044/16,813
-  [zero_shot] 9,124/16,813
-  [zero_shot] 9,204/16,813
-  [zero_shot] 9,284/16,813
-  [zero_shot] 9,364/16,813
-  [zero_shot] 9,444/16,813
-  [zero_shot] 9,524/16,813
-  [zero_shot] 9,604/16,813
-  [zero_shot] 9,684/16,813
-  [zero_shot] 9,764/16,813
-  [zero_shot] 9,844/16,813
-  [zero_shot] 9,924/16,813
-  [zero_shot] 10,004/16,813
-  [zero_shot] 10,084/16,813
-  [zero_shot] 10,164/16,813
-  [zero_shot] 10,244/16,813
-  [zero_shot] 10,324/16,813
-  [zero_shot] 10,404/16,813
-  [zero_shot] 10,484/16,813
-  [zero_shot] 10,564/16,813
-  [zero_shot] 10,644/16,813
-  [zero_shot] 10,724/16,813
-  [zero_shot] 10,804/16,813
-  [zero_shot] 10,884/16,813
-  [zero_shot] 10,964/16,813
-  [zero_shot] 11,044/16,813
-  [zero_shot] 11,124/16,813
-  [zero_shot] 11,204/16,813
-  [zero_shot] 11,284/16,813
-  [zero_shot] 11,364/16,813
-  [zero_shot] 11,444/16,813
-  [zero_shot] 11,524/16,813
-  [zero_shot] 11,604/16,813
-  [zero_shot] 11,684/16,813
-  [zero_shot] 11,764/16,813
-  [zero_shot] 11,844/16,813
-  [zero_shot] 11,924/16,813
-  [zero_shot] 12,004/16,813
-  [zero_shot] 12,084/16,813
-  [zero_shot] 12,164/16,813
-  [zero_shot] 12,244/16,813
-  [zero_shot] 12,324/16,813
-  [zero_shot] 12,404/16,813
-  [zero_shot] 12,484/16,813
-  [zero_shot] 12,564/16,813
-  [zero_shot] 12,644/16,813
-  [zero_shot] 12,724/16,813
-  [zero_shot] 12,804/16,813
-  [zero_shot] 12,884/16,813
-  [zero_shot] 12,964/16,813
-  [zero_shot] 13,044/16,813
-  [zero_shot] 13,124/16,813
-  [zero_shot] 13,204/16,813
-  [zero_shot] 13,284/16,813
-  [zero_shot] 13,364/16,813
-  [zero_shot] 13,444/16,813
-  [zero_shot] 13,524/16,813
-  [zero_shot] 13,604/16,813
-  [zero_shot] 13,684/16,813
-  [zero_shot] 13,764/16,813
-  [zero_shot] 13,844/16,813
-  [zero_shot] 13,924/16,813
-  [zero_shot] 14,004/16,813
-  [zero_shot] 14,084/16,813
-  [zero_shot] 14,164/16,813
-  [zero_shot] 14,244/16,813
-  [zero_shot] 14,324/16,813
-  [zero_shot] 14,404/16,813
-  [zero_shot] 14,484/16,813
-  [zero_shot] 14,564/16,813
-  [zero_shot] 14,644/16,813
-  [zero_shot] 14,724/16,813
-  [zero_shot] 14,804/16,813
-  [zero_shot] 14,884/16,813
-  [zero_shot] 14,964/16,813
-  [zero_shot] 15,044/16,813
-  [zero_shot] 15,124/16,813
-  [zero_shot] 15,204/16,813
-  [zero_shot] 15,284/16,813
-  [zero_shot] 15,364/16,813
-  [zero_shot] 15,444/16,813
-  [zero_shot] 15,524/16,813
-  [zero_shot] 15,604/16,813
-  [zero_shot] 15,684/16,813
-  [zero_shot] 15,764/16,813
-  [zero_shot] 15,844/16,813
-  [zero_shot] 15,924/16,813
-  [zero_shot] 16,004/16,813
-  [zero_shot] 16,084/16,813
-  [zero_shot] 16,164/16,813
-  [zero_shot] 16,244/16,813
-  [zero_shot] 16,324/16,813
-  [zero_shot] 16,404/16,813
-  [zero_shot] 16,484/16,813
-  [zero_shot] 16,564/16,813
-  [zero_shot] 16,644/16,813
-  [zero_shot] 16,724/16,813
-  [zero_shot] 16,804/16,813
-Wrote /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_shot.csv
------ Stage 4/6 finished in 591.3s -----
+Using existing /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_shot.csv
+----- Stage 4/6 finished in 0.0s -----
 
 ===== STAGE 5/6: POSTPROCESS PREDICTIONS =====
 Predictions read:    16,813 (zero_shot)
 Predictions changed: 0
 Wrote /home/gdhakal/gensec-asr/data/predictions/predictions_cleaned.csv
------ Stage 5/6 finished in 0.2s -----
+----- Stage 5/6 finished in 7.6s -----
 
 ===== STAGE 6/6: EVALUATE =====
-Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260830_212242
+Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260831_175856
 GenSEC evaluation
 ========================================================================
 Test utterances: 16,813
@@ -628,7 +389,7 @@ c054b8b2_885833_887534_240  sentence_wer=8.00
   hyp: is anything else you want me to do
 
 Wrote /home/gdhakal/gensec-asr/evaluation_results/wer_report.txt
------ Stage 6/6 finished in 13.3s -----
+----- Stage 6/6 finished in 16.1s -----
 
 ===== GENSEC PIPELINE COMPLETE =====
-Finished: Mon Aug 31 17:58:57 CDT 2026
+Finished: Wed Sep  2 17:23:31 CDT 2026
