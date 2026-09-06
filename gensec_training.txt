@@ -1,6 +1,6 @@
 ===== GENSEC PIPELINE STARTED =====
 Repository: /home/gdhakal/gensec-asr
-Started: Wed Sep  2 16:15:15 CDT 2026
+Started: Sat Sep  5 23:49:13 CDT 2026
 ===== DEPENDENCY CHECK =====
 Dependencies are already installed.
 CUDA available: True
@@ -19,140 +19,35 @@ References kept:          140,268
 Group split:              {'TD': 128983, 'LT': 11285}
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_reference.json
 Wrote /home/gdhakal/gensec-asr/data/utterance_metadata.json
------ Stage 1/6 finished in 5.0s -----
+----- Stage 1/6 finished in 6.8s -----
 
 ===== STAGE 2/6: GENERATE WHISPER N-BEST =====
-Resuming from 93,897 clips already transcribed
-Discarding 6,713 stale/collapsed entries for regeneration
-Clips found: 142,824 | to transcribe: 55,568
+Resuming from 139,348 clips already transcribed
+Clips found: 142,824 | to transcribe: 3,386
 /bighome/gdhakal/.conda/envs/gensec_env/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
   warnings.warn(
 Model:  rishabhjain16/whisper_medium_to_myst55h
-Device: cuda (NVIDIA H100 80GB HBM3)
-[504/55,568] 7.98 clips/sec
-[1,000/55,568] 12.01 clips/sec
-[1,504/55,568] 13.99 clips/sec
-[2,000/55,568] 15.28 clips/sec
-[2,504/55,568] 16.57 clips/sec
-[3,000/55,568] 16.93 clips/sec
-[3,504/55,568] 17.58 clips/sec
-[4,000/55,568] 18.02 clips/sec
-[4,504/55,568] 18.02 clips/sec
-[5,000/55,568] 18.02 clips/sec
-[5,504/55,568] 18.44 clips/sec
-[6,000/55,568] 18.45 clips/sec
-[6,504/55,568] 18.76 clips/sec
-[7,000/55,568] 19.06 clips/sec
-[7,504/55,568] 19.35 clips/sec
-[8,000/55,568] 19.61 clips/sec
-[8,504/55,568] 19.80 clips/sec
-[9,000/55,568] 20.00 clips/sec
-[9,504/55,568] 20.04 clips/sec
-[10,000/55,568] 20.18 clips/sec
-[10,504/55,568] 20.29 clips/sec
-[11,000/55,568] 20.33 clips/sec
-[11,504/55,568] 19.95 clips/sec
-[12,000/55,568] 19.83 clips/sec
-[12,504/55,568] 19.81 clips/sec
-[13,000/55,568] 19.80 clips/sec
-[13,504/55,568] 19.73 clips/sec
-[14,000/55,568] 19.63 clips/sec
-[14,504/55,568] 19.62 clips/sec
-[15,000/55,568] 19.57 clips/sec
-[15,504/55,568] 19.34 clips/sec
-[16,000/55,568] 19.36 clips/sec
-[16,504/55,568] 19.36 clips/sec
-[17,000/55,568] 19.35 clips/sec
-[17,504/55,568] 19.35 clips/sec
-[18,000/55,568] 19.28 clips/sec
-[18,504/55,568] 19.28 clips/sec
-[19,000/55,568] 19.25 clips/sec
-[19,504/55,568] 19.18 clips/sec
-[20,000/55,568] 19.18 clips/sec
-[20,504/55,568] 18.60 clips/sec
-[21,000/55,568] 18.55 clips/sec
-[21,504/55,568] 18.51 clips/sec
-[22,000/55,568] 18.43 clips/sec
-[22,504/55,568] 18.40 clips/sec
-[23,000/55,568] 18.31 clips/sec
-[23,504/55,568] 18.17 clips/sec
-[24,000/55,568] 18.10 clips/sec
-[24,504/55,568] 18.01 clips/sec
-[25,000/55,568] 17.90 clips/sec
-[25,504/55,568] 17.76 clips/sec
-[26,000/55,568] 17.61 clips/sec
-[26,504/55,568] 17.51 clips/sec
-[27,000/55,568] 17.41 clips/sec
-[27,504/55,568] 17.19 clips/sec
-[28,000/55,568] 17.10 clips/sec
-[28,504/55,568] 17.00 clips/sec
-[29,000/55,568] 16.89 clips/sec
-[29,504/55,568] 16.81 clips/sec
-[30,000/55,568] 16.66 clips/sec
-[30,504/55,568] 16.58 clips/sec
-[31,000/55,568] 16.47 clips/sec
-[31,504/55,568] 16.30 clips/sec
-[32,000/55,568] 16.22 clips/sec
-[32,504/55,568] 16.09 clips/sec
-[33,000/55,568] 16.03 clips/sec
-[33,504/55,568] 15.97 clips/sec
-[34,000/55,568] 15.91 clips/sec
-[34,504/55,568] 15.86 clips/sec
-[35,000/55,568] 15.80 clips/sec
-[35,504/55,568] 15.72 clips/sec
-[36,000/55,568] 15.57 clips/sec
-[36,504/55,568] 15.51 clips/sec
-[37,000/55,568] 15.41 clips/sec
-[37,504/55,568] 15.35 clips/sec
-[38,000/55,568] 15.27 clips/sec
-[38,504/55,568] 15.22 clips/sec
-[39,000/55,568] 15.11 clips/sec
-[39,504/55,568] 15.05 clips/sec
-[40,000/55,568] 14.93 clips/sec
-[40,504/55,568] 14.82 clips/sec
-[41,000/55,568] 14.78 clips/sec
-[41,504/55,568] 14.73 clips/sec
-[42,000/55,568] 14.55 clips/sec
-[42,504/55,568] 14.50 clips/sec
-[43,000/55,568] 14.45 clips/sec
-[43,504/55,568] 14.24 clips/sec
-[44,000/55,568] 14.18 clips/sec
-[44,504/55,568] 14.10 clips/sec
-[45,000/55,568] 14.03 clips/sec
-[45,504/55,568] 13.99 clips/sec
-[46,000/55,568] 13.95 clips/sec
-[46,504/55,568] 13.91 clips/sec
-[47,000/55,568] 13.87 clips/sec
-[47,504/55,568] 13.81 clips/sec
-[48,000/55,568] 13.71 clips/sec
-[48,504/55,568] 13.67 clips/sec
-[49,000/55,568] 13.59 clips/sec
-[49,504/55,568] 13.55 clips/sec
-[50,000/55,568] 13.49 clips/sec
-[50,504/55,568] 13.44 clips/sec
-[51,000/55,568] 13.40 clips/sec
-[51,504/55,568] 13.33 clips/sec
-[52,000/55,568] 13.28 clips/sec
-Transcribed:        52,182
+Device: cuda (NVIDIA L4)
+Transcribed:        0
 Skipped (duration): 3,386
 Failed:             0
-Time:               65.9 min
+Time:               1.1 min
 Wrote /home/gdhakal/gensec-asr/data/utterance_id_to_nbest.json
------ Stage 2/6 finished in 3977.5s -----
+----- Stage 2/6 finished in 84.0s -----
 
 ===== STAGE 3/6: BUILD GENSEC DATASET =====
 Utterances seen: 139,348
-Kept:            88,688 (63.6%)
-Dropped:         50,660
-  fewer_than_min_unique_hypotheses: 48,315
+Kept:            137,003 (98.3%)
+Dropped:         2,345
   no_reference_transcript: 2,345
 Hypotheses per kept example:
+  1: 48,315
   2: 44,638
   3: 22,504
   4: 13,924
   5: 7,622
 Wrote /home/gdhakal/gensec-asr/data/processed_gensec.json
------ Stage 3/6 finished in 1.5s -----
+----- Stage 3/6 finished in 2.0s -----
 
 ===== STAGE 4/6: TRAIN AND RUN INFERENCE =====
 Using existing /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_shot.csv
@@ -160,27 +55,27 @@ Using existing /home/gdhakal/gensec-asr/data/predictions/test_predictions_zero_s
 
 ===== STAGE 5/6: POSTPROCESS PREDICTIONS =====
 Predictions read:    16,813 (zero_shot)
-Predictions changed: 0
+Predictions changed: 42
 Wrote /home/gdhakal/gensec-asr/data/predictions/predictions_cleaned.csv
------ Stage 5/6 finished in 7.6s -----
+----- Stage 5/6 finished in 0.4s -----
 
 ===== STAGE 6/6: EVALUATE =====
-Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260831_175856
+Archived previous results to /home/gdhakal/gensec-asr/evaluation_history/20260902_172330
 GenSEC evaluation
 ========================================================================
 Test utterances: 16,813
 
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
-whisper_1best                  59.06%     6.17%   27,791   13,225    9,990
+whisper_1best                  59.06%     6.17%   27,790   13,225    9,989
 gensec_zero_shot               61.27%     5.90%   28,390   14,535    9,989
-gensec_zero_shot_cleaned       61.27%     5.90%   28,390   14,535    9,989
+gensec_zero_shot_cleaned       61.29%     5.90%   28,358   14,599    9,969
 oracle_nbest                   48.63%    12.48%   23,522   12,221    6,254
-oracle_compositional           39.80%     0.00%        0   34,368        0
+oracle_compositional           39.79%     0.00%        0   34,366        0
 
 gensec_zero_shot vs whisper_1best: -3.74% relative WER reduction (worse)
 
-gensec_zero_shot_cleaned vs whisper_1best: -3.74% relative WER reduction (worse)
+gensec_zero_shot_cleaned vs whisper_1best: -3.77% relative WER reduction (worse)
 
 oracle_nbest vs whisper_1best: +17.66% relative WER reduction (better)
 
@@ -192,10 +87,10 @@ Significance (1,000 bootstrap resamples of the utterance set)
 gensec_zero_shot vs whisper_1best
   overall        16813    -3.74%   95% CI [-5.82%, -1.24%]
   LT              1580    -5.39%   95% CI [-7.78%, -3.17%]
-  TD             15233    -3.50%   95% CI [-5.87%, -0.83%]
+  TD             15233    -3.51%   95% CI [-5.88%, -0.83%]
 
-  TD - LT                  1.88%   95% CI [-1.37%, +5.37%]
-  p = 0.272 - NOT significant at p<0.05
+  TD - LT                  1.88%   95% CI [-1.38%, +5.37%]
+  p = 0.274 - NOT significant at p<0.05
 
 
 By group (LT = late talker, TD = typically developing)
@@ -204,12 +99,12 @@ By group (LT = late talker, TD = typically developing)
 LT
   whisper_1best                 1580    61.21%     4.18%
   gensec_zero_shot              1580    64.51%     3.92%
-  gensec_zero_shot_cleaned      1580    64.51%     3.92%
+  gensec_zero_shot_cleaned      1580    64.54%     3.92%
   oracle_nbest                  1580    52.22%     7.72%
 TD
-  whisper_1best                15233    58.77%     6.37%
+  whisper_1best                15233    58.76%     6.37%
   gensec_zero_shot             15233    60.83%     6.11%
-  gensec_zero_shot_cleaned     15233    60.83%     6.11%
+  gensec_zero_shot_cleaned     15233    60.84%     6.11%
   oracle_nbest                 15233    48.14%    12.98%
 
 
@@ -217,29 +112,29 @@ By reference length
 ------------------------------------------------------------------------
                                 utts       WER     exact
 1 word
-  whisper_1best                 3133   123.43%    10.44%
+  whisper_1best                 3133   123.40%    10.44%
   gensec_zero_shot              3133   175.14%     5.01%
-  gensec_zero_shot_cleaned      3133   175.14%     5.01%
+  gensec_zero_shot_cleaned      3133   175.01%     5.04%
   oracle_nbest                  3133    89.24%    20.71%
 2 words
   whisper_1best                 2213    95.37%     5.51%
   gensec_zero_shot              2213   105.83%     5.15%
-  gensec_zero_shot_cleaned      2213   105.83%     5.15%
+  gensec_zero_shot_cleaned      2213   105.81%     5.15%
   oracle_nbest                  2213    78.92%    11.84%
 3-5 words
   whisper_1best                 5133    75.31%     5.24%
   gensec_zero_shot              5133    73.28%     7.13%
-  gensec_zero_shot_cleaned      5133    73.28%     7.13%
+  gensec_zero_shot_cleaned      5133    73.29%     7.13%
   oracle_nbest                  5133    60.92%    10.93%
 6-10 words
   whisper_1best                 4736    51.75%     5.66%
   gensec_zero_shot              4736    51.73%     6.25%
-  gensec_zero_shot_cleaned      4736    51.73%     6.25%
+  gensec_zero_shot_cleaned      4736    51.75%     6.23%
   oracle_nbest                  4736    43.22%    11.02%
 11+ words
   whisper_1best                 1598    40.00%     3.19%
   gensec_zero_shot              1598    41.10%     3.69%
-  gensec_zero_shot_cleaned      1598    41.10%     3.69%
+  gensec_zero_shot_cleaned      1598    41.12%     3.69%
   oracle_nbest                  1598    34.60%     6.57%
 
 
@@ -249,7 +144,7 @@ References of 3+ words only (comparable to published child GenSEC work)
 3+ words
   whisper_1best                11467    54.46%     5.13%
   gensec_zero_shot             11467    54.24%     6.29%
-  gensec_zero_shot_cleaned     11467    54.24%     6.29%
+  gensec_zero_shot_cleaned     11467    54.26%     6.28%
   oracle_nbest                 11467    45.31%    10.36%
 
 
@@ -263,7 +158,7 @@ caa18248_731002_733904_160  sentence_wer=79.75
   hyp: we were eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and
 aa9c983b_149275_167526_17  sentence_wer=28.00
   ref: then
-  hyp: then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms
+  hyp: then then i think there tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think there tms
 e27739fd_2129082_2131504_621  sentence_wer=22.89
   ref: blah blah blah blah blah blah blah blah blah
   hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
@@ -389,7 +284,7 @@ c054b8b2_885833_887534_240  sentence_wer=8.00
   hyp: is anything else you want me to do
 
 Wrote /home/gdhakal/gensec-asr/evaluation_results/wer_report.txt
------ Stage 6/6 finished in 16.1s -----
+----- Stage 6/6 finished in 19.4s -----
 
 ===== GENSEC PIPELINE COMPLETE =====
-Finished: Wed Sep  2 17:23:31 CDT 2026
+Finished: Sat Sep  5 23:52:25 CDT 2026

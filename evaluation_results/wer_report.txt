@@ -4,15 +4,15 @@ Test utterances: 16,813
 
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
-whisper_1best                  59.06%     6.17%   27,791   13,225    9,990
+whisper_1best                  59.06%     6.17%   27,790   13,225    9,989
 gensec_zero_shot               61.27%     5.90%   28,390   14,535    9,989
-gensec_zero_shot_cleaned       61.27%     5.90%   28,390   14,535    9,989
+gensec_zero_shot_cleaned       61.29%     5.90%   28,358   14,599    9,969
 oracle_nbest                   48.63%    12.48%   23,522   12,221    6,254
-oracle_compositional           39.80%     0.00%        0   34,368        0
+oracle_compositional           39.79%     0.00%        0   34,366        0
 
 gensec_zero_shot vs whisper_1best: -3.74% relative WER reduction (worse)
 
-gensec_zero_shot_cleaned vs whisper_1best: -3.74% relative WER reduction (worse)
+gensec_zero_shot_cleaned vs whisper_1best: -3.77% relative WER reduction (worse)
 
 oracle_nbest vs whisper_1best: +17.66% relative WER reduction (better)
 
@@ -24,10 +24,10 @@ Significance (1,000 bootstrap resamples of the utterance set)
 gensec_zero_shot vs whisper_1best
   overall        16813    -3.74%   95% CI [-5.82%, -1.24%]
   LT              1580    -5.39%   95% CI [-7.78%, -3.17%]
-  TD             15233    -3.50%   95% CI [-5.87%, -0.83%]
+  TD             15233    -3.51%   95% CI [-5.88%, -0.83%]
 
-  TD - LT                  1.88%   95% CI [-1.37%, +5.37%]
-  p = 0.272 - NOT significant at p<0.05
+  TD - LT                  1.88%   95% CI [-1.38%, +5.37%]
+  p = 0.274 - NOT significant at p<0.05
 
 
 By group (LT = late talker, TD = typically developing)
@@ -36,12 +36,12 @@ By group (LT = late talker, TD = typically developing)
 LT
   whisper_1best                 1580    61.21%     4.18%
   gensec_zero_shot              1580    64.51%     3.92%
-  gensec_zero_shot_cleaned      1580    64.51%     3.92%
+  gensec_zero_shot_cleaned      1580    64.54%     3.92%
   oracle_nbest                  1580    52.22%     7.72%
 TD
-  whisper_1best                15233    58.77%     6.37%
+  whisper_1best                15233    58.76%     6.37%
   gensec_zero_shot             15233    60.83%     6.11%
-  gensec_zero_shot_cleaned     15233    60.83%     6.11%
+  gensec_zero_shot_cleaned     15233    60.84%     6.11%
   oracle_nbest                 15233    48.14%    12.98%
 
 
@@ -49,29 +49,29 @@ By reference length
 ------------------------------------------------------------------------
                                 utts       WER     exact
 1 word
-  whisper_1best                 3133   123.43%    10.44%
+  whisper_1best                 3133   123.40%    10.44%
   gensec_zero_shot              3133   175.14%     5.01%
-  gensec_zero_shot_cleaned      3133   175.14%     5.01%
+  gensec_zero_shot_cleaned      3133   175.01%     5.04%
   oracle_nbest                  3133    89.24%    20.71%
 2 words
   whisper_1best                 2213    95.37%     5.51%
   gensec_zero_shot              2213   105.83%     5.15%
-  gensec_zero_shot_cleaned      2213   105.83%     5.15%
+  gensec_zero_shot_cleaned      2213   105.81%     5.15%
   oracle_nbest                  2213    78.92%    11.84%
 3-5 words
   whisper_1best                 5133    75.31%     5.24%
   gensec_zero_shot              5133    73.28%     7.13%
-  gensec_zero_shot_cleaned      5133    73.28%     7.13%
+  gensec_zero_shot_cleaned      5133    73.29%     7.13%
   oracle_nbest                  5133    60.92%    10.93%
 6-10 words
   whisper_1best                 4736    51.75%     5.66%
   gensec_zero_shot              4736    51.73%     6.25%
-  gensec_zero_shot_cleaned      4736    51.73%     6.25%
+  gensec_zero_shot_cleaned      4736    51.75%     6.23%
   oracle_nbest                  4736    43.22%    11.02%
 11+ words
   whisper_1best                 1598    40.00%     3.19%
   gensec_zero_shot              1598    41.10%     3.69%
-  gensec_zero_shot_cleaned      1598    41.10%     3.69%
+  gensec_zero_shot_cleaned      1598    41.12%     3.69%
   oracle_nbest                  1598    34.60%     6.57%
 
 
@@ -81,7 +81,7 @@ References of 3+ words only (comparable to published child GenSEC work)
 3+ words
   whisper_1best                11467    54.46%     5.13%
   gensec_zero_shot             11467    54.24%     6.29%
-  gensec_zero_shot_cleaned     11467    54.24%     6.29%
+  gensec_zero_shot_cleaned     11467    54.26%     6.28%
   oracle_nbest                 11467    45.31%    10.36%
 
 
@@ -95,7 +95,7 @@ caa18248_731002_733904_160  sentence_wer=79.75
   hyp: we were eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and eating and
 aa9c983b_149275_167526_17  sentence_wer=28.00
   ref: then
-  hyp: then then i think thereâ tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think thereâ tms
+  hyp: then then i think there tms i wanted to among the few that the beautiful well i heard that yeah and then and then then i think there tms
 e27739fd_2129082_2131504_621  sentence_wer=22.89
   ref: blah blah blah blah blah blah blah blah blah
   hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
