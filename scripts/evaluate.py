@@ -245,11 +245,22 @@ def collect_systems(config: dict) -> dict[str, list[tuple[str, str, str]]]:
         ],
     }
 
+    if "selective_prediction" in frame.columns:
+        systems[f"gensec_{mode}_selective"] = [
+            (row["id"], row["truth"], row["selective_prediction"])
+            for row in frame.to_dict("records")
+        ]
+
     if config["cleaned_predictions_path"].is_file():
         cleaned = pd.read_csv(config["cleaned_predictions_path"]).fillna("")
         systems[f"gensec_{mode}_cleaned"] = [
             (row["id"], row["truth"], row["prediction"]) for row in cleaned.to_dict("records")
         ]
+        if "selective_prediction" in cleaned.columns:
+            systems[f"gensec_{mode}_selective_cleaned"] = [
+                (row["id"], row["truth"], row["selective_prediction"])
+                for row in cleaned.to_dict("records")
+            ]
 
     # The ceiling. Without it a WER reduction has no scale: 4% of a reachable
     # 5% is most of what there was, 4% of a reachable 40% is barely a start.
@@ -259,6 +270,98 @@ def collect_systems(config: dict) -> dict[str, list[tuple[str, str, str]]]:
     ]
 
     return systems
+
+
+def selective_diagnostics(frame: pd.DataFrame, nbest: dict, config: dict) -> tuple[list[str], dict]:
+    """Summarize coverage and whether accepted corrections help or hurt."""
+    required = {"selective_prediction", "selective_score", "correction_accepted"}
+    if not required.issubset(frame.columns):
+        return [], {}
+
+    rows = frame.to_dict("records")
+
+    def as_bool(value) -> bool:
+        if isinstance(value, bool):
+            return value
+        return str(value).strip().lower() in {"1", "true", "yes"}
+
+    accepted = [as_bool(row["correction_accepted"]) for row in rows]
+    scores = pd.to_numeric(frame["selective_score"], errors="coerce").fillna(0.0).tolist()
+    baseline_errors = []
+    correction_errors = []
+    for row in rows:
+        reference = normalize_for_scoring(row["truth"]).split()
+        one_best = row.get("one_best") or nbest.get(row["id"], {}).get("1best_text", "")
+        generated = row.get("prediction", "")
+        baseline_errors.append(sum(count_errors(reference, normalize_for_scoring(one_best).split())))
+        correction_errors.append(sum(count_errors(reference, normalize_for_scoring(generated).split())))
+
+    accepted_count = sum(accepted)
+    helpful = sum(
+        use and correction < baseline
+        for use, correction, baseline in zip(accepted, correction_errors, baseline_errors)
+    )
+    harmful = sum(
+        use and correction > baseline
+        for use, correction, baseline in zip(accepted, correction_errors, baseline_errors)
+    )
+    diagnostics = {
+        "threshold": config["selective_min_score"],
+        "utterances": len(rows),
+        "accepted_corrections": accepted_count,
+        "coverage": accepted_count / len(rows) if rows else 0.0,
+        "helpful_accepted_corrections": helpful,
+        "harmful_accepted_corrections": harmful,
+        "harmful_rate_among_accepted": harmful / accepted_count if accepted_count else 0.0,
+    }
+
+    lines = [
+        "\n\nSelective correction diagnostics",
+        "-" * 72,
+        f"  fixed threshold:                 {diagnostics['threshold']:.2f}",
+        f"  accepted corrections:            {accepted_count:,}/{len(rows):,} "
+        f"({diagnostics['coverage']:.2%} coverage)",
+        f"  helpful accepted corrections:    {helpful:,}",
+        f"  harmful accepted corrections:    {harmful:,} "
+        f"({diagnostics['harmful_rate_among_accepted']:.2%} of accepted)",
+        "",
+        "Risk/coverage sweep (accepted generated corrections; abstentions use Whisper 1-best)",
+        f"{'threshold':>12}{'coverage':>12}{'WER':>12}{'harmful':>12}",
+        "-" * 48,
+    ]
+    curve = []
+    for threshold in config.get("selective_report_thresholds", []):
+        use = [
+            score >= threshold and row.get("prediction", "") != (row.get("one_best") or "")
+            for score, row in zip(scores, rows)
+        ]
+        pairs = []
+        harmful_at_threshold = 0
+        for row, take in zip(rows, use):
+            one_best = row.get("one_best") or nbest.get(row["id"], {}).get("1best_text", "")
+            prediction = row.get("prediction", "") if take else one_best
+            pairs.append((row["id"], row["truth"], prediction))
+            if take:
+                reference = normalize_for_scoring(row["truth"]).split()
+                base = sum(count_errors(reference, normalize_for_scoring(one_best).split()))
+                corrected = sum(count_errors(reference, normalize_for_scoring(row.get("prediction", "")).split()))
+                harmful_at_threshold += corrected > base
+        result = score(pairs)
+        coverage = sum(use) / len(use) if use else 0.0
+        curve_row = {
+            "threshold": threshold,
+            "coverage": coverage,
+            "wer": result["wer"],
+            "harmful_accepted_corrections": harmful_at_threshold,
+        }
+        curve.append(curve_row)
+        lines.append(
+            f"{threshold:>12.2f}{coverage:>12.2%}{result['wer']:>12.2%}"
+            f"{harmful_at_threshold:>12,}"
+        )
+
+    diagnostics["risk_coverage"] = curve
+    return lines, diagnostics
 
 
 LENGTH_BUCKETS = [
@@ -385,6 +488,11 @@ def main(config: dict | None = None) -> None:
     if config["metadata_path"].is_file():
         metadata = json.loads(config["metadata_path"].read_text(encoding="utf-8"))
 
+    prediction_frame = pd.read_csv(predictions_path(config, mode))
+    selective_lines, selective_summary = selective_diagnostics(
+        prediction_frame, nbest, config
+    )
+
     config["results_dir"].mkdir(parents=True, exist_ok=True)
 
     lines = [
@@ -413,6 +521,7 @@ def main(config: dict | None = None) -> None:
 
     significance_lines, significance_summary = significance(systems, metadata, config)
     lines += significance_lines
+    lines += selective_lines
 
     # Late-talker vs typically-developing. This split is the reason the dataset
     # is worth running GenSEC over at all, so it gets its own table rather than
@@ -469,6 +578,8 @@ def main(config: dict | None = None) -> None:
     }
     if significance_summary:
         metrics["significance"] = significance_summary
+    if selective_summary:
+        metrics["selective_correction"] = selective_summary
     (config["results_dir"] / "metrics.json").write_text(
         json.dumps(metrics, indent=2), encoding="utf-8"
     )

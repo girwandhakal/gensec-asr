@@ -11,6 +11,7 @@ exists, which is what lets a job that hit the walltime just be resubmitted.
 
 from __future__ import annotations
 
+import csv
 import shutil
 import sys
 import time
@@ -28,6 +29,25 @@ import train
 from config import load_config, predictions_path
 
 TOTAL_STAGES = 6
+REQUIRED_PREDICTION_COLUMNS = {
+    "prediction",
+    "selective_prediction",
+    "generation_confidence",
+    "hypothesis_support",
+    "selective_score",
+}
+
+
+def predictions_are_complete(path: Path) -> bool:
+    """Only reuse Stage 4 output when the selective experiment is present."""
+    if not path.is_file():
+        return False
+    try:
+        with path.open("r", encoding="utf-8", newline="") as handle:
+            header = next(csv.reader(handle), [])
+    except (OSError, UnicodeError):
+        return False
+    return REQUIRED_PREDICTION_COLUMNS.issubset(header)
 
 
 def archive_previous_results(results_dir: Path, history_dir: Path) -> None:
@@ -90,9 +110,10 @@ def main() -> None:
     with stage(4, "TRAIN AND RUN INFERENCE"):
         # The costly one. Delete the predictions to retrain on a grown dataset.
         first_mode = config["inference_modes"][0]
-        if predictions_path(config, first_mode).is_file():
+        if predictions_are_complete(predictions_path(config, first_mode)):
             print(f"Using existing {predictions_path(config, first_mode)}")
         else:
+            print("Stage 4 predictions are missing selective-confidence fields; regenerating")
             train.main(config)
 
     with stage(5, "POSTPROCESS PREDICTIONS"):

@@ -15,6 +15,7 @@ from __future__ import annotations
 import math
 import random
 import sys
+from collections import Counter
 from pathlib import Path
 
 import pandas as pd
@@ -51,8 +52,38 @@ def format_hypotheses(hypotheses: list[str]) -> str:
     return "\n".join(f"{i}. {text}" for i, text in enumerate(hypotheses, start=1))
 
 
-def build_nbest_prompt(hypotheses: list[str]) -> str:
-    return f"{INSTRUCTION}\n\nHypotheses:\n{format_hypotheses(hypotheses)}"
+def consensus_evidence(hypotheses: list[str], config: dict) -> str:
+    """Render word support across hypotheses as explicit model evidence."""
+    word_counts = Counter()
+    for hypothesis in hypotheses:
+        # Count a word once per hypothesis: repeated words in one transcript
+        # should not masquerade as agreement between candidates.
+        word_counts.update(set(normalize(hypothesis).split()))
+
+    minimum = min(config.get("consensus_min_support", 2), len(hypotheses))
+    supported = [
+        (word, count)
+        for word, count in word_counts.items()
+        if count >= minimum
+    ]
+    supported.sort(key=lambda item: (-item[1], item[0]))
+    supported = supported[: config.get("consensus_max_words", 40)]
+
+    if not supported:
+        return "none"
+    total = max(len(hypotheses), 1)
+    return ", ".join(f"{word} ({count}/{total})" for word, count in supported)
+
+
+def hypotheses_block(hypotheses: list[str], config: dict) -> str:
+    return (
+        f"Hypotheses:\n{format_hypotheses(hypotheses)}\n"
+        f"Consensus evidence (word support): {consensus_evidence(hypotheses, config)}"
+    )
+
+
+def build_nbest_prompt(hypotheses: list[str], config: dict) -> str:
+    return f"{INSTRUCTION}\n\n{hypotheses_block(hypotheses, config)}"
 
 
 def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
@@ -70,15 +101,13 @@ def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
         # never saw, which put zero-shot inference off-distribution and made
         # the model echo the hypothesis list back instead of correcting it.
         if not demos:
-            return build_nbest_prompt(hyps)
+            return build_nbest_prompt(hyps, config)
 
         blocks = [INSTRUCTION]
         for demo in demos:
             demo_hyps = demo["input"][:config["icl_demo_hypotheses"]]
-            blocks.append(
-                f"Hypotheses:\n{format_hypotheses(demo_hyps)}\nCorrected: {demo['output']}"
-            )
-        blocks.append(f"Hypotheses:\n{format_hypotheses(hyps)}\nCorrected:")
+            blocks.append(f"{hypotheses_block(demo_hyps, config)}\nCorrected: {demo['output']}")
+        blocks.append(f"{hypotheses_block(hyps, config)}\nCorrected:")
         return "\n\n".join(blocks)
 
     def token_count(text: str) -> int:
@@ -164,7 +193,7 @@ class AbortOnDeadTraining(TrainerCallback):
 
 def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     def tokenize(batch):
-        prompts = [build_nbest_prompt(h) for h in batch["input"]]
+        prompts = [build_nbest_prompt(h, config) for h in batch["input"]]
         model_inputs = tokenizer(
             prompts, max_length=config["max_source_length"], truncation=True
         )
@@ -215,6 +244,9 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     trainer.save_model(str(final_checkpoint))
     tokenizer.save_pretrained(str(final_checkpoint))
     (final_checkpoint / "train_rows.txt").write_text(str(len(train_frame)), encoding="utf-8")
+    (final_checkpoint / "training_signature.txt").write_text(
+        config["methodology_version"], encoding="utf-8"
+    )
     print(f"Saved model to {final_checkpoint}")
 
     return model
@@ -262,6 +294,74 @@ def generation_cap(batch: list[dict], tokenizer, config) -> int:
 
     cap = min(by_hypothesis, by_duration, config["max_target_length"])
     return max(config["generation_min_tokens"], cap)
+
+
+def generated_sequence_confidence(model, inputs, sequences, tokenizer) -> list[float]:
+    """Estimate confidence from the model's mean generated-token probability.
+
+    This uses one teacher-forced forward pass after generation rather than
+    retaining every beam's vocabulary logits during generation. That keeps the
+    confidence signal practical for the same small inference batches used by
+    the pipeline.
+    """
+    if sequences.shape[1] < 2:
+        return [0.0] * sequences.shape[0]
+
+    forward_inputs = {
+        key: value
+        for key, value in inputs.items()
+        if key in {"input_ids", "attention_mask"}
+    }
+    outputs = model(
+        **forward_inputs,
+        decoder_input_ids=sequences[:, :-1],
+        use_cache=False,
+    )
+    labels = sequences[:, 1:]
+    log_probabilities = torch.log_softmax(outputs.logits.float(), dim=-1)
+    token_log_probabilities = log_probabilities.gather(
+        -1, labels.unsqueeze(-1)
+    ).squeeze(-1)
+    valid = labels.ne(tokenizer.pad_token_id)
+    lengths = valid.sum(dim=1).clamp_min(1)
+    mean_log_probability = (token_log_probabilities * valid).sum(dim=1) / lengths
+    return torch.exp(mean_log_probability).detach().cpu().tolist()
+
+
+def hypothesis_support(text: str, hypotheses: list[str]) -> float:
+    """Return the average fraction of hypotheses supporting each output word."""
+    words = normalize(text).split()
+    if not words or not hypotheses:
+        return 0.0
+
+    candidate_words = [set(normalize(hypothesis).split()) for hypothesis in hypotheses]
+    support = sum(
+        sum(word in candidate for candidate in candidate_words) / len(candidate_words)
+        for word in words
+    )
+    return support / len(words)
+
+
+def selective_decision(
+    prediction: str,
+    one_best: str,
+    generation_confidence: float,
+    support: float,
+    config: dict,
+) -> tuple[str, float, bool, str]:
+    """Accept a correction only when its confidence and evidence pass the gate."""
+    selective_score = generation_confidence * (0.5 + 0.5 * support)
+
+    if prediction == one_best:
+        return prediction, selective_score, False, "same_as_1best"
+
+    if (
+        selective_score >= config["selective_min_score"]
+        and support >= config["selective_min_support"]
+    ):
+        return prediction, selective_score, True, "accepted"
+
+    return one_best, selective_score, False, "abstained"
 
 
 def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> None:
@@ -315,9 +415,14 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 repetition_penalty=config["repetition_penalty"],
                 do_sample=False,
             )
+            generation_confidences = generated_sequence_confidence(
+                model, inputs, generated, tokenizer
+            )
         predictions = tokenizer.batch_decode(generated, skip_special_tokens=True)
 
-        for example, (prompt, demos, hyps, tokens), prediction in zip(batch, built, predictions):
+        for example, (prompt, demos, hyps, tokens), prediction, gen_confidence in zip(
+            batch, built, predictions, generation_confidences
+        ):
             cleaned_pred = collapse_whitespace(prediction)
             words = cleaned_pred.split()
 
@@ -339,14 +444,31 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 one_best = example["input"][0] if example["input"] else cleaned_pred
                 cleaned_pred = one_best
 
+            one_best = example["input"][0] if example["input"] else ""
+            support = hypothesis_support(cleaned_pred, example["input"])
+            selective_pred, selective_score, accepted, decision = selective_decision(
+                cleaned_pred,
+                one_best,
+                float(gen_confidence),
+                support,
+                config,
+            )
+
             rows.append({
                 "id": example["id"],
                 "input": " | ".join(example["input"]),
+                "one_best": one_best,
                 "input_token_count": tokens,
                 "retained_icl_examples": demos,
                 "retained_input_hypotheses": hyps,
                 "truth": example["output"],
                 "prediction": cleaned_pred,
+                "selective_prediction": selective_pred,
+                "generation_confidence": float(gen_confidence),
+                "hypothesis_support": support,
+                "selective_score": selective_score,
+                "correction_accepted": accepted,
+                "selective_decision": decision,
             })
 
         if start % (batch_size * 20) == 0:
@@ -381,17 +503,31 @@ def main(config: dict | None = None) -> None:
     # was trained on and retrain whenever the current split doesn't match it.
     final_checkpoint = config["work_dir"] / "final_checkpoint"
     stamp_path = final_checkpoint / "train_rows.txt"
+    signature_path = final_checkpoint / "training_signature.txt"
     stamp = stamp_path.read_text(encoding="utf-8").strip() if stamp_path.is_file() else None
+    signature = (
+        signature_path.read_text(encoding="utf-8").strip()
+        if signature_path.is_file()
+        else None
+    )
 
-    if final_checkpoint.is_dir() and stamp == str(len(train_frame)):
-        print(f"Using existing fine-tune: {final_checkpoint} (trained on {stamp} rows)")
+    if (
+        final_checkpoint.is_dir()
+        and stamp == str(len(train_frame))
+        and signature == config["methodology_version"]
+    ):
+        print(
+            f"Using existing fine-tune: {final_checkpoint} "
+            f"(trained on {stamp} rows, {signature})"
+        )
         model = AutoModelForSeq2SeqLM.from_pretrained(str(final_checkpoint))
     else:
         if final_checkpoint.is_dir():
             print(
                 f"Discarding fine-tune at {final_checkpoint}: trained on "
-                f"{stamp or 'an unknown number of'} rows, current split has "
-                f"{len(train_frame):,} - retraining"
+                f"{stamp or 'an unknown number of'} rows / {signature or 'unknown methodology'}, "
+                f"current split has {len(train_frame):,} / {config['methodology_version']} "
+                "- retraining"
             )
         model = fine_tune(train_frame, tokenizer, config)
 

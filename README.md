@@ -71,6 +71,25 @@ flowchart TD
 | 5 | `postprocess.py` | `data/predictions/predictions_cleaned.csv` |
 | 6 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
 
+## Consensus-aware selective GenSEC
+
+The correction stage now runs two systems from the same generated output. The
+regular GenSEC prediction is always retained. A selective prediction accepts
+that correction only when its mean FLAN-T5 token probability and its word
+support across the Whisper hypotheses pass the configured gate; otherwise it
+abstains and returns Whisper's 1-best transcript.
+
+The prediction CSV records `generation_confidence`, `hypothesis_support`,
+`selective_score`, `correction_accepted`, and `selective_decision`. The final
+WER report compares Whisper 1-best, raw GenSec, selective GenSec, cleaned
+versions of both, the N-best oracle, and the compositional oracle. It also
+reports accepted-correction coverage, helpful versus harmful corrections, and
+a fixed-threshold risk/coverage sweep.
+
+The gate settings are in `configs/baseline.yaml`. Both systems use the same
+test utterances, references, and postprocessing, so the comparison is paired
+and reproducible at the end of every pipeline run.
+
 ## The data
 
 Audio clips and reference transcripts come from the sibling

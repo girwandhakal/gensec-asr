@@ -91,11 +91,19 @@ def main(config: dict | None = None) -> None:
     if not source.is_file():
         raise SystemExit(f"Missing predictions: {source}")
 
-    frame = pd.read_csv(source).fillna({"prediction": ""})
-    original = frame["prediction"].astype(str)
-    frame["prediction"] = original.map(clean_prediction)
+    frame = pd.read_csv(source)
+    prediction_columns = ["prediction"]
+    if "selective_prediction" in frame.columns:
+        prediction_columns.append("selective_prediction")
 
-    changed = int((frame["prediction"] != original).sum())
+    originals = {
+        column: frame[column].fillna("").astype(str)
+        for column in prediction_columns
+    }
+    for column, original in originals.items():
+        frame[column] = original.map(clean_prediction)
+
+    changed = int((frame["prediction"] != originals["prediction"]).sum())
     frame.to_csv(config["cleaned_predictions_path"], index=False)
 
     print(f"Predictions read:    {len(frame):,} ({mode})")
