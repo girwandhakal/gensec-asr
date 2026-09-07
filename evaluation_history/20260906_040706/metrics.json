@@ -1,0 +1,80 @@
+{
+  "whisper_1best": {
+    "substitutions": 35647,
+    "deletions": 19171,
+    "insertions": 11620,
+    "reference_words": 134785,
+    "utterances": 27401,
+    "total_errors": 66438,
+    "wer": 0.49291835144860335,
+    "exact_match_rate": 0.1614174665158206
+  },
+  "gensec_zero_shot": {
+    "substitutions": 31517,
+    "deletions": 16299,
+    "insertions": 9079,
+    "reference_words": 134785,
+    "utterances": 27401,
+    "total_errors": 56895,
+    "wer": 0.4221167043810513,
+    "exact_match_rate": 0.2711579869347834
+  },
+  "gensec_zero_shot_cleaned": {
+    "substitutions": 31476,
+    "deletions": 16445,
+    "insertions": 9049,
+    "reference_words": 134785,
+    "utterances": 27401,
+    "total_errors": 56970,
+    "wer": 0.42267314612160106,
+    "exact_match_rate": 0.2708660267873435
+  },
+  "oracle_nbest": {
+    "substitutions": 31177,
+    "deletions": 17943,
+    "insertions": 8193,
+    "reference_words": 134785,
+    "utterances": 27401,
+    "total_errors": 57313,
+    "wer": 0.42521793968171534,
+    "exact_match_rate": 0.2032772526550126
+  },
+  "oracle_compositional": {
+    "substitutions": 0,
+    "deletions": 47750,
+    "insertions": 0,
+    "reference_words": 134785,
+    "utterances": 27401,
+    "total_errors": 47750,
+    "wer": 0.3542679081500167,
+    "exact_match_rate": 0.0
+  },
+  "significance": {
+    "overall": {
+      "utterances": 27401,
+      "reduction": 0.14363767723290888,
+      "ci_low": 0.13334746340060255,
+      "ci_high": 0.1576520842539402
+    },
+    "LT": {
+      "utterances": 2197,
+      "reduction": 0.10767056404985224,
+      "ci_low": 0.09128787878787879,
+      "ci_high": 0.1257820646506778
+    },
+    "TD": {
+      "utterances": 25204,
+      "reduction": 0.14841019520927456,
+      "ci_low": 0.1358817252418161,
+      "ci_high": 0.16301507537688442
+    },
+    "TD_minus_LT": {
+      "difference": 0.04073963115942232,
+      "ci_low": 0.018694109679113807,
+      "ci_high": 0.06223399501253464,
+      "p_value": 0.0,
+      "p_below": 0.002,
+      "significant": true
+    }
+  }
+}

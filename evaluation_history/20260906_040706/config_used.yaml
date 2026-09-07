@@ -1,5 +1,4 @@
 seed: 42
-methodology_version: consensus_selective_v1
 
 # Audio and reference transcripts prepared by asr-dataset-pipelines.
 # The label CSV lives at the root of the media directory, so config.py derives
@@ -82,17 +81,6 @@ num_beams: 8
 no_repeat_ngram_size: 3        # 0 disables
 repetition_penalty: 1.2        # 1.0 disables
 generation_length_slack: 1.5   # cap output at this multiple of the longest input hypothesis
-
-# Consensus-aware selective correction. The model sees explicit word support
-# counts, and the gate falls back to Whisper 1-best when generated evidence is
-# weak. The raw and selective predictions are both written and evaluated.
-consensus_min_support: 2        # minimum number of hypotheses supporting a word
-consensus_max_words: 40         # keep prompts bounded on long utterances
-selective_min_score: 0.50       # generation confidence x evidence-adjusted support
-selective_min_support: 0.35     # minimum average word support across the n-best list
-
-# Thresholds reported as a risk/coverage curve in addition to the fixed gate.
-selective_report_thresholds: [0.30, 0.40, 0.50, 0.60, 0.70]
 
 # The harder cap: what the clip could physically hold. Whisper writes whole
 # sentences onto near-silent audio - the worst rows of 2026-08-27 were 100 ms
