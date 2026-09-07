@@ -1,0 +1,1 @@
+{"asr_do_sample": true, "asr_model_id": "rishabhjain16/whisper_medium_to_myst55h", "asr_token_margin": 16, "asr_tokens_per_second": 8, "max_clip_seconds": 30, "min_clip_seconds": 0.1, "num_return_sequences": 5, "sample_rate": 16000, "temperature": 0.6, "top_k": 50, "top_p": 0.95}

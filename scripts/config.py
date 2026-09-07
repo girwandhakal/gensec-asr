@@ -62,6 +62,18 @@ def clip_seconds(utterance_id: str) -> float | None:
     return (end - start) / 1000 if end > start else None
 
 
+def transcript_id(utterance_id: str) -> str:
+    """The source transcript a clip was cut from, read straight out of the id.
+
+    Clips are named `<transcript_hash>_<start_ms>_<end_ms>_<ordinal>`, so every
+    utterance from one recording session shares a prefix. This is the unit the
+    train/test split has to respect: utterances from the same session share a
+    child, a recording setup and a vocabulary, so splitting below this level
+    lets the corrector memorize a session it is later scored on.
+    """
+    return utterance_id.split("_")[0]
+
+
 def predictions_path(config: dict, mode: str) -> Path:
     """Where one inference mode's raw predictions live."""
     return config["predictions_dir"] / f"test_predictions_{mode}.csv"

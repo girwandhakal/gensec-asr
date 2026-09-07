@@ -12,6 +12,7 @@ like.
 
 from __future__ import annotations
 
+import json
 import math
 import random
 import sys
@@ -21,7 +22,6 @@ from pathlib import Path
 import pandas as pd
 import torch
 from datasets import Dataset
-from sklearn.model_selection import train_test_split
 from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
@@ -32,7 +32,7 @@ from transformers import (
 )
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import clip_seconds, load_config, predictions_path
+from config import clip_seconds, load_config, predictions_path, transcript_id
 from text import collapse_whitespace
 
 INSTRUCTION = """You are correcting ASR output.
@@ -142,18 +142,87 @@ def load_examples(config: dict) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def make_splits(examples: pd.DataFrame, config: dict):
-    train_frame, test_frame = train_test_split(
-        examples,
-        test_size=config["test_size"],
-        random_state=config["seed"],
-        shuffle=True,
-    )
+def make_splits(examples: pd.DataFrame, config: dict, metadata: dict):
+    """Split by source transcript, stratified by LT/TD.
+
+    Splitting on utterances - which is what this did until 2026-09-07 - puts
+    every test session in the training set too: all 867 test transcripts and
+    all 821 test children also appeared in training. A corrector can score well
+    on that by memorizing a session's vocabulary rather than by correcting, so
+    the number it produced was not a measure of correction.
+
+    Transcripts are held out whole. Stratifying by group matters because LT is
+    the small side - 140 of 873 transcripts - and the LT/TD gap is the finding
+    this project reports, so LT cannot be left to the luck of one draw.
+
+    What this does NOT fix, so nobody goes looking for it: ~11% of test rows
+    are a verbatim (hypotheses, target) pair that also occurs in training, and
+    that figure is identical before and after this change. They are one-word
+    utterances - `yeah` 1,875 times corpus-wide, `no` 592 - recurring across
+    hundreds of transcripts. That is the frequency of short child speech, not
+    leakage, and no split can separate it.
+    """
+    positions: dict[str, dict[str, list[int]]] = {}
+    for position, utterance_id in enumerate(examples["id"]):
+        group = metadata.get(utterance_id, {}).get("group", "")
+        transcript = transcript_id(utterance_id)
+        positions.setdefault(group, {}).setdefault(transcript, []).append(position)
+
+    test_positions: list[int] = []
+    for group in sorted(positions):
+        transcripts = positions[group]
+        total = sum(len(rows) for rows in transcripts.values())
+        target = config["test_size"] * total
+
+        # Sort before shuffling so the draw depends on the seed alone, not on
+        # whatever order the rows happened to arrive in.
+        order = sorted(transcripts)
+        random.Random(f"{config['seed']}:{group}").shuffle(order)
+
+        # Transcripts run from 1 to 866 utterances, so taking them until the
+        # target is passed can overshoot badly. Stop at whichever side of the
+        # target is closer instead.
+        taken = 0
+        held_out = 0
+        for transcript in order:
+            size = len(transcripts[transcript])
+            if taken and abs(taken + size - target) > abs(taken - target):
+                break
+            test_positions.extend(transcripts[transcript])
+            taken += size
+            held_out += 1
+
+        print(
+            f"  {group or '(no group)'}: {held_out}/{len(transcripts)} transcripts, "
+            f"{taken:,}/{total:,} utterances held out ({taken / total:.1%})"
+        )
+
+    # Positional, not label-based: load_examples builds a fresh RangeIndex but
+    # nothing here should depend on that staying true.
+    test_mask = pd.Series(False, index=examples.index)
+    test_mask.iloc[test_positions] = True
+    train_frame, test_frame = examples[~test_mask.to_numpy()], examples[test_mask.to_numpy()]
 
     config["splits_dir"].mkdir(parents=True, exist_ok=True)
     train_frame.to_csv(config["splits_dir"] / "train_split.csv", index=False)
     test_frame.to_csv(config["splits_dir"] / "test_split.csv", index=False)
     print(f"Train: {len(train_frame):,} | Test: {len(test_frame):,}")
+
+    # Leakage is the thing this function exists to prevent, so it is asserted
+    # rather than assumed. A child recorded across several sessions can still
+    # span the split; that residual is reported so it stays a known quantity.
+    train_transcripts = {transcript_id(i) for i in train_frame["id"]}
+    test_transcripts = {transcript_id(i) for i in test_frame["id"]}
+    assert not train_transcripts & test_transcripts, "transcript leaked across the split"
+
+    train_children = {metadata.get(i, {}).get("child_id") for i in train_frame["id"]}
+    test_children = {metadata.get(i, {}).get("child_id") for i in test_frame["id"]}
+    shared = (train_children & test_children) - {None, ""}
+    if shared:
+        print(
+            f"Note: {len(shared)} children appear on both sides (recorded across "
+            "several sessions). Split on child_id instead if that has to be zero."
+        )
 
     return train_frame, test_frame
 
@@ -480,14 +549,82 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
     print(f"Wrote {output_path}")
 
 
+# Everything that changes what a predictions CSV contains. Stage 4 is reused
+# only when all of it still matches, because the alternative - reusing on the
+# column names alone, which is what run_pipeline did until 2026-09-07 - meant a
+# threshold or decoding change silently re-scored stale predictions and the
+# report showed no effect from the edit.
+INFERENCE_SIGNATURE_KEYS = (
+    "methodology_version",
+    "gensec_model_id",
+    "seed",
+    "test_size",
+    "min_hypotheses",
+    "max_source_length",
+    "max_target_length",
+    "num_beams",
+    "no_repeat_ngram_size",
+    "repetition_penalty",
+    "generation_length_slack",
+    "generation_tokens_per_second",
+    "generation_min_tokens",
+    "consensus_min_support",
+    "consensus_max_words",
+    "selective_min_score",
+    "selective_min_support",
+    "few_shot_examples",
+    "icl_demo_hypotheses",
+)
+
+
+def inference_signature(config: dict, mode: str, train_rows: int, test_rows: int) -> str:
+    """A stable description of everything the predictions depend on."""
+    payload = {key: config[key] for key in INFERENCE_SIGNATURE_KEYS if key in config}
+    payload["mode"] = mode
+    payload["train_rows"] = train_rows
+    payload["test_rows"] = test_rows
+    return json.dumps(payload, sort_keys=True, default=str)
+
+
+def signature_path(config: dict, mode: str) -> Path:
+    return predictions_path(config, mode).with_suffix(".signature.json")
+
+
+def predictions_are_current(config: dict, mode: str, train_rows: int, test_rows: int) -> bool:
+    path, stamp = predictions_path(config, mode), signature_path(config, mode)
+    if not path.is_file() or not stamp.is_file():
+        return False
+    return stamp.read_text(encoding="utf-8") == inference_signature(
+        config, mode, train_rows, test_rows
+    )
+
+
 def main(config: dict | None = None) -> None:
     config = config or load_config()
 
     if not config["processed_path"].is_file():
         raise SystemExit(f"Missing dataset: {config['processed_path']}")
 
+    metadata = {}
+    if config["metadata_path"].is_file():
+        metadata = json.loads(config["metadata_path"].read_text(encoding="utf-8"))
+    if not metadata:
+        raise SystemExit(
+            f"Missing metadata: {config['metadata_path']}. The split is stratified by "
+            "LT/TD group, so it cannot be built without it - run stage 1 first."
+        )
+
     examples = load_examples(config)
-    train_frame, test_frame = make_splits(examples, config)
+    train_frame, test_frame = make_splits(examples, config, metadata)
+
+    modes = list(config["inference_modes"])
+    if all(
+        predictions_are_current(config, mode, len(train_frame), len(test_frame))
+        for mode in modes
+    ):
+        for mode in modes:
+            print(f"Using existing predictions: {predictions_path(config, mode)}")
+        return
 
     tokenizer = AutoTokenizer.from_pretrained(config["gensec_model_id"])
 
@@ -531,9 +668,16 @@ def main(config: dict | None = None) -> None:
             )
         model = fine_tune(train_frame, tokenizer, config)
 
-    for mode in config["inference_modes"]:
+    for mode in modes:
+        if predictions_are_current(config, mode, len(train_frame), len(test_frame)):
+            print(f"===== inference: {mode} (already current, skipping) =====")
+            continue
         print(f"===== inference: {mode} =====")
         run_inference(model, tokenizer, train_frame, test_frame, mode, config)
+        signature_path(config, mode).write_text(
+            inference_signature(config, mode, len(train_frame), len(test_frame)),
+            encoding="utf-8",
+        )
 
 
 if __name__ == "__main__":

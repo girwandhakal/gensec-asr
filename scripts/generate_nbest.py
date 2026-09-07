@@ -6,10 +6,19 @@ top N candidate transcripts for each one, not just the best.
 High-level role in the pipeline:
 This is where the raw material for correction comes from, and it sets the
 ceiling on everything downstream: the corrector cannot recover a word that
-appears in none of these candidates. Decoding is beam search, so the candidates
-come back ranked and rank 1 is a genuine 1-best. Sampling was tried first and
-was worse on both counts - it returned candidates in no order at all, and 44%
-of clips collapsed to a single distinct string.
+appears in none of these candidates.
+
+Which decoding strategy runs is set by `asr_do_sample` in baseline.yaml, and it
+matters more than it looks. Under sampling - the current setting - generate()
+returns num_return_sequences independent draws in NO order, so `rank` is the
+order they happened to come back in and `1best_text` is an arbitrary draw
+rather than a best of anything. Everything downstream that treats it as a
+baseline (evaluate.py's whisper_1best, the selective gate's fallback) is then
+comparing against a random sample at temperature 0.6, which flatters the
+correction result by an unmeasured amount. Beam search gives a genuine ranking;
+it has twice collapsed to one distinct string per clip at the settings in
+decode_arguments(), and diverse beam search (asr_beam_groups > 1) is the
+untested candidate fix. See the notes in baseline.yaml.
 
 This is the long stage. It saves as it goes and skips clips it has already
 done, so a job that runs out of walltime just needs resubmitting.
@@ -55,11 +64,13 @@ def load_model(model_id: str):
 
 
 def unique_hypotheses(texts: list[str], scores: list, limit: int) -> list[dict]:
-    """The distinct candidates for one clip, best first.
+    """The distinct candidates for one clip, in the order generate() returned them.
 
-    Under beam search the incoming order is already by sequence score, so rank 1
-    is a genuine 1-best rather than an arbitrary draw. Scores are kept because
-    they are what any later reranking would need.
+    Under beam search that order is by sequence score, so rank 1 is a genuine
+    1-best. Under sampling it is not an order at all - the draws are
+    independent and rank 1 is whichever landed first. `rank` therefore means
+    "position as returned", and only carries best-first meaning when
+    asr_do_sample is false.
     """
     ranked: list[tuple[str, float | None]] = []
     seen: set[str] = set()
@@ -168,6 +179,76 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
     ]
 
 
+# The settings that determine what a cached n-best entry actually contains.
+# Resuming keys on whether a clip id is already present, so without this a
+# decoding change reruns nothing and the corpus stays whatever the previous
+# strategy produced - the whole corpus silently disagreeing with the config
+# archived next to the results.
+DECODE_SIGNATURE_KEYS = (
+    "asr_model_id",
+    "asr_do_sample",
+    "asr_num_beams",
+    "asr_beam_groups",
+    "asr_diversity_penalty",
+    "temperature",
+    "top_p",
+    "top_k",
+    "num_return_sequences",
+    "asr_tokens_per_second",
+    "asr_token_margin",
+    "sample_rate",
+    "min_clip_seconds",
+    "max_clip_seconds",
+)
+
+
+def decode_signature(config: dict) -> str:
+    payload = {key: config[key] for key in DECODE_SIGNATURE_KEYS if key in config}
+    if config.get("asr_do_sample"):
+        # Beam settings cannot affect a sampled decode; excluding them keeps an
+        # unrelated edit from invalidating a corpus it did not change.
+        for key in ("asr_num_beams", "asr_beam_groups", "asr_diversity_penalty"):
+            payload.pop(key, None)
+    else:
+        for key in ("temperature", "top_p", "top_k"):
+            payload.pop(key, None)
+    return json.dumps(payload, sort_keys=True, default=str)
+
+
+def check_decode_signature(config: dict, output_path: Path, cached: int) -> None:
+    """Refuse to extend a corpus that was decoded with different settings.
+
+    Deliberately fatal rather than self-healing: regenerating means days of GPU
+    time and discarding work nobody asked to discard, so that call belongs to
+    whoever is running the job. Continuing would be worse than either option -
+    it would mix two decoding strategies into one corpus and label the result
+    with whichever config happened to be on disk when it finished.
+    """
+    stamp_path = output_path.with_suffix(".signature.json")
+    current = decode_signature(config)
+
+    if not stamp_path.is_file():
+        # First run under signature tracking: adopt the existing corpus as
+        # matching the current config, which holds as long as the decode
+        # settings were not edited between generating it and now.
+        stamp_path.write_text(current, encoding="utf-8")
+        if cached:
+            print(f"Stamped {cached:,} existing clips with the current decode signature")
+        return
+
+    previous = stamp_path.read_text(encoding="utf-8")
+    if previous != current:
+        raise SystemExit(
+            f"Decode settings changed since {output_path.name} was generated.\n"
+            f"  cached ({cached:,} clips): {previous}\n"
+            f"  current:                   {current}\n"
+            "Resuming keys on clip id, so those clips would keep their old decoding "
+            "and the corpus would mix two strategies. Either revert the change in "
+            f"configs/baseline.yaml, or move {output_path.name} and its .signature.json "
+            "aside (see data/archive/) to regenerate the corpus from scratch."
+        )
+
+
 def generate_nbest(config: dict) -> None:
     output_path = config["nbest_path"]
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -177,19 +258,20 @@ def generate_nbest(config: dict) -> None:
         results = json.loads(output_path.read_text(encoding="utf-8"))
         print(f"Resuming from {len(results):,} clips already transcribed")
 
-        # A clip recorded with fewer than min_hypotheses distinct candidates
-        # is not real signal about that clip - it is what a collapsed decode
-        # (e.g. the early_stopping diversity bug fixed in 51e6780) looks like
-        # on disk. Skipping it on resume would keep that stale result forever,
-        # since resuming only looks at whether the key exists. Drop it back
-        # into the work queue instead so a settings change actually reaches
-        # every previously-broken clip without anyone deleting the JSON by hand.
+        # Requeue entries carrying no usable candidate at all. Note this catches
+        # only empty ones: min_hypotheses is 1, so a clip that collapsed to a
+        # single distinct string passes here and keeps its cached result. That
+        # collapse is a decoding problem, and a decoding change is what
+        # check_decode_signature() handles - this is not the check that
+        # rescues those 49,088 single-candidate clips.
         stale = [uid for uid, entry in results.items()
                  if len(entry.get("nbest", [])) < config["min_hypotheses"]]
         for uid in stale:
             del results[uid]
         if stale:
             print(f"Discarding {len(stale):,} stale/collapsed entries for regeneration")
+
+    check_decode_signature(config, output_path, len(results))
 
     clips = sorted(config["media_dir"].rglob("*" + config["audio_extension"]))
     if config["asr_limit"]:

@@ -182,6 +182,26 @@ python scripts/build_gensec_dataset.py
 python scripts/evaluate.py
 ```
 
+## How the test set is held out
+
+Whole source transcripts, stratified by LT/TD. Utterances from one recording
+session share a child, a recording setup and a vocabulary, so an utterance-level
+split lets the corrector memorize sessions it is then scored on - which is what
+this did until 2026-09-07, when all 867 test transcripts and all 821 test
+children were also in the training set. Results produced before
+`methodology_version: transcript_split_v2` are not comparable to results after
+it, and the older numbers in `evaluation_history/` should be read as an upper
+bound rather than a measurement.
+
+Two residuals are known and reported rather than hidden:
+
+- **12 children still span the split**, because they were recorded across
+  several sessions. Split on `child_id` in `make_splits` if that has to be zero.
+- **~11% of test rows are a verbatim (hypotheses, target) pair seen in
+  training**, and no split can change that. They are single-word utterances -
+  `yeah`, `no`, `okay`, `mhm` - that recur across hundreds of transcripts. That
+  is the natural frequency of short child speech, not leakage.
+
 ## What this does not do
 
 Left out to keep the first result interpretable:
