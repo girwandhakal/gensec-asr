@@ -640,11 +640,13 @@ def main(config: dict | None = None) -> None:
     # was trained on and retrain whenever the current split doesn't match it.
     final_checkpoint = config["work_dir"] / "final_checkpoint"
     stamp_path = final_checkpoint / "train_rows.txt"
-    signature_path = final_checkpoint / "training_signature.txt"
+    # Not `signature_path`: that is the module-level function for the per-mode
+    # predictions stamp, and binding it here shadows it for the rest of main().
+    training_signature_path = final_checkpoint / "training_signature.txt"
     stamp = stamp_path.read_text(encoding="utf-8").strip() if stamp_path.is_file() else None
     signature = (
-        signature_path.read_text(encoding="utf-8").strip()
-        if signature_path.is_file()
+        training_signature_path.read_text(encoding="utf-8").strip()
+        if training_signature_path.is_file()
         else None
     )
 
