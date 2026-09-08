@@ -476,10 +476,13 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 **inputs,
                 max_new_tokens=generation_cap(batch, tokenizer, config),
                 num_beams=config["num_beams"],
-                # Repetition control, not cleanup. The first working run emitted
-                # 110,711 insertions - looping phrases until the length limit -
-                # and postprocessing stripped 98,197 of them after the fact.
-                # Blocking the loop here is what should carry the result.
+                # Repetition control, and the only place it happens. The first
+                # working run emitted 110,711 insertions - looping phrases until
+                # the length limit - which a postprocessing stage then stripped
+                # after the fact. These two settings removed the loops at the
+                # source (no prediction now repeats a word more than 3 times),
+                # so that stage was deleted: all it still caught was genuine
+                # child disfluency like "up up up", which is not an artifact.
                 no_repeat_ngram_size=config["no_repeat_ngram_size"],
                 repetition_penalty=config["repetition_penalty"],
                 do_sample=False,

@@ -43,7 +43,7 @@ reuses the model it already trained.
 configs/baseline.yaml     every path and hyperparameter
 envs/                     conda environment and pinned requirements
 bash_scripts/train.sh     the single entry point
-scripts/                  the six pipeline stages
+scripts/                  the five pipeline stages
 data/                     generated artifacts (gitignored)
 evaluation_results/       WER report and metrics
 ```
@@ -57,9 +57,8 @@ flowchart TD
     B --> D[3. build_gensec_dataset.py]
     C --> D
     D --> E[4. train.py<br/>fine-tune FLAN-T5, then infer]
-    E --> F[5. postprocess.py<br/>strip repetition artifacts]
-    F --> G[6. evaluate.py<br/>WER: 1-best vs corrected]
-    G --> H[evaluation_results/]
+    E --> F[5. evaluate.py<br/>WER: 1-best vs corrected]
+    F --> G[evaluation_results/]
 ```
 
 | Stage | Script | Produces |
@@ -68,8 +67,7 @@ flowchart TD
 | 2 | `generate_nbest.py` | `data/utterance_id_to_nbest.json` |
 | 3 | `build_gensec_dataset.py` | `data/processed_gensec.json`, `data/dropped_gensec.json` |
 | 4 | `train.py` | `data/splits/*.csv`, `data/predictions/test_predictions_<mode>.csv` |
-| 5 | `postprocess.py` | `data/predictions/predictions_cleaned.csv` |
-| 6 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
+| 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
 
 ## Consensus-aware selective GenSEC
 
@@ -81,14 +79,32 @@ abstains and returns Whisper's 1-best transcript.
 
 The prediction CSV records `generation_confidence`, `hypothesis_support`,
 `selective_score`, `correction_accepted`, and `selective_decision`. The final
-WER report compares Whisper 1-best, raw GenSec, selective GenSec, cleaned
-versions of both, the N-best oracle, and the compositional oracle. It also
+WER report compares Whisper 1-best, raw GenSec, selective GenSec, the N-best
+oracle, and the compositional oracle. It also
 reports accepted-correction coverage, helpful versus harmful corrections, and
 a fixed-threshold risk/coverage sweep.
 
 The gate settings are in `configs/baseline.yaml`. Both systems use the same
-test utterances, references, and postprocessing, so the comparison is paired
-and reproducible at the end of every pipeline run.
+test utterances and references, so the comparison is paired and reproducible
+at the end of every pipeline run.
+
+## Why there is no postprocessing stage
+
+There was one until 2026-09-08: it collapsed repeated phrases out of the
+predictions, because the first working run looped a phrase until the length
+limit and emitted 110,711 insertions. `no_repeat_ngram_size` and
+`repetition_penalty` now block that at generation time, and they work - no
+prediction in the current run repeats a word more than three times, and none
+runs past 60 words.
+
+With the artifact gone, the only thing left for the stage to match was real
+child speech. It rewrote 93 of 27,412 predictions (0.34%): 15 improved, 61 got
+worse, for a net +96 word errors. Every harmful edit was the same shape -
+`up up up flew the kites`, `and and and make it`, `no no no` - emphatic and
+disfluent repetition that the corrector had already transcribed correctly.
+Run over the ground-truth references themselves, the cleaner corrupted 271 of
+them (1%). A stage that damages 1% of correct human transcripts cannot pay for
+itself at a 0.34% intervention rate, so it was deleted rather than tuned.
 
 ## The data
 
@@ -165,7 +181,7 @@ asr_limit: 200
 
 | File | Contents |
 |---|---|
-| `evaluation_results/wer_report.txt` | WER table for 1-best vs corrected vs cleaned, plus the worst utterances |
+| `evaluation_results/wer_report.txt` | WER table for 1-best vs corrected vs selective, plus the worst utterances |
 | `evaluation_results/metrics.json` | The same numbers, machine-readable |
 | `evaluation_results/config_used.yaml` | The settings that produced them |
 | `evaluation_history/<timestamp>/` | The previous run, archived automatically |

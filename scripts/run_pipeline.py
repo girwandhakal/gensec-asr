@@ -1,6 +1,6 @@
 """
 What this file is for:
-The single entry point. Runs all six stages in order, so nothing has to be
+The single entry point. Runs all five stages in order, so nothing has to be
 run by hand.
 
 High-level role in the pipeline:
@@ -23,11 +23,10 @@ import build_gensec_dataset
 import build_reference_map
 import evaluate
 import generate_nbest
-import postprocess
 import train
 from config import load_config
 
-TOTAL_STAGES = 6
+TOTAL_STAGES = 5
 
 
 def archive_previous_results(results_dir: Path, history_dir: Path) -> None:
@@ -96,10 +95,7 @@ def main() -> None:
         # checks a signature covering all of it.
         train.main(config)
 
-    with stage(5, "POSTPROCESS PREDICTIONS"):
-        postprocess.main(config)
-
-    with stage(6, "EVALUATE"):
+    with stage(5, "EVALUATE"):
         # Last possible moment: everything that can fail has already run, so
         # the previous numbers survive a crash anywhere upstream.
         archive_previous_results(

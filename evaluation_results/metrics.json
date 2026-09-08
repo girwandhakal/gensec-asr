@@ -29,26 +29,6 @@
     "wer": 0.4163946565116209,
     "exact_match_rate": 0.26382606157887056
   },
-  "gensec_zero_shot_cleaned": {
-    "substitutions": 31070,
-    "deletions": 15842,
-    "insertions": 8484,
-    "reference_words": 132348,
-    "utterances": 27412,
-    "total_errors": 55396,
-    "wer": 0.41856318191434705,
-    "exact_match_rate": 0.27878301473807093
-  },
-  "gensec_zero_shot_selective_cleaned": {
-    "substitutions": 29837,
-    "deletions": 18440,
-    "insertions": 6361,
-    "reference_words": 132348,
-    "utterances": 27412,
-    "total_errors": 54638,
-    "wer": 0.41283585698310515,
-    "exact_match_rate": 0.2631694148548081
-  },
   "oracle_nbest": {
     "substitutions": 30884,
     "deletions": 17198,

@@ -7,7 +7,7 @@
 # It activates the environment, checks dependencies, and runs the one Python
 # pipeline that builds the reference map, generates Whisper n-best output,
 # builds the correction dataset, fine-tunes FLAN-T5, runs inference,
-# postprocesses, and scores WER.
+# and scores WER.
 
 #SBATCH --job-name=gensec
 #SBATCH --partition=gpu

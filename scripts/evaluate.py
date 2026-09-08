@@ -251,17 +251,6 @@ def collect_systems(config: dict) -> dict[str, list[tuple[str, str, str]]]:
             for row in frame.to_dict("records")
         ]
 
-    if config["cleaned_predictions_path"].is_file():
-        cleaned = pd.read_csv(config["cleaned_predictions_path"]).fillna("")
-        systems[f"gensec_{mode}_cleaned"] = [
-            (row["id"], row["truth"], row["prediction"]) for row in cleaned.to_dict("records")
-        ]
-        if "selective_prediction" in cleaned.columns:
-            systems[f"gensec_{mode}_selective_cleaned"] = [
-                (row["id"], row["truth"], row["selective_prediction"])
-                for row in cleaned.to_dict("records")
-            ]
-
     # The ceiling. Without it a WER reduction has no scale: 4% of a reachable
     # 5% is most of what there was, 4% of a reachable 40% is barely a start.
     systems["oracle_nbest"] = [

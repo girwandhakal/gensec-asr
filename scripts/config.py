@@ -38,7 +38,6 @@ def load_config(path: Path | None = None) -> dict:
     config["dropped_path"] = data_dir / "dropped_gensec.json"
     config["splits_dir"] = data_dir / "splits"
     config["predictions_dir"] = data_dir / "predictions"
-    config["cleaned_predictions_path"] = config["predictions_dir"] / "predictions_cleaned.csv"
 
     return config
 

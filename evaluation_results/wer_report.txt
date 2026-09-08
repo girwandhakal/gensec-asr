@@ -7,18 +7,12 @@ system                             WER     exact        S        D        I
 whisper_1best                  49.00%    16.39%   35,237   18,217   11,394
 gensec_zero_shot               41.78%    27.94%   31,102   15,686    8,512
 gensec_zero_shot_selective     41.64%    26.38%   29,917   18,163    7,029
-gensec_zero_shot_cleaned       41.86%    27.88%   31,070   15,842    8,484
-gensec_zero_shot_selective_cleaned   41.28%    26.32%   29,837   18,440    6,361
 oracle_nbest                   41.88%    20.43%   30,884   17,198    7,348
 oracle_compositional           35.29%     0.00%        0   46,710        0
 
 gensec_zero_shot vs whisper_1best: +14.72% relative WER reduction (better)
 
 gensec_zero_shot_selective vs whisper_1best: +15.02% relative WER reduction (better)
-
-gensec_zero_shot_cleaned vs whisper_1best: +14.58% relative WER reduction (better)
-
-gensec_zero_shot_selective_cleaned vs whisper_1best: +15.74% relative WER reduction (better)
 
 oracle_nbest vs whisper_1best: +14.52% relative WER reduction (better)
 
@@ -60,15 +54,11 @@ LT
   whisper_1best                 2235    64.34%     9.17%
   gensec_zero_shot              2235    59.45%    13.15%
   gensec_zero_shot_selective    2235    59.10%    13.06%
-  gensec_zero_shot_cleaned      2235    59.52%    13.06%
-  gensec_zero_shot_selective_cleaned    2235    59.12%    12.98%
   oracle_nbest                  2235    56.84%    11.63%
 TD
   whisper_1best                25177    47.48%    17.04%
   gensec_zero_shot             25177    40.04%    29.25%
   gensec_zero_shot_selective   25177    39.91%    27.56%
-  gensec_zero_shot_cleaned     25177    40.11%    29.19%
-  gensec_zero_shot_selective_cleaned   25177    39.52%    27.50%
   oracle_nbest                 25177    40.40%    21.21%
 
 
@@ -79,36 +69,26 @@ By reference length
   whisper_1best                 5496    99.49%    27.49%
   gensec_zero_shot              5496   116.36%    32.28%
   gensec_zero_shot_selective    5496    97.93%    29.00%
-  gensec_zero_shot_cleaned      5496   116.36%    32.28%
-  gensec_zero_shot_selective_cleaned    5496    92.19%    29.02%
   oracle_nbest                  5496    75.04%    33.35%
 2 words
   whisper_1best                 3757    80.62%    16.58%
   gensec_zero_shot              3757    72.82%    29.04%
   gensec_zero_shot_selective    3757    73.42%    24.57%
-  gensec_zero_shot_cleaned      3757    72.81%    29.04%
-  gensec_zero_shot_selective_cleaned    3757    73.41%    24.57%
   oracle_nbest                  3757    69.83%    20.68%
 3-5 words
   whisper_1best                 8651    59.16%    13.21%
   gensec_zero_shot              8651    49.04%    27.78%
   gensec_zero_shot_selective    8651    50.64%    26.86%
-  gensec_zero_shot_cleaned      8651    49.05%    27.75%
-  gensec_zero_shot_selective_cleaned    8651    49.87%    26.83%
   oracle_nbest                  8651    51.16%    16.56%
 6-10 words
   whisper_1best                 7357    40.91%    13.65%
   gensec_zero_shot              7357    33.11%    27.32%
   gensec_zero_shot_selective    7357    33.49%    27.31%
-  gensec_zero_shot_cleaned      7357    33.20%    27.16%
-  gensec_zero_shot_selective_cleaned    7357    33.56%    27.13%
   oracle_nbest                  7357    35.60%    17.45%
 11+ words
   whisper_1best                 2151    35.00%     9.90%
   gensec_zero_shot              2151    27.92%    17.71%
   gensec_zero_shot_selective    2151    27.97%    17.76%
-  gensec_zero_shot_cleaned      2151    28.07%    17.57%
-  gensec_zero_shot_selective_cleaned    2151    28.22%    17.62%
   oracle_nbest                  2151    29.69%    12.69%
 
 
@@ -119,8 +99,6 @@ References of 3+ words only (comparable to published child GenSEC work)
   whisper_1best                18159    44.68%    13.00%
   gensec_zero_shot             18159    36.39%    26.40%
   gensec_zero_shot_selective   18159    37.05%    25.97%
-  gensec_zero_shot_cleaned     18159    36.48%    26.31%
-  gensec_zero_shot_selective_cleaned   18159    36.92%    25.86%
   oracle_nbest                 18159    38.60%    16.47%
 
 
@@ -224,74 +202,6 @@ a7f26114_348141_348241_107  sentence_wer=13.00
 de72f95c_212576_212866_35  sentence_wer=8.00
   ref: hey
   hyp: i was just about to say that yeah
-
-
-Worst utterances - gensec_zero_shot_cleaned
-------------------------------------------------------------------------
-286c4c29_71308_75418_5  sentence_wer=13.00
-  ref: nuhhuh
-  hyp: by the way note the non restrictive relative clause earlier in the sentence
-5db5ca14_804884_809668_68  sentence_wer=9.50
-  ref: oh yeah
-  hyp: and then he shows oh yeah he showed me that number four which is also on the dark green tree was
-309d1202_144788_147790_27  sentence_wer=9.00
-  ref: mm
-  hyp: that's the closest we can get to the city
-eb5b5cb4_209422_212604_54  sentence_wer=8.00
-  ref: twenty
-  hyp: sixteen that's why i told you to wait
-5db5ca14_886570_893026_78  sentence_wer=8.00
-  ref: mm
-  hyp: i'm just addressing for the use of infact
-4ad311a3_1930644_1948325_367  sentence_wer=8.00
-  ref: mm
-  hyp: what would you do there what are these
-6f8ba677_677539_682452_56  sentence_wer=7.00
-  ref: oh ugh
-  hyp: he looked at the dishwasher and he saw the thing happening and said oh uh
-4ad311a3_676600_682885_137  sentence_wer=7.00
-  ref: pond
-  hyp: this is where we park our bikes
-66c5f561_993421_1000572_39  sentence_wer=7.00
-  ref: tony
-  hyp: you mean the second third place people
-52baa29b_1421261_1422402_440  sentence_wer=6.00
-  ref: mm
-  hyp: that what you normally have at
-
-
-Worst utterances - gensec_zero_shot_selective_cleaned
-------------------------------------------------------------------------
-a7f26114_348141_348241_107  sentence_wer=13.00
-  ref: ten
-  hyp: i dont really know but i do know that in a way theres
-286c4c29_71308_75418_5  sentence_wer=13.00
-  ref: nuhhuh
-  hyp: by the way note the non restrictive relative clause earlier in the sentence
-309d1202_144788_147790_27  sentence_wer=10.00
-  ref: mm
-  hyp: this is the closest we can get to the city
-5db5ca14_804884_809668_68  sentence_wer=9.50
-  ref: oh yeah
-  hyp: and then he shows oh yeah he showed me that number four which is also on the dark green tree was
-67ce51d0_1763606_1763747_539  sentence_wer=9.00
-  ref: yeah
-  hyp: the way that happens then you can also just
-247ae489_668054_668554_173  sentence_wer=9.00
-  ref: forty
-  hyp: our name is marnie and im 38 years old
-de72f95c_212576_212866_35  sentence_wer=8.00
-  ref: hey
-  hyp: i was just about to say that yeah
-eb5b5cb4_209422_212604_54  sentence_wer=8.00
-  ref: twenty
-  hyp: sixteen that's why i told you to wait
-67ce51d0_704109_708633_234  sentence_wer=8.00
-  ref: mm
-  hyp: hello i am a hawk and a hawk
-5db5ca14_886570_893026_78  sentence_wer=8.00
-  ref: mm
-  hyp: i'm just addressing for the use of infact
 
 
 Worst utterances - oracle_nbest
