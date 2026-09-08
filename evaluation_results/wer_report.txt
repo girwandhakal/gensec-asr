@@ -1,328 +1,328 @@
 GenSEC evaluation
 ========================================================================
-Test utterances: 27,401
+Test utterances: 27,412
 
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
-whisper_1best                  49.29%    16.14%   35,647   19,171   11,620
-gensec_zero_shot               42.10%    27.09%   31,528   16,162    9,059
-gensec_zero_shot_selective     41.91%    25.45%   30,269   18,916    7,300
-gensec_zero_shot_cleaned       42.17%    27.06%   31,500   16,296    9,037
-gensec_zero_shot_selective_cleaned   41.79%    25.42%   30,172   19,184    6,976
-oracle_nbest                   42.52%    20.33%   31,177   17,943    8,193
-oracle_compositional           35.43%     0.00%        0   47,750        0
+whisper_1best                  49.00%    16.39%   35,237   18,217   11,394
+gensec_zero_shot               41.78%    27.94%   31,102   15,686    8,512
+gensec_zero_shot_selective     41.64%    26.38%   29,917   18,163    7,029
+gensec_zero_shot_cleaned       41.86%    27.88%   31,070   15,842    8,484
+gensec_zero_shot_selective_cleaned   41.28%    26.32%   29,837   18,440    6,361
+oracle_nbest                   41.88%    20.43%   30,884   17,198    7,348
+oracle_compositional           35.29%     0.00%        0   46,710        0
 
-gensec_zero_shot vs whisper_1best: +14.58% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +14.72% relative WER reduction (better)
 
-gensec_zero_shot_selective vs whisper_1best: +14.98% relative WER reduction (better)
+gensec_zero_shot_selective vs whisper_1best: +15.02% relative WER reduction (better)
 
-gensec_zero_shot_cleaned vs whisper_1best: +14.46% relative WER reduction (better)
+gensec_zero_shot_cleaned vs whisper_1best: +14.58% relative WER reduction (better)
 
-gensec_zero_shot_selective_cleaned vs whisper_1best: +15.21% relative WER reduction (better)
+gensec_zero_shot_selective_cleaned vs whisper_1best: +15.74% relative WER reduction (better)
 
-oracle_nbest vs whisper_1best: +13.73% relative WER reduction (better)
+oracle_nbest vs whisper_1best: +14.52% relative WER reduction (better)
 
-oracle_compositional vs whisper_1best: +28.13% relative WER reduction (better)
+oracle_compositional vs whisper_1best: +27.97% relative WER reduction (better)
 
 
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall        27401    14.58%   95% CI [+13.49%, +15.95%]
-  LT              2197    11.35%   95% CI [+9.82%, +13.05%]
-  TD             25204    15.01%   95% CI [+13.77%, +16.46%]
+  overall        27412    14.72%   95% CI [+13.06%, +16.51%]
+  LT              2235     7.60%   95% CI [+5.91%, +9.47%]
+  TD             25177    15.68%   95% CI [+13.89%, +17.89%]
 
-  TD - LT                  3.67%   95% CI [+1.77%, +5.80%]
+  TD - LT                  8.08%   95% CI [+5.53%, +10.91%]
   p < 0.002 - significant at p<0.05
 
 
 Selective correction diagnostics
 ------------------------------------------------------------------------
   fixed threshold:                 0.50
-  accepted corrections:            10,757/27,401 (39.26% coverage)
-  helpful accepted corrections:    6,737
-  harmful accepted corrections:    1,561 (14.51% of accepted)
+  accepted corrections:            10,756/27,412 (39.24% coverage)
+  helpful accepted corrections:    6,788
+  harmful accepted corrections:    1,536 (14.28% of accepted)
 
 Risk/coverage sweep (accepted generated corrections; abstentions use Whisper 1-best)
    threshold    coverage         WER     harmful
 ------------------------------------------------
-        0.30      53.53%      41.18%       2,441
-        0.40      46.86%      41.34%       2,004
-        0.50      40.19%      41.74%       1,586
-        0.60      33.59%      42.56%       1,179
-        0.70      25.95%      43.47%         757
+        0.30      53.65%      40.58%       2,465
+        0.40      46.72%      40.85%       1,967
+        0.50      40.15%      41.46%       1,563
+        0.60      33.55%      42.33%       1,179
+        0.70      25.86%      43.25%         766
 
 
 By group (LT = late talker, TD = typically developing)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 LT
-  whisper_1best                 2197    56.27%     9.47%
-  gensec_zero_shot              2197    49.88%    16.07%
-  gensec_zero_shot_selective    2197    50.48%    15.70%
-  gensec_zero_shot_cleaned      2197    49.96%    16.02%
-  gensec_zero_shot_selective_cleaned    2197    50.51%    15.61%
-  oracle_nbest                  2197    49.45%    12.56%
+  whisper_1best                 2235    64.34%     9.17%
+  gensec_zero_shot              2235    59.45%    13.15%
+  gensec_zero_shot_selective    2235    59.10%    13.06%
+  gensec_zero_shot_cleaned      2235    59.52%    13.06%
+  gensec_zero_shot_selective_cleaned    2235    59.12%    12.98%
+  oracle_nbest                  2235    56.84%    11.63%
 TD
-  whisper_1best                25204    48.49%    16.72%
-  gensec_zero_shot             25204    41.21%    28.06%
-  gensec_zero_shot_selective   25204    40.93%    26.30%
-  gensec_zero_shot_cleaned     25204    41.27%    28.03%
-  gensec_zero_shot_selective_cleaned   25204    40.80%    26.27%
-  oracle_nbest                 25204    41.73%    21.00%
+  whisper_1best                25177    47.48%    17.04%
+  gensec_zero_shot             25177    40.04%    29.25%
+  gensec_zero_shot_selective   25177    39.91%    27.56%
+  gensec_zero_shot_cleaned     25177    40.11%    29.19%
+  gensec_zero_shot_selective_cleaned   25177    39.52%    27.50%
+  oracle_nbest                 25177    40.40%    21.21%
 
 
 By reference length
 ------------------------------------------------------------------------
                                 utts       WER     exact
 1 word
-  whisper_1best                 5442    94.43%    28.46%
-  gensec_zero_shot              5442   112.99%    32.84%
-  gensec_zero_shot_selective    5442    91.22%    29.47%
-  gensec_zero_shot_cleaned      5442   112.95%    32.86%
-  gensec_zero_shot_selective_cleaned    5442    91.03%    29.49%
-  oracle_nbest                  5442    75.91%    34.67%
+  whisper_1best                 5496    99.49%    27.49%
+  gensec_zero_shot              5496   116.36%    32.28%
+  gensec_zero_shot_selective    5496    97.93%    29.00%
+  gensec_zero_shot_cleaned      5496   116.36%    32.28%
+  gensec_zero_shot_selective_cleaned    5496    92.19%    29.02%
+  oracle_nbest                  5496    75.04%    33.35%
 2 words
-  whisper_1best                 3679    81.77%    14.73%
-  gensec_zero_shot              3679    73.85%    27.89%
-  gensec_zero_shot_selective    3679    75.90%    22.59%
-  gensec_zero_shot_cleaned      3679    73.84%    27.89%
-  gensec_zero_shot_selective_cleaned    3679    75.80%    22.59%
-  oracle_nbest                  3679    71.36%    18.92%
+  whisper_1best                 3757    80.62%    16.58%
+  gensec_zero_shot              3757    72.82%    29.04%
+  gensec_zero_shot_selective    3757    73.42%    24.57%
+  gensec_zero_shot_cleaned      3757    72.81%    29.04%
+  gensec_zero_shot_selective_cleaned    3757    73.41%    24.57%
+  oracle_nbest                  3757    69.83%    20.68%
 3-5 words
-  whisper_1best                 8494    60.91%    13.69%
-  gensec_zero_shot              8494    50.82%    27.37%
-  gensec_zero_shot_selective    8494    51.75%    26.50%
-  gensec_zero_shot_cleaned      8494    50.82%    27.37%
-  gensec_zero_shot_selective_cleaned    8494    51.60%    26.48%
-  oracle_nbest                  8494    52.62%    17.34%
+  whisper_1best                 8651    59.16%    13.21%
+  gensec_zero_shot              8651    49.04%    27.78%
+  gensec_zero_shot_selective    8651    50.64%    26.86%
+  gensec_zero_shot_cleaned      8651    49.05%    27.75%
+  gensec_zero_shot_selective_cleaned    8651    49.87%    26.83%
+  oracle_nbest                  8651    51.16%    16.56%
 6-10 words
-  whisper_1best                 7474    42.51%    13.01%
-  gensec_zero_shot              7474    33.59%    25.70%
-  gensec_zero_shot_selective    7474    34.38%    25.68%
-  gensec_zero_shot_cleaned      7474    33.66%    25.64%
-  gensec_zero_shot_selective_cleaned    7474    34.10%    25.61%
-  oracle_nbest                  7474    36.85%    16.51%
+  whisper_1best                 7357    40.91%    13.65%
+  gensec_zero_shot              7357    33.11%    27.32%
+  gensec_zero_shot_selective    7357    33.49%    27.31%
+  gensec_zero_shot_cleaned      7357    33.20%    27.16%
+  gensec_zero_shot_selective_cleaned    7357    33.56%    27.13%
+  oracle_nbest                  7357    35.60%    17.45%
 11+ words
-  whisper_1best                 2312    33.84%     8.52%
-  gensec_zero_shot              2312    28.52%    15.79%
-  gensec_zero_shot_selective    2312    28.55%    15.96%
-  gensec_zero_shot_cleaned      2312    28.65%    15.61%
-  gensec_zero_shot_selective_cleaned    2312    28.78%    15.79%
-  oracle_nbest                  2312    29.54%    12.11%
+  whisper_1best                 2151    35.00%     9.90%
+  gensec_zero_shot              2151    27.92%    17.71%
+  gensec_zero_shot_selective    2151    27.97%    17.76%
+  gensec_zero_shot_cleaned      2151    28.07%    17.57%
+  gensec_zero_shot_selective_cleaned    2151    28.22%    17.62%
+  oracle_nbest                  2151    29.69%    12.69%
 
 
 References of 3+ words only (comparable to published child GenSEC work)
 ------------------------------------------------------------------------
                                 utts       WER     exact
 3+ words
-  whisper_1best                18280    45.32%    12.76%
-  gensec_zero_shot             18280    37.03%    25.22%
-  gensec_zero_shot_selective   18280    37.66%    24.83%
-  gensec_zero_shot_cleaned     18280    37.10%    25.18%
-  gensec_zero_shot_selective_cleaned   18280    37.55%    24.77%
-  oracle_nbest                 18280    39.29%    16.34%
+  whisper_1best                18159    44.68%    13.00%
+  gensec_zero_shot             18159    36.39%    26.40%
+  gensec_zero_shot_selective   18159    37.05%    25.97%
+  gensec_zero_shot_cleaned     18159    36.48%    26.31%
+  gensec_zero_shot_selective_cleaned   18159    36.92%    25.86%
+  oracle_nbest                 18159    38.60%    16.47%
 
 
 Worst utterances - whisper_1best
 ------------------------------------------------------------------------
-caa18248_731002_733904_160  sentence_wer=79.75
-  ref: i see a lion
-  hyp: i see a lion and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk too
-ca1af806_319242_339118_49  sentence_wer=63.00
-  ref: yeah
-  hyp: and he said yeah in other words uh i was not only questioning the surprise because i thought that he had to go pee but he had gone pee before but i also explained the source of my question which may be something i havent seen him quite do this but he may be picking that up soon ill ill be monitoring for it
-d1e46094_410128_430469_42  sentence_wer=57.00
-  ref: zero
-  hyp: i was talking to ross a little bit about how much he liked the girls how pretty he thought the or cute the girls were in class and he he was estimating how big they were and i asked how cute oh please no i asked how cute um thank you uh stacie was and he said zero
-e27739fd_2129082_2131504_621  sentence_wer=22.89
-  ref: blah blah blah blah blah blah blah blah blah
-  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-d46a1c10_987156_992793_95  sentence_wer=22.00
-  ref: whatever
-  hyp: and i said gave her a long explanation about how it depends on the role and the sense and ross said what
-75e24f8c_538572_549370_12  sentence_wer=19.00
-  ref: yeah
-  hyp: this is uh because we were sleeping downstairs in the uh motel by the beach and he liked that
-d034267d_335967_336108_141  sentence_wer=18.00
-  ref: yep
-  hyp: i dont really know but i do know that they are living a very special and wonderful life
-f74602e2_285874_286175_67  sentence_wer=16.00
-  ref: mitt
-  hyp: and if you want to see more of this stuff just click on the little bell
+67ce51d0_704109_708633_234  sentence_wer=319.00
+  ref: mm
+  hyp: hello i am a hawk and i am a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk
+286c4c29_1133850_1139795_66  sentence_wer=43.20
+  ref: mm mm mm mm mm
+  hyp: mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm
+4ad311a3_73398_75780_7  sentence_wer=41.50
+  ref: c cookies
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+93a03081_1383845_1388190_377  sentence_wer=29.82
+  ref: if you are human you would just put a shoe on
+  hyp: you are a human you have just put a shoe on you are a human you are just a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be a human be
+c7fb7885_871195_879365_81  sentence_wer=16.59
+  ref: and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew
+  hyp: and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and go
 c7ef2ab5_1049160_1062952_52  sentence_wer=13.67
   ref: pooocha pun pooch
   hyp: punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch
-884b4c25_471008_473893_55  sentence_wer=13.00
-  ref: worried
-  hyp: you kind of told me youd be saying oh you know wheres my
+a7f26114_348141_348241_107  sentence_wer=13.00
+  ref: ten
+  hyp: i dont really know but i do know that in a way theres
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
+5db5ca14_804884_809668_68  sentence_wer=10.50
+  ref: oh yeah
+  hyp: and then he showed oh yeah he showed me that number four which is also on the dark green tree was colored black
+309d1202_144788_147790_27  sentence_wer=10.00
+  ref: mm
+  hyp: this is the closest we can get to the city
 
 
 Worst utterances - gensec_zero_shot
 ------------------------------------------------------------------------
-75e24f8c_538572_549370_12  sentence_wer=17.00
-  ref: yeah
-  hyp: this is because we were sleeping downstairs in the motel by the beach and he liked that
-d46a1c10_987156_992793_95  sentence_wer=15.00
-  ref: whatever
-  hyp: and i said gave her a long explanation about how it depends on the role
-884b4c25_471008_473893_55  sentence_wer=13.00
-  ref: worried
-  hyp: you kind of told me you'd be saying oh you know where's my
-309d1202_144788_147790_27  sentence_wer=10.00
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
+5db5ca14_804884_809668_68  sentence_wer=9.50
+  ref: oh yeah
+  hyp: and then he shows oh yeah he showed me that number four which is also on the dark green tree was
+309d1202_144788_147790_27  sentence_wer=9.00
   ref: mm
-  hyp: this is the closest we can get to the city
-4844c1a8_64178_75347_1  sentence_wer=10.00
-  ref: yeah
-  hyp: and ross said gave him some reply like yeah or something
-31bfa83f_932661_937188_18  sentence_wer=9.00
-  ref: picturedee
-  hyp: and ross started to giggle and he said picture
-4ad311a3_746374_747997_147  sentence_wer=8.00
-  ref: cancoon
-  hyp: and he and the elephant are winding them
-89574440_20_2722_1  sentence_wer=8.00
-  ref: abcdefghijklmnopqrstuvwxyz
-  hyp: c d e f h i j k
-5855403c_939233_941578_92  sentence_wer=7.00
-  ref: daddy
-  hyp: maybe i'll get him to the cup
+  hyp: that's the closest we can get to the city
+eb5b5cb4_209422_212604_54  sentence_wer=8.00
+  ref: twenty
+  hyp: sixteen that's why i told you to wait
+5db5ca14_886570_893026_78  sentence_wer=8.00
+  ref: mm
+  hyp: i'm just addressing for the use of infact
+4ad311a3_1930644_1948325_367  sentence_wer=8.00
+  ref: mm
+  hyp: what would you do there what are these
+6f8ba677_677539_682452_56  sentence_wer=7.00
+  ref: oh ugh
+  hyp: he looked at the dishwasher and he saw the thing happening and said oh uh
 4ad311a3_676600_682885_137  sentence_wer=7.00
   ref: pond
   hyp: this is where we park our bikes
+66c5f561_993421_1000572_39  sentence_wer=7.00
+  ref: tony
+  hyp: you mean the second third place people
+52baa29b_1421261_1422402_440  sentence_wer=6.00
+  ref: mm
+  hyp: that what you normally have at
 
 
 Worst utterances - gensec_zero_shot_selective
 ------------------------------------------------------------------------
-e27739fd_2129082_2131504_621  sentence_wer=22.89
-  ref: blah blah blah blah blah blah blah blah blah
-  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-d034267d_335967_336108_141  sentence_wer=18.00
-  ref: yep
-  hyp: i dont really know but i do know that they are living a very special and wonderful life
-75e24f8c_538572_549370_12  sentence_wer=17.00
-  ref: yeah
-  hyp: this is because we were sleeping downstairs in the motel by the beach and he liked that
-f74602e2_285874_286175_67  sentence_wer=16.00
-  ref: mitt
-  hyp: and if you want to see more of this stuff just click on the little bell
-d46a1c10_987156_992793_95  sentence_wer=15.00
-  ref: whatever
-  hyp: and i said gave her a long explanation about how it depends on the role
+67ce51d0_704109_708633_234  sentence_wer=319.00
+  ref: mm
+  hyp: hello i am a hawk and i am a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk and a hawk
+286c4c29_1133850_1139795_66  sentence_wer=43.20
+  ref: mm mm mm mm mm
+  hyp: mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm mm
 c7ef2ab5_1049160_1062952_52  sentence_wer=13.67
   ref: pooocha pun pooch
   hyp: punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch
-884b4c25_471008_473893_55  sentence_wer=13.00
-  ref: worried
-  hyp: you kind of told me you'd be saying oh you know where's my
+a7f26114_348141_348241_107  sentence_wer=13.00
+  ref: ten
+  hyp: i dont really know but i do know that in a way theres
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
 309d1202_144788_147790_27  sentence_wer=10.00
   ref: mm
   hyp: this is the closest we can get to the city
-4844c1a8_64178_75347_1  sentence_wer=10.00
+5db5ca14_804884_809668_68  sentence_wer=9.50
+  ref: oh yeah
+  hyp: and then he shows oh yeah he showed me that number four which is also on the dark green tree was
+67ce51d0_1763606_1763747_539  sentence_wer=9.00
   ref: yeah
-  hyp: and ross said gave him some reply like yeah or something
-31bfa83f_932661_937188_18  sentence_wer=9.00
-  ref: picturedee
-  hyp: and ross started to giggle and he said picture
+  hyp: the way that happens then you can also just
+247ae489_668054_668554_173  sentence_wer=9.00
+  ref: forty
+  hyp: our name is marnie and im 38 years old
+de72f95c_212576_212866_35  sentence_wer=8.00
+  ref: hey
+  hyp: i was just about to say that yeah
 
 
 Worst utterances - gensec_zero_shot_cleaned
 ------------------------------------------------------------------------
-75e24f8c_538572_549370_12  sentence_wer=17.00
-  ref: yeah
-  hyp: this is because we were sleeping downstairs in the motel by the beach and he liked that
-d46a1c10_987156_992793_95  sentence_wer=15.00
-  ref: whatever
-  hyp: and i said gave her a long explanation about how it depends on the role
-884b4c25_471008_473893_55  sentence_wer=13.00
-  ref: worried
-  hyp: you kind of told me you'd be saying oh you know where's my
-309d1202_144788_147790_27  sentence_wer=10.00
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
+5db5ca14_804884_809668_68  sentence_wer=9.50
+  ref: oh yeah
+  hyp: and then he shows oh yeah he showed me that number four which is also on the dark green tree was
+309d1202_144788_147790_27  sentence_wer=9.00
   ref: mm
-  hyp: this is the closest we can get to the city
-4844c1a8_64178_75347_1  sentence_wer=10.00
-  ref: yeah
-  hyp: and ross said gave him some reply like yeah or something
-31bfa83f_932661_937188_18  sentence_wer=9.00
-  ref: picturedee
-  hyp: and ross started to giggle and he said picture
-4ad311a3_746374_747997_147  sentence_wer=8.00
-  ref: cancoon
-  hyp: and he and the elephant are winding them
-89574440_20_2722_1  sentence_wer=8.00
-  ref: abcdefghijklmnopqrstuvwxyz
-  hyp: c d e f h i j k
-5855403c_939233_941578_92  sentence_wer=7.00
-  ref: daddy
-  hyp: maybe i'll get him to the cup
+  hyp: that's the closest we can get to the city
+eb5b5cb4_209422_212604_54  sentence_wer=8.00
+  ref: twenty
+  hyp: sixteen that's why i told you to wait
+5db5ca14_886570_893026_78  sentence_wer=8.00
+  ref: mm
+  hyp: i'm just addressing for the use of infact
+4ad311a3_1930644_1948325_367  sentence_wer=8.00
+  ref: mm
+  hyp: what would you do there what are these
+6f8ba677_677539_682452_56  sentence_wer=7.00
+  ref: oh ugh
+  hyp: he looked at the dishwasher and he saw the thing happening and said oh uh
 4ad311a3_676600_682885_137  sentence_wer=7.00
   ref: pond
   hyp: this is where we park our bikes
+66c5f561_993421_1000572_39  sentence_wer=7.00
+  ref: tony
+  hyp: you mean the second third place people
+52baa29b_1421261_1422402_440  sentence_wer=6.00
+  ref: mm
+  hyp: that what you normally have at
 
 
 Worst utterances - gensec_zero_shot_selective_cleaned
 ------------------------------------------------------------------------
-d034267d_335967_336108_141  sentence_wer=18.00
-  ref: yep
-  hyp: i dont really know but i do know that they are living a very special and wonderful life
-75e24f8c_538572_549370_12  sentence_wer=17.00
-  ref: yeah
-  hyp: this is because we were sleeping downstairs in the motel by the beach and he liked that
-f74602e2_285874_286175_67  sentence_wer=16.00
-  ref: mitt
-  hyp: and if you want to see more of this stuff just click on the little bell
-d46a1c10_987156_992793_95  sentence_wer=15.00
-  ref: whatever
-  hyp: and i said gave her a long explanation about how it depends on the role
-884b4c25_471008_473893_55  sentence_wer=13.00
-  ref: worried
-  hyp: you kind of told me you'd be saying oh you know where's my
+a7f26114_348141_348241_107  sentence_wer=13.00
+  ref: ten
+  hyp: i dont really know but i do know that in a way theres
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
 309d1202_144788_147790_27  sentence_wer=10.00
   ref: mm
   hyp: this is the closest we can get to the city
-4844c1a8_64178_75347_1  sentence_wer=10.00
+5db5ca14_804884_809668_68  sentence_wer=9.50
+  ref: oh yeah
+  hyp: and then he shows oh yeah he showed me that number four which is also on the dark green tree was
+67ce51d0_1763606_1763747_539  sentence_wer=9.00
   ref: yeah
-  hyp: and ross said gave him some reply like yeah or something
-31bfa83f_932661_937188_18  sentence_wer=9.00
-  ref: picturedee
-  hyp: and ross started to giggle and he said picture
-fb8ef7a6_139740_139861_42  sentence_wer=8.00
-  ref: j juice
-  hyp: been talking about this for a while now and i was like okay let me start
-89574440_20_2722_1  sentence_wer=8.00
-  ref: abcdefghijklmnopqrstuvwxyz
-  hyp: c d e f h i j k
+  hyp: the way that happens then you can also just
+247ae489_668054_668554_173  sentence_wer=9.00
+  ref: forty
+  hyp: our name is marnie and im 38 years old
+de72f95c_212576_212866_35  sentence_wer=8.00
+  ref: hey
+  hyp: i was just about to say that yeah
+eb5b5cb4_209422_212604_54  sentence_wer=8.00
+  ref: twenty
+  hyp: sixteen that's why i told you to wait
+67ce51d0_704109_708633_234  sentence_wer=8.00
+  ref: mm
+  hyp: hello i am a hawk and a hawk
+5db5ca14_886570_893026_78  sentence_wer=8.00
+  ref: mm
+  hyp: i'm just addressing for the use of infact
 
 
 Worst utterances - oracle_nbest
 ------------------------------------------------------------------------
-ca1af806_319242_339118_49  sentence_wer=62.00
-  ref: yeah
-  hyp: and he said yeah in other words uh i was not only questioning the surprise because i thought that you had to go pee but you had gone pee before i also explain the source of my questioning which may be something i havent seen him quite do this but he may be picking that up soon ill ill be monitoring for it
-d1e46094_410128_430469_42  sentence_wer=57.00
-  ref: zero
-  hyp: i was talking to ross a little bit about how much he liked the girls how pretty he thought the or cute the girls were in class and he he was estimating how big they were and i asked how cute oh please no i asked how cute um thank you uh stacie was and he said zero
-e27739fd_2129082_2131504_621  sentence_wer=22.11
-  ref: blah blah blah blah blah blah blah blah blah
-  hyp: blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-d46a1c10_987156_992793_95  sentence_wer=21.00
-  ref: whatever
-  hyp: and i said gave her a long explanation about how it depends on the role and the sentence and ross said whatever
-75e24f8c_538572_549370_12  sentence_wer=19.00
-  ref: yeah
-  hyp: this is uh because we were sleeping downstairs in the uh motel by the beach and he liked that
-884b4c25_471008_473893_55  sentence_wer=13.00
-  ref: worried
-  hyp: you kind of told me youd be saying oh you know wheres my
-60bafe2b_258170_282946_6  sentence_wer=11.33
-  ref: can we have some bedtime snack
-  hyp: um i promised to ross that he could after he clean up his room i said you can have some youve done such a good job you can have some uh bedtime snack you certainly deserved it go down and tell mom she probably will give you some trouble but ill come down in a little bit anyway he went down and told mary that he said uh can we have some bedtime snack
-4844c1a8_64178_75347_1  sentence_wer=10.00
-  ref: yeah
-  hyp: and ross said gave him some reply like yeah or something
-e16dd427_497683_511383_55  sentence_wer=9.33
-  ref: as i knew
-  hyp: then he saw that it was dumbo on the phone on the television and he said just as i no lets see as i knew not just as as i knew
-7f5ea438_988620_1010168_31  sentence_wer=9.12
-  ref: yeah he has very good ideas about art
-  hyp: grandpa had his own ideas about how to a lot of things he didnt want to go on the walk with us and he said he had his own ideas and ross said yeah he has his own ideas about art too and i think ross menace has very good ideas not that he was headstrong but that he had very good ideas about art we asked him what does that mean he said he had very good ideas about art
+c7fb7885_871195_879365_81  sentence_wer=15.50
+  ref: and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew and grew
+  hyp: and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and grow and go
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
+5db5ca14_804884_809668_68  sentence_wer=10.50
+  ref: oh yeah
+  hyp: and then he showed oh yeah he showed me that number four which is also on the dark green tree was colored black
+6f8ba677_240355_259015_34  sentence_wer=9.75
+  ref: is this a cereal
+  hyp: mark made a in a bowl mark put cherries and blueberries i think and fritos and chocolate chips and he told me it was a cereal later on ross came in was sort of nibbling from it and said is this a cereal
+66c5f561_993421_1000572_39  sentence_wer=9.00
+  ref: tony
+  hyp: you mean the second third place people mm mm
+4ad311a3_1930644_1948325_367  sentence_wer=9.00
+  ref: mm
+  hyp: what would you do there um what are these
+eb5b5cb4_209422_212604_54  sentence_wer=8.00
+  ref: twenty
+  hyp: sixteen thats why i told you to wait
+6f8ba677_677539_682452_56  sentence_wer=7.00
+  ref: oh ugh
+  hyp: we looked at the dishwasher and we saw the thing happening and said oh uh
+5db5ca14_886570_893026_78  sentence_wer=7.00
+  ref: mm
+  hyp: just addressing for the use of infact
+017eb8da_206105_219001_28  sentence_wer=7.00
+  ref: and little boy took one home
+  hyp: and thats it right thats really good did you remember that from last week no wow you did a really good job you know what were gonna do now even though you did a good job that time um i wanna try to

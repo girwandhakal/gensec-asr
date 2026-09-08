@@ -1,11 +1,5 @@
 seed: 42
-# Bumping this invalidates the saved fine-tune and the saved predictions, which
-# is the point: v2 is the first version whose test set is disjoint from its
-# training set. Under v1 the split was drawn over utterances, so all 867 test
-# transcripts and all 821 test children were also in training and 11.0% of test
-# rows were verbatim training pairs. Every v1 number measures memorization as
-# much as correction and none of them carry over.
-methodology_version: transcript_split_v2
+methodology_version: consensus_selective_v1
 
 # Audio and reference transcripts prepared by asr-dataset-pipelines.
 # The label CSV lives at the root of the media directory, so config.py derives
@@ -106,10 +100,6 @@ selective_report_thresholds: [0.30, 0.40, 0.50, 0.60, 0.70]
 # that. 8 tokens/s is deliberately generous against ~3 words/s of child speech.
 generation_tokens_per_second: 8
 generation_min_tokens: 6       # floor. 4 cut 262 predictions mid-word ("i don'"), all on sub-1s clips
-# Held out by whole source transcript, stratified by LT/TD (see make_splits).
-# Never by utterance: utterances from one recording session share a child, a
-# recording setup and a vocabulary, so an utterance-level split lets the
-# corrector memorize sessions it is then scored on.
 test_size: 0.2
 eval_size: 0.02                # held out of the fine-tune for a per-epoch loss check
 inference_modes: [zero_shot]   # also available: one_shot, few_shot

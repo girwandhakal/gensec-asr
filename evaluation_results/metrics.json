@@ -1,97 +1,97 @@
 {
   "whisper_1best": {
-    "substitutions": 35647,
-    "deletions": 19171,
-    "insertions": 11620,
-    "reference_words": 134785,
-    "utterances": 27401,
-    "total_errors": 66438,
-    "wer": 0.49291835144860335,
-    "exact_match_rate": 0.1614174665158206
+    "substitutions": 35237,
+    "deletions": 18217,
+    "insertions": 11394,
+    "reference_words": 132348,
+    "utterances": 27412,
+    "total_errors": 64848,
+    "wer": 0.4899809592891468,
+    "exact_match_rate": 0.16394279877425944
   },
   "gensec_zero_shot": {
-    "substitutions": 31528,
-    "deletions": 16162,
-    "insertions": 9059,
-    "reference_words": 134785,
-    "utterances": 27401,
-    "total_errors": 56749,
-    "wer": 0.4210334977927811,
-    "exact_match_rate": 0.2709390168242035
+    "substitutions": 31102,
+    "deletions": 15686,
+    "insertions": 8512,
+    "reference_words": 132348,
+    "utterances": 27412,
+    "total_errors": 55300,
+    "wer": 0.4178378215008916,
+    "exact_match_rate": 0.27940318108857437
   },
   "gensec_zero_shot_selective": {
-    "substitutions": 30269,
-    "deletions": 18916,
-    "insertions": 7300,
-    "reference_words": 134785,
-    "utterances": 27401,
-    "total_errors": 56485,
-    "wer": 0.4190748228660459,
-    "exact_match_rate": 0.2545162585307106
+    "substitutions": 29917,
+    "deletions": 18163,
+    "insertions": 7029,
+    "reference_words": 132348,
+    "utterances": 27412,
+    "total_errors": 55109,
+    "wer": 0.4163946565116209,
+    "exact_match_rate": 0.26382606157887056
   },
   "gensec_zero_shot_cleaned": {
-    "substitutions": 31500,
-    "deletions": 16296,
-    "insertions": 9037,
-    "reference_words": 134785,
-    "utterances": 27401,
-    "total_errors": 56833,
-    "wer": 0.42165671254219683,
-    "exact_match_rate": 0.27064705667676364
+    "substitutions": 31070,
+    "deletions": 15842,
+    "insertions": 8484,
+    "reference_words": 132348,
+    "utterances": 27412,
+    "total_errors": 55396,
+    "wer": 0.41856318191434705,
+    "exact_match_rate": 0.27878301473807093
   },
   "gensec_zero_shot_selective_cleaned": {
-    "substitutions": 30172,
-    "deletions": 19184,
-    "insertions": 6976,
-    "reference_words": 134785,
-    "utterances": 27401,
-    "total_errors": 56332,
-    "wer": 0.4179396817153244,
-    "exact_match_rate": 0.2541513083464107
+    "substitutions": 29837,
+    "deletions": 18440,
+    "insertions": 6361,
+    "reference_words": 132348,
+    "utterances": 27412,
+    "total_errors": 54638,
+    "wer": 0.41283585698310515,
+    "exact_match_rate": 0.2631694148548081
   },
   "oracle_nbest": {
-    "substitutions": 31177,
-    "deletions": 17943,
-    "insertions": 8193,
-    "reference_words": 134785,
-    "utterances": 27401,
-    "total_errors": 57313,
-    "wer": 0.42521793968171534,
-    "exact_match_rate": 0.2032772526550126
+    "substitutions": 30884,
+    "deletions": 17198,
+    "insertions": 7348,
+    "reference_words": 132348,
+    "utterances": 27412,
+    "total_errors": 55430,
+    "wer": 0.4188200803941125,
+    "exact_match_rate": 0.20429009193054137
   },
   "oracle_compositional": {
     "substitutions": 0,
-    "deletions": 47750,
+    "deletions": 46710,
     "insertions": 0,
-    "reference_words": 134785,
-    "utterances": 27401,
-    "total_errors": 47750,
-    "wer": 0.3542679081500167,
+    "reference_words": 132348,
+    "utterances": 27412,
+    "total_errors": 46710,
+    "wer": 0.35293317617191045,
     "exact_match_rate": 0.0
   },
   "significance": {
     "overall": {
-      "utterances": 27401,
-      "reduction": 0.14583521478671843,
-      "ci_low": 0.13492208703076877,
-      "ci_high": 0.15948994167361027
+      "utterances": 27412,
+      "reduction": 0.14723661485319517,
+      "ci_low": 0.1306121813339978,
+      "ci_high": 0.1651286814273302
     },
     "LT": {
-      "utterances": 2197,
-      "reduction": 0.11345239624823333,
-      "ci_low": 0.09817470664928292,
-      "ci_high": 0.1305055055055055
+      "utterances": 2235,
+      "reduction": 0.07603025560772039,
+      "ci_low": 0.05909153665608173,
+      "ci_high": 0.09470443349753695
     },
     "TD": {
-      "utterances": 25204,
-      "reduction": 0.15013212854829086,
-      "ci_low": 0.13766883094337,
-      "ci_high": 0.164560821110396
+      "utterances": 25177,
+      "reduction": 0.1567855893669115,
+      "ci_low": 0.13888499789886538,
+      "ci_high": 0.17887526051453756
     },
     "TD_minus_LT": {
-      "difference": 0.03667973230005753,
-      "ci_low": 0.01773296639817734,
-      "ci_high": 0.05800736606766098,
+      "difference": 0.08075533375919111,
+      "ci_low": 0.055262002703160354,
+      "ci_high": 0.10914955788397797,
       "p_value": 0.0,
       "p_below": 0.002,
       "significant": true
@@ -99,42 +99,42 @@
   },
   "selective_correction": {
     "threshold": 0.5,
-    "utterances": 27401,
-    "accepted_corrections": 10757,
-    "coverage": 0.3925769132513412,
-    "helpful_accepted_corrections": 6737,
-    "harmful_accepted_corrections": 1561,
-    "harmful_rate_among_accepted": 0.1451148089616064,
+    "utterances": 27412,
+    "accepted_corrections": 10756,
+    "coverage": 0.3923828980008755,
+    "helpful_accepted_corrections": 6788,
+    "harmful_accepted_corrections": 1536,
+    "harmful_rate_among_accepted": 0.1428040163629602,
     "risk_coverage": [
       {
         "threshold": 0.3,
-        "coverage": 0.5353454253494399,
-        "wer": 0.411818822569277,
-        "harmful_accepted_corrections": 2441
+        "coverage": 0.5365168539325843,
+        "wer": 0.4057560371142745,
+        "harmful_accepted_corrections": 2465
       },
       {
         "threshold": 0.4,
-        "coverage": 0.4685960366409985,
-        "wer": 0.4133842786660237,
-        "harmful_accepted_corrections": 2004
+        "coverage": 0.4672041441704363,
+        "wer": 0.4085290295282135,
+        "harmful_accepted_corrections": 1967
       },
       {
         "threshold": 0.5,
-        "coverage": 0.40191963796941715,
-        "wer": 0.4174054976443966,
-        "harmful_accepted_corrections": 1586
+        "coverage": 0.4014665110170728,
+        "wer": 0.41461147882854293,
+        "harmful_accepted_corrections": 1563
       },
       {
         "threshold": 0.6,
-        "coverage": 0.33593664464800554,
-        "wer": 0.42558890084208184,
+        "coverage": 0.3355099956223552,
+        "wer": 0.423308247952368,
         "harmful_accepted_corrections": 1179
       },
       {
         "threshold": 0.7,
-        "coverage": 0.25947958103718843,
-        "wer": 0.43468486849426863,
-        "harmful_accepted_corrections": 757
+        "coverage": 0.25857288778637094,
+        "wer": 0.4325339257110043,
+        "harmful_accepted_corrections": 766
       }
     ]
   }
