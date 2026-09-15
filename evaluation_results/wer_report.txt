@@ -92,6 +92,46 @@ By reference length
   oracle_nbest                  2151    29.69%    12.69%
 
 
+By reference audio duration
+------------------------------------------------------------------------
+                                utts       WER     exact
+under 0.5s
+  whisper_1best                 2104    97.84%    15.21%
+  gensec_zero_shot              2104    96.07%    21.53%
+  gensec_zero_shot_selective    2104    97.34%    16.06%
+  oracle_nbest                  2104    82.40%    18.77%
+0.5-1s
+  whisper_1best                 7866    73.11%    22.90%
+  gensec_zero_shot              7866    75.38%    30.29%
+  gensec_zero_shot_selective    7866    69.86%    27.22%
+  oracle_nbest                  7866    64.41%    27.77%
+1-2s
+  whisper_1best                 7546    50.02%    15.11%
+  gensec_zero_shot              7546    42.31%    30.29%
+  gensec_zero_shot_selective    7546    42.47%    29.53%
+  oracle_nbest                  7546    43.51%    19.27%
+2-3s
+  whisper_1best                 3989    41.24%    15.29%
+  gensec_zero_shot              3989    34.17%    29.53%
+  gensec_zero_shot_selective    3989    34.13%    29.46%
+  oracle_nbest                  3989    35.16%    18.88%
+3-5s
+  whisper_1best                 3632    39.78%    12.72%
+  gensec_zero_shot              3632    30.77%    26.71%
+  gensec_zero_shot_selective    3632    32.05%    26.51%
+  oracle_nbest                  3632    32.30%    16.60%
+5-10s
+  whisper_1best                 1968    42.31%     7.47%
+  gensec_zero_shot              1968    31.74%    18.09%
+  gensec_zero_shot_selective    1968    32.64%    17.94%
+  oracle_nbest                  1968    35.60%     9.81%
+10s+
+  whisper_1best                  307    53.58%     4.56%
+  gensec_zero_shot               307    39.00%    10.75%
+  gensec_zero_shot_selective     307    39.68%    11.07%
+  oracle_nbest                   307    48.37%     5.86%
+
+
 References of 3+ words only (comparable to published child GenSEC work)
 ------------------------------------------------------------------------
                                 utts       WER     exact
