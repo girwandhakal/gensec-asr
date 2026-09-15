@@ -49,15 +49,8 @@ asr_do_sample: true            # false switches to beam search (see decode_argum
                                 # fresh. Diverse beam search (asr_beam_groups) was identified as
                                 # the likely fix but never tested; revisit before trying beam
                                 # search again.
-# NOTE (2026-09-14): the corpus currently in data/ was generated when
-# decode_arguments() hardcoded num_beams=1 on the sampling path, so it is pure
-# sampling regardless of what this says. Now that the sampling branch honours
-# this value, running stage 2 against this config would decode differently than
-# the cache, and check_decode_signature() will refuse to extend it rather than
-# mix two strategies. That refusal is correct - resolve it by deciding whether
-# to regenerate, not by editing the number back.
 asr_num_beams: 8
-asr_beam_groups: 1             # >1 switches on diverse beam search; ignored when sampling
+asr_beam_groups: 1             # >1 switches on diverse beam search
 asr_diversity_penalty: 0.5     # only used when asr_beam_groups > 1
 
 # Sampling parameters, kept for the ablation. Ignored unless asr_do_sample.

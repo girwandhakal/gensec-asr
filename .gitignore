@@ -26,6 +26,3 @@ __pycache__/
 .claude/
 .agents/
 .codex/
-
-# Cloned reference repos for comparison; not part of this project.
-temp_reference/
