@@ -18,7 +18,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import load_config, predictions_path
+from config import clip_seconds, load_config, predictions_path
 from text import normalize_for_scoring
 
 WORST_EXAMPLES = 10
@@ -361,6 +361,22 @@ LENGTH_BUCKETS = [
     ("11+ words", 11, 10**6),
 ]
 
+# The same question asked of the audio rather than the transcript. Reference
+# length and clip duration disagree about which utterances are hard - Whisper
+# writes a sentence onto a 300 ms clip, so a long reference and a long clip are
+# not the same population - and the correction gain tracks duration far more
+# cleanly than it tracks word count. Bounds are [low, high) seconds, because
+# durations are continuous; the word buckets above are inclusive on both ends.
+DURATION_BUCKETS = [
+    ("under 0.5s", 0.0, 0.5),
+    ("0.5-1s", 0.5, 1.0),
+    ("1-2s", 1.0, 2.0),
+    ("2-3s", 2.0, 3.0),
+    ("3-5s", 3.0, 5.0),
+    ("5-10s", 5.0, 10.0),
+    ("10s+", 10.0, float("inf")),
+]
+
 
 def significance(systems: dict, metadata: dict, config: dict) -> tuple[list[str], dict]:
     """Confidence intervals on the WER reduction, overall and per group.
@@ -535,6 +551,24 @@ def main(config: dict | None = None) -> None:
         lines += breakdown(
             systems,
             lambda t, lo=low, hi=high: lo <= len(normalize_for_scoring(t[1]).split()) <= hi,
+            label,
+        )
+
+    # Clip duration, read out of the utterance id - no audio is opened. This is
+    # where the short-clip failure is visible: correction is a large win on
+    # everything past a second and a net loss below it, which the reference
+    # length table above averages away.
+    lines.append("\n\nBy reference audio duration")
+    lines.append("-" * 72)
+    lines.append(f"{'':<28}{'utts':>8}{'WER':>10}{'exact':>10}")
+    for label, low, high in DURATION_BUCKETS:
+        lines += breakdown(
+            systems,
+            # Unparseable ids yield None and belong in no bucket rather than
+            # silently landing in the shortest one.
+            lambda t, lo=low, hi=high: (
+                (seconds := clip_seconds(t[0])) is not None and lo <= seconds < hi
+            ),
             label,
         )
 
