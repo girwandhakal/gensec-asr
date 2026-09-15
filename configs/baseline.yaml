@@ -5,11 +5,7 @@ seed: 42
 # transcripts and all 821 test children were also in training and 11.0% of test
 # rows were verbatim training pairs. Every v1 number measures memorization as
 # much as correction and none of them carry over.
-# v3 changes the corrector itself: FlanEC-large (adult-GenSEC pretrained) with
-# LoRA, replacing a full fine-tune of raw flan-t5-base. Bumping this discards
-# the saved checkpoint, which is required - the two are not the same model and
-# reusing the old one would silently score v2's weights under v3's label.
-methodology_version: flanec_lora_v3
+methodology_version: transcript_split_v2
 
 # Audio and reference transcripts prepared by asr-dataset-pipelines.
 # The label CSV lives at the root of the media directory, so config.py derives
@@ -84,41 +80,13 @@ max_hypotheses: 5         # beam search returns 5 ranked candidates; show the mo
 min_hypotheses: 1         # 1 keeps utterances where candidates agree so LM learns identity mapping
 
 # Stage 4: the correction model.
-#
-# FlanEC-large has already been trained on HyPoradise, which is the same
-# hypotheses-to-transcript task on adult speech, so it arrives knowing what an
-# n-best list is and what to do with one. Raw flan-t5-base (used until
-# 2026-09-14) has never seen the task and has to learn it from child data
-# alone, which is both the harder problem and the smaller corpus. This is the
-# transfer path CHSER used (temp_reference/CHSER, Interspeech 2025): adult
-# GenSEC pretraining first, child adaptation second.
-#
-# Set back to google/flan-t5-base to run the from-scratch ablation; everything
-# else here works either way.
-gensec_model_id: morenolq/flanec-large-cd
+gensec_model_id: google/flan-t5-base
 max_source_length: 512
 max_target_length: 128
-
-# LoRA. A 780M model full-tuned on 110k short utterances mostly memorizes; the
-# adapters keep the pretrained GenSEC behaviour and learn the child-speech
-# delta on top. lora_rank 0 disables LoRA and full-tunes instead, which is
-# what the base-model ablation wants.
-lora_rank: 16
-lora_alpha: 16
-lora_dropout: 0.05
-
 num_train_epochs: 5
-# 5e-4 is a LoRA learning rate, roughly 15x the full-tune rate, because only
-# the adapters move. Dropping back to full tuning means dropping this to 3e-5.
-learning_rate: 5.0e-4
+learning_rate: 3.0e-5
 train_batch_size: 8
-gradient_accumulation_steps: 4   # effective batch 32
 eval_batch_size: 16
-
-# Stop once validation WER stops improving, and keep the best epoch rather than
-# the last one. Without this the run always shipped epoch 5, which is the most
-# overfit checkpoint whenever the curve turned earlier.
-early_stopping_patience: 2
 generation_batch_size: 4       # beam search is far heavier per row than eval; keep this small
 num_beams: 8
 

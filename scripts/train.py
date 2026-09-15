@@ -26,7 +26,6 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
-    EarlyStoppingCallback,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     TrainerCallback,
@@ -57,7 +56,8 @@ def consensus_evidence(hypotheses: list[str], config: dict) -> str:
     """Render word support across hypotheses as explicit model evidence."""
     word_counts = Counter()
     for hypothesis in hypotheses:
-        # Count each word once per hypothesis to reflect candidate agreement.
+        # Count a word once per hypothesis: repeated words in one transcript
+        # should not masquerade as agreement between candidates.
         word_counts.update(set(normalize(hypothesis).split()))
 
     minimum = min(config.get("consensus_min_support", 2), len(hypotheses))
@@ -96,7 +96,10 @@ def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
     hyps = list(hypotheses)
 
     def render() -> str:
-        # Use the standard fine-tuning prompt when no demonstrations are present.
+        # With no demonstrations this has to match the fine-tuning prompt
+        # exactly. It used to append a trailing "Corrected:" the fine-tune
+        # never saw, which put zero-shot inference off-distribution and made
+        # the model echo the hypothesis list back instead of correcting it.
         if not demos:
             return build_nbest_prompt(hyps, config)
 
@@ -171,11 +174,14 @@ def make_splits(examples: pd.DataFrame, config: dict, metadata: dict):
         total = sum(len(rows) for rows in transcripts.values())
         target = config["test_size"] * total
 
-        # Deterministically shuffle transcripts for this group.
+        # Sort before shuffling so the draw depends on the seed alone, not on
+        # whatever order the rows happened to arrive in.
         order = sorted(transcripts)
         random.Random(f"{config['seed']}:{group}").shuffle(order)
 
-        # Greedily select transcripts until closest to the target test size.
+        # Transcripts run from 1 to 866 utterances, so taking them until the
+        # target is passed can overshoot badly. Stop at whichever side of the
+        # target is closer instead.
         taken = 0
         held_out = 0
         for transcript in order:
@@ -191,7 +197,8 @@ def make_splits(examples: pd.DataFrame, config: dict, metadata: dict):
             f"{taken:,}/{total:,} utterances held out ({taken / total:.1%})"
         )
 
-    # Split examples into train and test frames using positional row masks.
+    # Positional, not label-based: load_examples builds a fresh RangeIndex but
+    # nothing here should depend on that staying true.
     test_mask = pd.Series(False, index=examples.index)
     test_mask.iloc[test_positions] = True
     train_frame, test_frame = examples[~test_mask.to_numpy()], examples[test_mask.to_numpy()]
@@ -201,7 +208,9 @@ def make_splits(examples: pd.DataFrame, config: dict, metadata: dict):
     test_frame.to_csv(config["splits_dir"] / "test_split.csv", index=False)
     print(f"Train: {len(train_frame):,} | Test: {len(test_frame):,}")
 
-    # Verify that no source transcript is shared across the split.
+    # Leakage is the thing this function exists to prevent, so it is asserted
+    # rather than assumed. A child recorded across several sessions can still
+    # span the split; that residual is reported so it stays a known quantity.
     train_transcripts = {transcript_id(i) for i in train_frame["id"]}
     test_transcripts = {transcript_id(i) for i in test_frame["id"]}
     assert not train_transcripts & test_transcripts, "transcript leaked across the split"
@@ -251,47 +260,6 @@ class AbortOnDeadTraining(TrainerCallback):
             )
 
 
-def apply_lora(model, config):
-    """Wrap the model in LoRA adapters, unless lora_rank is 0.
-
-    Full-tuning a 780M corrector on short child utterances mostly teaches it
-    the training set; the adapters keep FlanEC's pretrained GenSEC behaviour
-    fixed and learn only the child-speech delta on top of it. Targeting the
-    attention projections is the usual seq2seq choice and is what makes the
-    5e-4 learning rate in the config safe - it moves ~1% of the weights.
-
-    lora_rank: 0 skips this entirely and full-tunes, which is what the
-    flan-t5-base ablation wants. Drop learning_rate back to 3e-5 for that.
-    """
-    rank = config.get("lora_rank", 0)
-    if not rank:
-        print("LoRA disabled (lora_rank: 0); full fine-tune")
-        return model
-
-    try:
-        from peft import LoraConfig, TaskType, get_peft_model
-    except ImportError:
-        raise SystemExit(
-            "lora_rank is set but peft is not installed. Either "
-            "`pip install peft` or set lora_rank: 0 in configs/baseline.yaml "
-            "to full-tune instead (and drop learning_rate to 3e-5)."
-        )
-
-    model = get_peft_model(
-        model,
-        LoraConfig(
-            task_type=TaskType.SEQ_2_SEQ_LM,
-            r=rank,
-            lora_alpha=config.get("lora_alpha", rank),
-            lora_dropout=config.get("lora_dropout", 0.05),
-            target_modules=["q", "k", "v", "o"],
-            bias="none",
-        ),
-    )
-    model.print_trainable_parameters()
-    return model
-
-
 def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     def tokenize(batch):
         prompts = [build_nbest_prompt(h, config) for h in batch["input"]]
@@ -306,27 +274,20 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     dataset = Dataset.from_pandas(train_frame[["input", "output"]], preserve_index=False)
     dataset = dataset.map(tokenize, batched=True, remove_columns=dataset.column_names)
 
-    # Hold out a validation slice to track training loss across epochs.
+    # A slice held out of training, purely so the loss curve has something to
+    # be checked against per epoch. The scored test split is separate.
     split = dataset.train_test_split(test_size=config["eval_size"], seed=config["seed"])
     print(f"Fine-tune on {len(split['train']):,} | validate on {len(split['test']):,}")
 
     model = AutoModelForSeq2SeqLM.from_pretrained(config["gensec_model_id"])
-    model = apply_lora(model, config)
-
     arguments = Seq2SeqTrainingArguments(
         output_dir=str(config["work_dir"]),
         per_device_train_batch_size=config["train_batch_size"],
         per_device_eval_batch_size=config["eval_batch_size"],
-        gradient_accumulation_steps=config.get("gradient_accumulation_steps", 1),
         learning_rate=config["learning_rate"],
         num_train_epochs=config["num_train_epochs"],
         save_strategy="epoch",
         eval_strategy="epoch",
-        # Keep the epoch that validated best, not the one that happened to run
-        # last. Without this a run that peaked at epoch 2 still shipped epoch 5.
-        load_best_model_at_end=True,
-        metric_for_best_model="eval_loss",
-        greater_is_better=False,
         save_total_limit=1,
         logging_steps=100,
         # NOT fp16. T5 was pretrained in bfloat16 and overflows fp16's range:
@@ -338,28 +299,15 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
         seed=config["seed"],
     )
 
-    callbacks = [AbortOnDeadTraining()]
-    patience = config.get("early_stopping_patience")
-    if patience:
-        callbacks.append(EarlyStoppingCallback(early_stopping_patience=patience))
-
     trainer = Seq2SeqTrainer(
         model=model,
         args=arguments,
         train_dataset=split["train"],
         eval_dataset=split["test"],
         data_collator=DataCollatorForSeq2Seq(tokenizer, model=model),
-        callbacks=callbacks,
+        callbacks=[AbortOnDeadTraining()],
     )
     trainer.train()
-
-    # Fold the adapters back into the base weights, so everything downstream -
-    # reload, inference, the checkpoint on disk - sees an ordinary seq2seq
-    # model and needs to know nothing about LoRA.
-    model = trainer.model
-    if hasattr(model, "merge_and_unload"):
-        model = model.merge_and_unload()
-        trainer.model = model
 
     final_checkpoint = config["work_dir"] / "final_checkpoint"
     trainer.save_model(str(final_checkpoint))
@@ -404,7 +352,8 @@ def generation_cap(batch: list[dict], tokenizer, config) -> int:
     )
     by_hypothesis = int(longest * config["generation_length_slack"]) + 5
 
-    # Determine the maximum clip duration in seconds for the batch.
+    # Unparseable ids fall back to the hypothesis bound alone rather than
+    # silently capping everything at the floor.
     seconds = max((clip_seconds(example["id"]) or 0.0 for example in batch), default=0.0)
     by_duration = (
         int(seconds * config["generation_tokens_per_second"])
@@ -490,10 +439,15 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
 
     pool = train_frame.to_dict("records")
 
-    # Sort test examples by clip duration to minimize batch padding and align token budgets.
+    # Batch clips of similar length together. The cap below is one number for
+    # the whole batch, so mixing a 30-second clip with a 100 ms one would lift
+    # the short clip's ceiling to the long clip's. Sorting also cuts padding.
     tests = sorted(test_frame.to_dict("records"), key=lambda e: clip_seconds(e["id"]) or 0.0)
 
-    # Use the dedicated generation batch size to manage memory during beam search.
+    # Beam search holds num_beams sequences in flight per row, and reordering
+    # the cache between steps allocates a second copy of it - so generation
+    # needs a far smaller batch than the teacher-forced eval pass does. Sharing
+    # one number with eval_batch_size is what put a T4 out of memory.
     batch_size = config["generation_batch_size"]
 
     rows = []
@@ -522,7 +476,13 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 **inputs,
                 max_new_tokens=generation_cap(batch, tokenizer, config),
                 num_beams=config["num_beams"],
-                # Constrain n-gram repeats and apply repetition penalties during decoding.
+                # Repetition control, and the only place it happens. The first
+                # working run emitted 110,711 insertions - looping phrases until
+                # the length limit - which a postprocessing stage then stripped
+                # after the fact. These two settings removed the loops at the
+                # source (no prediction now repeats a word more than 3 times),
+                # so that stage was deleted: all it still caught was genuine
+                # child disfluency like "up up up", which is not an artifact.
                 no_repeat_ngram_size=config["no_repeat_ngram_size"],
                 repetition_penalty=config["repetition_penalty"],
                 do_sample=False,
@@ -538,7 +498,8 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
             cleaned_pred = collapse_whitespace(prediction)
             words = cleaned_pred.split()
 
-            # Cap predicted word count based on audio duration and realistic speech rate.
+            # Per-utterance physical speech limit guard: a clip cannot contain more words
+            # than physically possible at maximum child speech rate (~4 words/sec).
             sec = clip_seconds(example["id"])
             if sec is not None and sec > 0:
                 max_words = max(2, math.ceil(sec * 4.0) + 1)
@@ -546,7 +507,10 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                     words = words[:max_words]
                     cleaned_pred = " ".join(words)
 
-            # Fall back to 1-best if a short utterance expands beyond three words.
+            # Short-utterance hallucination gate:
+            # Seq2seq LMs tend to expand short 1-2 word utterances into whole sentences.
+            # If all candidate hypotheses are <= 2 words, reject any prediction that
+            # inflates beyond 3 words and fall back to the Whisper 1-best.
             max_hyp_len = max((len(h.split()) for h in example["input"]), default=0)
             if max_hyp_len <= 2 and len(words) > 3:
                 one_best = example["input"][0] if example["input"] else cleaned_pred
@@ -588,18 +552,14 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
     print(f"Wrote {output_path}")
 
 
-# Configuration keys that define the inference signature for cache validation.
+# Everything that changes what a predictions CSV contains. Stage 4 is reused
+# only when all of it still matches, because the alternative - reusing on the
+# column names alone, which is what run_pipeline did until 2026-09-07 - meant a
+# threshold or decoding change silently re-scored stale predictions and the
+# report showed no effect from the edit.
 INFERENCE_SIGNATURE_KEYS = (
     "methodology_version",
     "gensec_model_id",
-    # The weights these produce are different weights, so predictions made by
-    # the previous setting are not reusable under the new one.
-    "lora_rank",
-    "lora_alpha",
-    "lora_dropout",
-    "learning_rate",
-    "num_train_epochs",
-    "early_stopping_patience",
     "seed",
     "test_size",
     "min_hypotheses",
@@ -671,10 +631,20 @@ def main(config: dict | None = None) -> None:
 
     tokenizer = AutoTokenizer.from_pretrained(config["gensec_model_id"])
 
-    # Reuse the saved checkpoint only if its training row count and methodology match.
+    # Stage 4 is two expensive halves and only the second one is cheap to
+    # repeat. Inference dying - on an OOM, or a walltime - used to throw away a
+    # finished fine-tune, because the stage only skips on the predictions file.
+    # That reuse used to key on the checkpoint directory merely existing, which
+    # silently ran a stale fine-tune against a train split that had since grown
+    # or been rebuilt (2026-08-31: stage 2/3 reworked the n-best data and the
+    # train split changed from 59,937 to 67,249 rows, but inference still ran
+    # the 2026-08-26 checkpoint trained on the old split - a real train/test
+    # mismatch, not a decoding regression). Stamp the row count the checkpoint
+    # was trained on and retrain whenever the current split doesn't match it.
     final_checkpoint = config["work_dir"] / "final_checkpoint"
     stamp_path = final_checkpoint / "train_rows.txt"
-    # Path to the training methodology signature file in the checkpoint directory.
+    # Not `signature_path`: that is the module-level function for the per-mode
+    # predictions stamp, and binding it here shadows it for the rest of main().
     training_signature_path = final_checkpoint / "training_signature.txt"
     stamp = stamp_path.read_text(encoding="utf-8").strip() if stamp_path.is_file() else None
     signature = (
