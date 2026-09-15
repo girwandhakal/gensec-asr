@@ -92,15 +92,34 @@ def unique_hypotheses(texts: list[str], scores: list, limit: int) -> list[dict]:
 def decode_arguments(config: dict) -> dict:
     """Whichever decoding strategy the config asks for.
 
-    Beam search is the default. Sampling gave no ranking at all - rank 1 was
-    whichever draw happened to land first - so the 1-best baseline it produced
-    was not a best of anything, and 44% of clips collapsed to a single distinct
-    string. Sampling stays available for ablation.
+    Three are reachable, and which one runs is the single biggest lever on how
+    much the corrector has to work with.
+
+    Pure sampling (asr_num_beams == 1) draws num_return_sequences independent
+    times. There is no ranking - rank 1 is whichever draw landed first - and on
+    confident audio every draw repeats the same string: 35% of the corpus came
+    back with one distinct hypothesis.
+
+    Pure beam search (asr_do_sample false) ranks properly but collapsed to a
+    single distinct string on 99.9% of clips, twice.
+
+    Beam-search multinomial sampling - both together, num_beams > 1 AND
+    do_sample - is what CHSER (Interspeech 2025, temp_reference/CHSER) actually
+    used, despite their README claiming plain beam search: beams keep each
+    candidate on a high-probability path while sampling makes the candidates
+    differ. Paired with a large num_return_sequences that is filtered down to
+    max_hypotheses distinct strings, it reached 5 distinct hypotheses on 92% of
+    their utterances. Their temperature was 0.1, an order of magnitude below
+    what pure sampling needs, because the draw volume supplies the diversity
+    and the low temperature keeps every candidate plausible rather than
+    degenerate.
     """
     if config["asr_do_sample"]:
         return {
             "do_sample": True,
-            "num_beams": 1,
+            # Beams and sampling are not exclusive. Forcing 1 here (until
+            # 2026-09-14) made the hybrid above unreachable from config.
+            "num_beams": config["asr_num_beams"],
             "temperature": config["temperature"],
             "top_p": config["top_p"],
             "top_k": config["top_k"],
@@ -168,12 +187,20 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
     scores = [None] * len(texts)
 
     # generate() returns the sequences for each clip back to back.
+    #
+    # How many are drawn and how many are kept are deliberately separate:
+    # num_return_sequences is the draw volume, max_hypotheses is what survives
+    # deduplication. Over-drawing is the whole mechanism - 50 draws almost
+    # always contain 5 distinct strings even on confident audio, where 5 draws
+    # return the same string 5 times. Keeping them equal (until 2026-09-14)
+    # meant diversity was capped by the model's confidence on each clip.
     per_clip = config["num_return_sequences"]
+    keep = config["max_hypotheses"]
     return [
         unique_hypotheses(
             texts[i * per_clip:(i + 1) * per_clip],
             scores[i * per_clip:(i + 1) * per_clip],
-            per_clip,
+            keep,
         )
         for i in range(len(audio_arrays))
     ]
@@ -194,6 +221,9 @@ DECODE_SIGNATURE_KEYS = (
     "top_p",
     "top_k",
     "num_return_sequences",
+    # Not a decoding setting, but it decides how many of the draws are written
+    # to the corpus, so a cached entry depends on it exactly as much.
+    "max_hypotheses",
     "asr_tokens_per_second",
     "asr_token_margin",
     "sample_rate",
@@ -205,9 +235,11 @@ DECODE_SIGNATURE_KEYS = (
 def decode_signature(config: dict) -> str:
     payload = {key: config[key] for key in DECODE_SIGNATURE_KEYS if key in config}
     if config.get("asr_do_sample"):
-        # Beam settings cannot affect a sampled decode; excluding them keeps an
-        # unrelated edit from invalidating a corpus it did not change.
-        for key in ("asr_num_beams", "asr_beam_groups", "asr_diversity_penalty"):
+        # asr_num_beams DOES affect a sampled decode - beam-search multinomial
+        # sampling is beams and sampling together - so it stays in the payload.
+        # Only the grouping keys are inert here: transformers ignores
+        # num_beam_groups once do_sample is on.
+        for key in ("asr_beam_groups", "asr_diversity_penalty"):
             payload.pop(key, None)
     else:
         for key in ("temperature", "top_p", "top_k"):
@@ -387,4 +419,16 @@ def main(config: dict | None = None) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    # --config exists so a probe run can point at its own settings and its own
+    # data directory. run_pipeline.py calls main(config) directly and never
+    # goes through here.
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Stage 2: generate Whisper n-best.")
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=None,
+        help="Config to load instead of configs/baseline.yaml.",
+    )
+    main(load_config(parser.parse_args().config))

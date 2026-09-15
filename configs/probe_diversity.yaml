@@ -1,3 +1,26 @@
+# PROBE CONFIG - not the experiment.
+#
+# Purpose: find out whether beam-search multinomial sampling (num_beams > 1 AND
+# do_sample, the hybrid CHSER actually used - see temp_reference/CHSER) gives
+# enough candidate diversity to justify regenerating the full corpus, which is
+# days of GPU and is irreversible once the old n-best is archived.
+#
+# Only stage 2 settings differ from baseline.yaml. Everything downstream is
+# inherited unchanged and is not exercised by this run.
+#
+# Run:  python scripts/generate_nbest.py --config configs/probe_diversity.yaml
+# Then: python scripts/check_diversity.py
+#
+# Decide on distinct-hypothesis rate. CHSER reached 5 distinct on 92% of
+# utterances; the current corpus reaches it on 5.6%. If this probe does not
+# clear ~80% at 3+ distinct, raise temperature toward 0.3 before spending the
+# full run. Note their corpus is MyST classroom speech - longer utterances than
+# CHILDES, and easier to vary - so matching 92% on short child utterances is
+# not the bar.
+#
+# data_dir/work_dir/results_dir are redirected so this cannot touch or
+# invalidate the real corpus.
+
 seed: 42
 # Bumping this invalidates the saved fine-tune and the saved predictions, which
 # is the point: v2 is the first version whose test set is disjoint from its
@@ -25,7 +48,7 @@ audio_extension: .mp3
 sample_rate: 16000
 max_clip_seconds: 30      # Whisper's window; 91 clips exceed it, longest is 75 min
 min_clip_seconds: 0.1     # 135 clips are effectively zero-length
-num_return_sequences: 5
+num_return_sequences: 50
 
 # Beam search, not sampling. Sampling returned candidates in no order at all, so
 # "1best" was an arbitrary draw rather than a best - an indefensible baseline -
@@ -49,31 +72,24 @@ asr_do_sample: true            # false switches to beam search (see decode_argum
                                 # fresh. Diverse beam search (asr_beam_groups) was identified as
                                 # the likely fix but never tested; revisit before trying beam
                                 # search again.
-# NOTE (2026-09-14): the corpus currently in data/ was generated when
-# decode_arguments() hardcoded num_beams=1 on the sampling path, so it is pure
-# sampling regardless of what this says. Now that the sampling branch honours
-# this value, running stage 2 against this config would decode differently than
-# the cache, and check_decode_signature() will refuse to extend it rather than
-# mix two strategies. That refusal is correct - resolve it by deciding whether
-# to regenerate, not by editing the number back.
-asr_num_beams: 8
-asr_beam_groups: 1             # >1 switches on diverse beam search; ignored when sampling
+asr_num_beams: 50
+asr_beam_groups: 1             # >1 switches on diverse beam search
 asr_diversity_penalty: 0.5     # only used when asr_beam_groups > 1
 
 # Sampling parameters, kept for the ablation. Ignored unless asr_do_sample.
-temperature: 0.6
-top_p: 0.95
+temperature: 0.1
+top_p: 1.0
 top_k: 50
 
-asr_batch_size: 8             # 8 beams x 8 clips; the cross-attention cache is the limit
+asr_batch_size: 1             # 8 beams x 8 clips; the cross-attention cache is the limit
 
 # Whisper decodes toward its 448-token limit even on a 2-second clip. Sampling
 # hid that (each draw stopped at its own EOS); beam search does not, and
 # uncapped it ran stage 2 at 0.13 clips/sec - twelve days for the corpus.
 asr_tokens_per_second: 8
 asr_token_margin: 16          # floor, and headroom above the spoken content
-asr_save_every: 500       # checkpoint the n-best JSON this often, so the job resumes
-asr_limit: null           # set to an integer for a quick smoke test
+asr_save_every: 200       # checkpoint the n-best JSON this often, so the job resumes
+asr_limit: 2000           # set to an integer for a quick smoke test
 
 # Stage 3: dataset construction.
 max_hypotheses: 5         # beam search returns 5 ranked candidates; show the model all of them
@@ -126,6 +142,6 @@ icl_demo_hypotheses: 3         # hypotheses shown per in-context demonstration
 # Stage 6: how many resamples behind the LT/TD confidence intervals.
 bootstrap_iterations: 1000
 
-data_dir: data
-work_dir: work_directory
-results_dir: evaluation_results
+data_dir: data_probe
+work_dir: work_directory_probe
+results_dir: evaluation_results_probe
