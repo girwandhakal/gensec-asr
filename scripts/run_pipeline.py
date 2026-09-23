@@ -88,11 +88,10 @@ def main() -> None:
 
     with stage(4, "TRAIN AND RUN INFERENCE"):
         # The costly one, and the only stage that knows what its own output
-        # depends on - the split it was built from, the decoding settings, the
-        # selective thresholds. Reuse used to be decided here on the CSV column
-        # names alone, which meant editing any of those silently re-scored the
-        # previous run's predictions. train.main() now owns that decision and
-        # checks a signature covering all of it.
+        # depends on - the split it was built from and the decoding settings.
+        # Reuse used to be decided here on the CSV column names alone, which
+        # meant editing either silently re-scored stale predictions. train.main()
+        # now owns that decision and checks a signature covering both.
         train.main(config)
 
     with stage(5, "EVALUATE"):

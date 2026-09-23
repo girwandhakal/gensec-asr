@@ -36,9 +36,7 @@ from text import normalize_for_scoring
 MIN_UTTERANCES = 5
 
 # The two levels of the model factor: baseline Whisper against Whisper + LLM
-# correction. `gensec_zero_shot_selective` also exists and scores slightly
-# better, but its abstention mechanism is a third behaviour rather than a
-# second level, so it stays out of the ANOVA.
+# correction.
 SYSTEMS = {"whisper": "one_best", "gensec": "prediction"}
 
 

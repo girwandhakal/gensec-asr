@@ -365,74 +365,6 @@ def generation_cap(batch: list[dict], tokenizer, config) -> int:
     return max(config["generation_min_tokens"], cap)
 
 
-def generated_sequence_confidence(model, inputs, sequences, tokenizer) -> list[float]:
-    """Estimate confidence from the model's mean generated-token probability.
-
-    This uses one teacher-forced forward pass after generation rather than
-    retaining every beam's vocabulary logits during generation. That keeps the
-    confidence signal practical for the same small inference batches used by
-    the pipeline.
-    """
-    if sequences.shape[1] < 2:
-        return [0.0] * sequences.shape[0]
-
-    forward_inputs = {
-        key: value
-        for key, value in inputs.items()
-        if key in {"input_ids", "attention_mask"}
-    }
-    outputs = model(
-        **forward_inputs,
-        decoder_input_ids=sequences[:, :-1],
-        use_cache=False,
-    )
-    labels = sequences[:, 1:]
-    log_probabilities = torch.log_softmax(outputs.logits.float(), dim=-1)
-    token_log_probabilities = log_probabilities.gather(
-        -1, labels.unsqueeze(-1)
-    ).squeeze(-1)
-    valid = labels.ne(tokenizer.pad_token_id)
-    lengths = valid.sum(dim=1).clamp_min(1)
-    mean_log_probability = (token_log_probabilities * valid).sum(dim=1) / lengths
-    return torch.exp(mean_log_probability).detach().cpu().tolist()
-
-
-def hypothesis_support(text: str, hypotheses: list[str]) -> float:
-    """Return the average fraction of hypotheses supporting each output word."""
-    words = normalize(text).split()
-    if not words or not hypotheses:
-        return 0.0
-
-    candidate_words = [set(normalize(hypothesis).split()) for hypothesis in hypotheses]
-    support = sum(
-        sum(word in candidate for candidate in candidate_words) / len(candidate_words)
-        for word in words
-    )
-    return support / len(words)
-
-
-def selective_decision(
-    prediction: str,
-    one_best: str,
-    generation_confidence: float,
-    support: float,
-    config: dict,
-) -> tuple[str, float, bool, str]:
-    """Accept a correction only when its confidence and evidence pass the gate."""
-    selective_score = generation_confidence * (0.5 + 0.5 * support)
-
-    if prediction == one_best:
-        return prediction, selective_score, False, "same_as_1best"
-
-    if (
-        selective_score >= config["selective_min_score"]
-        and support >= config["selective_min_support"]
-    ):
-        return prediction, selective_score, True, "accepted"
-
-    return one_best, selective_score, False, "abstained"
-
-
 def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device).eval()
@@ -487,13 +419,10 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 repetition_penalty=config["repetition_penalty"],
                 do_sample=False,
             )
-            generation_confidences = generated_sequence_confidence(
-                model, inputs, generated, tokenizer
-            )
         predictions = tokenizer.batch_decode(generated, skip_special_tokens=True)
 
-        for example, (prompt, demos, hyps, tokens), prediction, gen_confidence in zip(
-            batch, built, predictions, generation_confidences
+        for example, (prompt, demos, hyps, tokens), prediction in zip(
+            batch, built, predictions
         ):
             cleaned_pred = collapse_whitespace(prediction)
             words = cleaned_pred.split()
@@ -507,25 +436,7 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                     words = words[:max_words]
                     cleaned_pred = " ".join(words)
 
-            # Short-utterance hallucination gate:
-            # Seq2seq LMs tend to expand short 1-2 word utterances into whole sentences.
-            # If all candidate hypotheses are <= 2 words, reject any prediction that
-            # inflates beyond 3 words and fall back to the Whisper 1-best.
-            max_hyp_len = max((len(h.split()) for h in example["input"]), default=0)
-            if max_hyp_len <= 2 and len(words) > 3:
-                one_best = example["input"][0] if example["input"] else cleaned_pred
-                cleaned_pred = one_best
-
             one_best = example["input"][0] if example["input"] else ""
-            support = hypothesis_support(cleaned_pred, example["input"])
-            selective_pred, selective_score, accepted, decision = selective_decision(
-                cleaned_pred,
-                one_best,
-                float(gen_confidence),
-                support,
-                config,
-            )
-
             rows.append({
                 "id": example["id"],
                 "input": " | ".join(example["input"]),
@@ -535,12 +446,6 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
                 "retained_input_hypotheses": hyps,
                 "truth": example["output"],
                 "prediction": cleaned_pred,
-                "selective_prediction": selective_pred,
-                "generation_confidence": float(gen_confidence),
-                "hypothesis_support": support,
-                "selective_score": selective_score,
-                "correction_accepted": accepted,
-                "selective_decision": decision,
             })
 
         if start % (batch_size * 20) == 0:
@@ -553,10 +458,7 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
 
 
 # Everything that changes what a predictions CSV contains. Stage 4 is reused
-# only when all of it still matches, because the alternative - reusing on the
-# column names alone, which is what run_pipeline did until 2026-09-07 - meant a
-# threshold or decoding change silently re-scored stale predictions and the
-# report showed no effect from the edit.
+# only when all of it still matches.
 INFERENCE_SIGNATURE_KEYS = (
     "methodology_version",
     "gensec_model_id",
@@ -573,8 +475,6 @@ INFERENCE_SIGNATURE_KEYS = (
     "generation_min_tokens",
     "consensus_min_support",
     "consensus_max_words",
-    "selective_min_score",
-    "selective_min_support",
     "few_shot_examples",
     "icl_demo_hypotheses",
 )

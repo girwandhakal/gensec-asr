@@ -12,9 +12,8 @@ Which decoding strategy runs is set by `asr_do_sample` in baseline.yaml, and it
 matters more than it looks. Under sampling - the current setting - generate()
 returns num_return_sequences independent draws in NO order, so `rank` is the
 order they happened to come back in and `1best_text` is an arbitrary draw
-rather than a best of anything. Everything downstream that treats it as a
-baseline (evaluate.py's whisper_1best, the selective gate's fallback) is then
-comparing against a random sample at temperature 0.6, which flatters the
+rather than a best of anything. The `whisper_1best` evaluation baseline is then a random sample at
+temperature 0.6, which flatters the
 correction result by an unmeasured amount. Beam search gives a genuine ranking;
 it has twice collapsed to one distinct string per clip at the settings in
 decode_arguments(), and diverse beam search (asr_beam_groups > 1) is the

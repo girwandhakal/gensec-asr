@@ -69,25 +69,6 @@ flowchart TD
 | 4 | `train.py` | `data/splits/*.csv`, `data/predictions/test_predictions_<mode>.csv` |
 | 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
 
-## Consensus-aware selective GenSEC
-
-The correction stage now runs two systems from the same generated output. The
-regular GenSEC prediction is always retained. A selective prediction accepts
-that correction only when its mean FLAN-T5 token probability and its word
-support across the Whisper hypotheses pass the configured gate; otherwise it
-abstains and returns Whisper's 1-best transcript.
-
-The prediction CSV records `generation_confidence`, `hypothesis_support`,
-`selective_score`, `correction_accepted`, and `selective_decision`. The final
-WER report compares Whisper 1-best, raw GenSec, selective GenSec, the N-best
-oracle, and the compositional oracle. It also
-reports accepted-correction coverage, helpful versus harmful corrections, and
-a fixed-threshold risk/coverage sweep.
-
-The gate settings are in `configs/baseline.yaml`. Both systems use the same
-test utterances and references, so the comparison is paired and reproducible
-at the end of every pipeline run.
-
 ## Why there is no postprocessing stage
 
 There was one until 2026-09-08: it collapsed repeated phrases out of the
@@ -181,7 +162,7 @@ asr_limit: 200
 
 | File | Contents |
 |---|---|
-| `evaluation_results/wer_report.txt` | WER table for 1-best vs corrected vs selective, plus the worst utterances |
+| `evaluation_results/wer_report.txt` | WER table for 1-best vs corrected, plus the worst utterances |
 | `evaluation_results/metrics.json` | The same numbers, machine-readable |
 | `evaluation_results/config_used.yaml` | The settings that produced them |
 | `evaluation_history/<timestamp>/` | The previous run, archived automatically |
