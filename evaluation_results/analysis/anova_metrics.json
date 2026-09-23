@@ -1,0 +1,101 @@
+{
+  "cell_means": [
+    {
+      "group": "LT",
+      "n": 29,
+      "whisper": 0.6876770155720021,
+      "gensec": 0.6445575181632365,
+      "improvement": 0.04311949740876559
+    },
+    {
+      "group": "TD",
+      "n": 134,
+      "whisper": 0.5753589575409273,
+      "gensec": 0.5034488319963053,
+      "improvement": 0.07191012554462192
+    }
+  ],
+  "mixed_model": {
+    "terms": {
+      "group[T.TD]": {
+        "coefficient": -0.11231805803107456,
+        "p": 0.031019533887144218
+      },
+      "model[T.gensec]": {
+        "coefficient": -0.043119497408765445,
+        "p": 0.02288537519823147
+      },
+      "group[T.TD]:model[T.gensec]": {
+        "coefficient": -0.02879062813585638,
+        "p": 0.16836626878114858
+      }
+    }
+  },
+  "permutation": {
+    "difference": 0.028790628135856332,
+    "p": 0.1563843615638436,
+    "groups": [
+      "LT",
+      "TD"
+    ]
+  },
+  "disagreement": {
+    "tests": {
+      "student_t": 0.17290743421523447,
+      "welch_t": 0.030715755785919757,
+      "mann_whitney": 0.22353747848611694,
+      "yuen_trimmed": 0.2213062248898533
+    },
+    "shapiro": {
+      "LT": 0.5773435498702195,
+      "TD": 2.176804063337831e-16
+    },
+    "disagree": true
+  },
+  "simple_effects": {
+    "LT": {
+      "n": 29,
+      "p_uncorrected": 4.906505221693975e-05,
+      "dz": 0.889727969514379,
+      "p_holm": 4.906505221693975e-05
+    },
+    "TD": {
+      "n": 134,
+      "p_uncorrected": 7.476533070558338e-12,
+      "dz": 0.6491958836759135,
+      "p_holm": 1.4953066141116676e-11
+    }
+  },
+  "power": {
+    "hedges_g": 0.279070262165166,
+    "smaller_group": "LT",
+    "observed_power": 0.27288986711939694,
+    "curve": [
+      {
+        "n_smaller_group": 29,
+        "power": 0.27288986711939694
+      },
+      {
+        "n_smaller_group": 60,
+        "power": 0.4316524494021132
+      },
+      {
+        "n_smaller_group": 100,
+        "power": 0.5569243447343954
+      },
+      {
+        "n_smaller_group": 150,
+        "power": 0.6479570339141285
+      },
+      {
+        "n_smaller_group": 200,
+        "power": 0.7028536049141868
+      },
+      {
+        "n_smaller_group": 300,
+        "power": 0.7642116952672898
+      }
+    ],
+    "n_per_group_for_80_percent": 202.5272327012443
+  }
+}
