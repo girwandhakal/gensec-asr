@@ -1,0 +1,60 @@
+Group x model statistics on per-child WER
+========================================================================
+
+Children: 163 LT 29, TD 134
+Retained utterances: 27,400
+
+Per-child cell means
+------------------------------------------------------------------------
+group       n     whisper      gensec   improvement
+LT         29     68.53%      64.48%         4.04pp
+TD        134     55.74%      49.72%         6.02pp
+
+Corpus composition (children)
+------------------------------------------------------------------------
+  Braunwald            TD    1
+  EHS                  TD   11
+  ENNI                 LT   10
+  ENNI                 TD   31
+  EllisWeismer         LT    5
+  EllisWeismer         TD    4
+  Gelman               TD    4
+  Gleason              TD    1
+  HSLLD                TD   15
+  MacWhinney           TD   21
+  Nippold              TD    2
+  OCSC                 TD   32
+  POLER                TD    5
+  Rescorla             LT   14
+  Rescorla             TD    7
+  Group comparisons may reflect differences in corpus composition.
+
+Mixed-effects model (random intercept per child)
+------------------------------------------------------------------------
+  group[T.TD]                              b=-0.1278  p=0.0109  significant
+  model[T.gensec]                          b=-0.0404  p=0.0075  significant
+  group[T.TD]:model[T.gensec]              b=-0.0198  p=0.2354  not significant
+  group coefficient: TD-LT difference under Whisper only.
+  model coefficient: GenSEC-Whisper difference within LT only.
+
+Interaction: does improvement differ by group?
+------------------------------------------------------------------------
+  label permutation (10,000 resamples)  p = 0.2347
+  Welch-statistic permutation (20,000 resamples)  p = 0.1438
+  difference in mean improvement: +1.98pp (TD - LT)
+
+  Other tests, for comparison:
+    student_t        p = 0.2400
+    welch_t          p = 0.1410
+    mann_whitney     p = 0.3387
+    yuen_trimmed     p = 0.5032
+    Shapiro LT       p = 0.206
+    Shapiro TD       p = 3.69e-11
+    improvement SD LT       = 0.0592
+    improvement SD TD       = 0.0860
+
+Simple effects: did correction help within each group?
+------------------------------------------------------------------------
+  LT       n=29    p(Holm)=0.000982  dz=0.68  significant
+  TD       n=134   p(Holm)=5.95e-13  dz=0.70  significant
+  These paired tests do not test whether the group gains differ.
