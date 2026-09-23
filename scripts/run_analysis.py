@@ -3,10 +3,8 @@ What this file is for:
 Entry point for the per-child analysis: per-child WER, then the statistics.
 
 High-level role in the pipeline:
-Deliberately NOT part of run_pipeline.py. The pipeline is hours on a GPU; this
-reads predictions stage 4 already wrote and finishes in seconds on a laptop.
-Keeping them apart also means this can never touch wer_report.txt - everything
-here is written into results_dir/analysis/.
+Pipeline stage 6. Reads predictions stage 4 already wrote and writes only into
+results_dir/analysis/. It can also be run by itself after inference.
 
     python -u scripts/run_analysis.py
 """

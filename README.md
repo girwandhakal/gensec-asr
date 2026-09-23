@@ -43,9 +43,9 @@ and regenerates predictions even when the number of rows is unchanged.
 configs/baseline.yaml     every path and hyperparameter
 envs/                     conda environment and pinned requirements
 bash_scripts/train.sh     the single entry point
-scripts/                  the five pipeline stages
+scripts/                  the six pipeline stages
 data/                     generated artifacts (gitignored)
-evaluation_results/       WER report and metrics
+evaluation_results/       WER and child-level analysis reports
 ```
 
 ## Workflow
@@ -58,7 +58,8 @@ flowchart TD
     C --> D
     D --> E[4. train.py<br/>fine-tune FLAN-T5, then infer]
     E --> F[5. evaluate.py<br/>WER: 1-best vs corrected]
-    F --> G[evaluation_results/]
+    F --> G[6. run_analysis.py<br/>per-child WER and mixed model]
+    G --> H[evaluation_results/]
 ```
 
 | Stage | Script | Produces |
@@ -68,6 +69,7 @@ flowchart TD
 | 3 | `build_gensec_dataset.py` | `data/processed_gensec.json`, `data/dropped_gensec.json` |
 | 4 | `train.py` | `data/splits/*.csv`, `data/predictions/test_predictions_<mode>.csv` |
 | 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
+| 6 | `run_analysis.py` | `evaluation_results/analysis/per_child_wer.csv`, `anova_report.txt`, `anova_metrics.json` |
 
 ## Why there is no postprocessing stage
 
@@ -165,6 +167,7 @@ asr_limit: 200
 |---|---|
 | `evaluation_results/wer_report.txt` | WER table for 1-best vs corrected, plus the worst utterances |
 | `evaluation_results/metrics.json` | The same numbers, machine-readable |
+| `evaluation_results/analysis/` | Per-child WER and group-by-model mixed-model results |
 | `evaluation_results/config_used.yaml` | The settings that produced them |
 | `evaluation_history/<timestamp>/` | The previous run, archived automatically |
 | `data/dropped_gensec.json` | Every dropped utterance and why |
@@ -178,6 +181,7 @@ the same config, for debugging:
 python scripts/build_reference_map.py
 python scripts/build_gensec_dataset.py
 python scripts/evaluate.py
+python scripts/run_analysis.py
 ```
 
 ## How the test set is held out

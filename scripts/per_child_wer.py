@@ -3,7 +3,7 @@ What this file is for:
 One WER per child per system - the unit every test in run_anova.py requires.
 
 High-level role in the pipeline:
-Not a pipeline stage. Reads the predictions stage 4 already wrote and regroups
+Pipeline stage 6. Reads the predictions stage 4 already wrote and regroups
 them by child; no retraining, no re-inference. Run it from run_analysis.py:
 
     python -u scripts/run_analysis.py

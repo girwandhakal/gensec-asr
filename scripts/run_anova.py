@@ -3,19 +3,18 @@ What this file is for:
 The group x model statistics Dr. Xiong asked for, on per-child WER.
 
 High-level role in the pipeline:
-Not a pipeline stage. Reads analysis/per_child_wer.csv and writes
+Pipeline stage 6. Reads analysis/per_child_wer.csv and writes
 analysis/anova_report.txt and anova_metrics.json. Run it from run_analysis.py.
 
-One joint model, not four t-tests, as she asked: four tests at alpha=.05 carry
-a ~19% chance of a false positive, and correcting for that costs more power
-than the joint model spends.
+The mixed model describes the factorial design. The interaction is also
+checked on child-level improvement scores, with the assumptions of each test
+reported alongside its result.
 
 A note on AnovaRM, so nobody spends an afternoon on it: the design is mixed -
 model is within-child, group is between-child - and statsmodels cannot fit
 that. AnovaRM raises "Between subject effect not yet supported!" the moment a
-between-subject factor is passed. Two routes that do handle it run instead: a
-mixed-effects model with a random intercept per child, and a permutation test
-on per-child improvement.
+between-subject factor is passed. A mixed-effects model with a random
+intercept per child and child-level tests of improvement run instead.
 """
 
 from __future__ import annotations
@@ -32,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import load_config
 
 PERMUTATIONS = 10_000
+STUDENTIZED_PERMUTATIONS = 20_000
 SEED = 20260908
 ALPHA = 0.05
 
@@ -79,9 +79,8 @@ def cell_means(children: pd.DataFrame) -> list[dict]:
 def mixed_model(long: pd.DataFrame) -> dict:
     """Random intercept per child; fixed effects for group, model, interaction.
 
-    This is the joint model, and it is what handles the unbalanced design that
-    a classical ANOVA would choke on - the two groups differ by an order of
-    magnitude in n, and every child contributes both models.
+    This is a joint model for the unbalanced mixed design. Its coefficient
+    p-values are model-based Wald tests.
     """
     try:
         import statsmodels.formula.api as smf
@@ -111,12 +110,12 @@ def mixed_model(long: pd.DataFrame) -> dict:
 
 
 def permutation_interaction(children: pd.DataFrame, rng: np.random.Generator) -> dict:
-    """Does improvement differ by group, assuming nothing about its shape?
+    """Compare mean improvement by permuting child-level group labels.
 
     The interaction in this design is exactly "is the per-child improvement
     larger in one group than the other", so it can be tested directly by
-    shuffling the group labels on the improvement scores. This assumes no
-    distribution, which matters here - see the disagreement check below.
+    shuffling the group labels on the improvement scores. The unstudentized
+    test requires exchangeability, which unequal group variances can violate.
     """
     groups = sorted(children["group"].unique())
     first = children.loc[children["group"] == groups[0], "improvement"].to_numpy()
@@ -141,17 +140,32 @@ def permutation_interaction(children: pd.DataFrame, rng: np.random.Generator) ->
     }
 
 
-def disagreement_check(children: pd.DataFrame) -> dict:
-    """Run every test a reviewer might run, and say so when they disagree.
+def studentized_permutation_interaction(children: pd.DataFrame) -> dict:
+    """Permutation check using a Welch statistic under unequal variances.
 
-    Per-child improvement is a small-denominator ratio with no upper bound, so
-    the larger group carries extreme positive outliers and is badly non-normal.
-    Welch's unequal-variance weighting hands the high-variance group extra
-    leverage and can clear .05 while nothing else does. Reporting Welch in that
-    situation would be choosing the test by its answer, and any reviewer who
-    runs a different one gets a different number - so all of them are printed
-    and the permutation p is the one reported.
+    This is asymptotically valid for equality of means under heterogeneous
+    variances; it is not an exact finite-sample test here.
     """
+    groups = sorted(children["group"].unique())
+    first = children.loc[children["group"] == groups[0], "improvement"].to_numpy()
+    second = children.loc[children["group"] == groups[1], "improvement"].to_numpy()
+
+    def statistic(a: np.ndarray, b: np.ndarray) -> float:
+        return float((b.mean() - a.mean()) / np.sqrt(a.var(ddof=1) / len(a) + b.var(ddof=1) / len(b)))
+
+    observed = statistic(first, second)
+    pooled = np.concatenate([first, second])
+    rng = np.random.default_rng(20260924)
+    extreme = 0
+    for _ in range(STUDENTIZED_PERMUTATIONS):
+        shuffled = rng.permutation(pooled)
+        extreme += abs(statistic(shuffled[:len(first)], shuffled[len(first):])) >= abs(observed)
+
+    return {"statistic": observed, "p": (extreme + 1) / (STUDENTIZED_PERMUTATIONS + 1)}
+
+
+def disagreement_check(children: pd.DataFrame) -> dict:
+    """Show sensitivity of the interaction to different test assumptions."""
     groups = sorted(children["group"].unique())
     first = children.loc[children["group"] == groups[0], "improvement"].to_numpy()
     second = children.loc[children["group"] == groups[1], "improvement"].to_numpy()
@@ -172,7 +186,12 @@ def disagreement_check(children: pd.DataFrame) -> dict:
 
     split = min(tests.values()) < ALPHA <= max(tests.values())
 
-    return {"tests": tests, "shapiro": normality, "disagree": bool(split)}
+    return {
+        "tests": tests,
+        "shapiro": normality,
+        "sd": {groups[0]: float(first.std(ddof=1)), groups[1]: float(second.std(ddof=1))},
+        "disagree": bool(split),
+    }
 
 
 def simple_effects(children: pd.DataFrame) -> dict:
@@ -209,72 +228,6 @@ def simple_effects(children: pd.DataFrame) -> dict:
     return results
 
 
-def power_curve(children: pd.DataFrame) -> dict:
-    """Observed effect size, and what n it would take to detect it.
-
-    This is the honest answer to "why no interaction". If the effect is real at
-    the observed size, the current design misses it most of the time, and that
-    is a statement about the test set rather than about the pipeline.
-    """
-    try:
-        from statsmodels.stats.power import TTestIndPower
-    except ImportError:
-        raise SystemExit("statsmodels is required: pip install statsmodels")
-
-    groups = sorted(children["group"].unique())
-    first = children.loc[children["group"] == groups[0], "improvement"].to_numpy()
-    second = children.loc[children["group"] == groups[1], "improvement"].to_numpy()
-
-    n1, n2 = len(first), len(second)
-    # Hedges' g: Cohen's d with the small-sample correction, which matters when
-    # one group is under 30.
-    pooled_sd = np.sqrt(
-        ((n1 - 1) * first.var(ddof=1) + (n2 - 1) * second.var(ddof=1)) / (n1 + n2 - 2)
-    )
-    d = (second.mean() - first.mean()) / pooled_sd if pooled_sd else 0.0
-    correction = 1 - (3 / (4 * (n1 + n2) - 9))
-    g = d * correction
-
-    analysis = TTestIndPower()
-    smaller, larger = (groups[0], n1) if n1 <= n2 else (groups[1], n2)
-    fixed = n2 if n1 <= n2 else n1
-
-    curve = []
-    for candidate in (larger, 60, 100, 150, 200, 300):
-        if candidate < larger:
-            continue
-        curve.append(
-            {
-                "n_smaller_group": int(candidate),
-                "power": float(
-                    analysis.power(
-                        effect_size=abs(g),
-                        nobs1=candidate,
-                        ratio=fixed / candidate,
-                        alpha=ALPHA,
-                    )
-                ),
-            }
-        )
-
-    required = None
-    if abs(g) > 0:
-        try:
-            required = float(
-                analysis.solve_power(effect_size=abs(g), power=0.80, alpha=ALPHA, ratio=1.0)
-            )
-        except Exception:
-            required = None
-
-    return {
-        "hedges_g": float(g),
-        "smaller_group": smaller,
-        "observed_power": curve[0]["power"] if curve else None,
-        "curve": curve,
-        "n_per_group_for_80_percent": required,
-    }
-
-
 def render(children: pd.DataFrame, results: dict) -> str:
     lines = [
         "Group x model statistics on per-child WER",
@@ -282,6 +235,7 @@ def render(children: pd.DataFrame, results: dict) -> str:
         "",
         f"Children: {len(children)} "
         + ", ".join(f"{row['group']} {row['n']}" for row in results["cell_means"]),
+        f"Retained utterances: {int(children['n_utterances'].sum()):,}",
         "",
         "Per-child cell means",
         "-" * 72,
@@ -293,18 +247,27 @@ def render(children: pd.DataFrame, results: dict) -> str:
             f"{row['gensec']:>12.2%}{row['improvement'] * 100:>13.2f}pp"
         )
 
+    lines += ["", "Corpus composition (children)", "-" * 72]
+    for (corpus, group), count in children.groupby(["corpus", "group"]).size().items():
+        lines.append(f"  {corpus:<20} {group:<3} {count:>3}")
+    lines.append("  Group comparisons may reflect differences in corpus composition.")
+
     lines += ["", "Mixed-effects model (random intercept per child)", "-" * 72]
     for name, term in results["mixed_model"]["terms"].items():
         flag = "significant" if term["p"] < ALPHA else "not significant"
         lines.append(f"  {name:<40} b={term['coefficient']:+.4f}  p={term['p']:.4f}  {flag}")
+    lines.append("  group coefficient: TD-LT difference under Whisper only.")
+    lines.append("  model coefficient: GenSEC-Whisper difference within LT only.")
 
     interaction = results["permutation"]
+    studentized = results["studentized_permutation"]
     lines += [
         "",
         "Interaction: does improvement differ by group?",
         "-" * 72,
-        f"  permutation ({PERMUTATIONS:,} resamples)  p = {interaction['p']:.4f}"
-        f"   <- reported",
+        f"  label permutation ({PERMUTATIONS:,} resamples)  p = {interaction['p']:.4f}",
+        f"  Welch-statistic permutation ({STUDENTIZED_PERMUTATIONS:,} resamples)"
+        f"  p = {studentized['p']:.4f}",
         f"  difference in mean improvement: {interaction['difference'] * 100:+.2f}pp "
         f"({interaction['groups'][1]} - {interaction['groups'][0]})",
         "",
@@ -315,54 +278,32 @@ def render(children: pd.DataFrame, results: dict) -> str:
         lines.append(f"    {name:<16} p = {p:.4f}{mark}")
 
     for group, p in results["disagreement"]["shapiro"].items():
-        lines.append(f"    Shapiro {group:<8} p = {p:.6f}")
+        lines.append(f"    Shapiro {group:<8} p = {p:.3g}")
+
+    for group, sd in results["disagreement"]["sd"].items():
+        lines.append(f"    improvement SD {group:<8} = {sd:.4f}")
 
     if results["disagreement"]["disagree"]:
         lines += [
             "",
             "  WARNING: these tests disagree across alpha = .05.",
-            "  Per-child improvement is non-normal (see Shapiro above): WER on a",
-            "  child with few short utterances is a small-denominator ratio with",
-            "  no upper bound, so the larger group carries extreme outliers.",
-            "  Welch clears .05 because of that skew, not in spite of it - its",
-            "  unequal-variance weighting hands the high-variance group extra",
-            "  leverage. Report the permutation p. Choosing the test by its",
-            "  answer is the one thing a reviewer will reliably catch.",
+            "  The groups have unequal variances and unequal sample sizes.",
+            "  The label permutation assumes exchangeable improvement scores;",
+            "  that assumption is doubtful here. Welch tests equality of means",
+            "  under unequal variances, but is sensitive to large TD values.",
+            "  No single p-value resolves this discrepancy. Treat the interaction",
+            "  as sensitive to the analysis method, not confirmed or ruled out.",
         ]
 
     lines += ["", "Simple effects: did correction help within each group?", "-" * 72]
     for group, effect in results["simple_effects"].items():
         verdict = "significant" if effect["p_holm"] < ALPHA else "not significant"
         lines.append(
-            f"  {group:<8} n={effect['n']:<5} p(Holm)={effect['p_holm']:.6f}  "
+            f"  {group:<8} n={effect['n']:<5} p(Holm)={effect['p_holm']:.3g}  "
             f"dz={effect['dz']:.2f}  {verdict}"
         )
-    if interaction["p"] >= ALPHA:
-        lines.append(
-            "  (The interaction is not significant, so these are reported as the"
-        )
-        lines.append(
-            "   within-group comparison in its own right, not as post-hoc tests.)"
-        )
 
-    power = results["power"]
-    lines += [
-        "",
-        "Power",
-        "-" * 72,
-        f"  Observed effect size (Hedges' g): {power['hedges_g']:.3f}",
-    ]
-    if power["observed_power"] is not None:
-        lines.append(f"  Power at the current design:      {power['observed_power']:.2f}")
-    if power["n_per_group_for_80_percent"]:
-        lines.append(
-            f"  Needed for 80% power:             "
-            f"~{power['n_per_group_for_80_percent']:.0f} per group"
-        )
-    lines.append("")
-    lines.append(f"  {'n ' + power['smaller_group'] + ' children':<28}{'power':>8}")
-    for point in power["curve"]:
-        lines.append(f"  {point['n_smaller_group']:<28}{point['power']:>8.2f}")
+    lines.append("  These paired tests do not test whether the group gains differ.")
 
     return "\n".join(lines) + "\n"
 
@@ -376,9 +317,9 @@ def main() -> None:
         "cell_means": cell_means(children),
         "mixed_model": mixed_model(to_long(children)),
         "permutation": permutation_interaction(children, rng),
+        "studentized_permutation": studentized_permutation_interaction(children),
         "disagreement": disagreement_check(children),
         "simple_effects": simple_effects(children),
-        "power": power_curve(children),
     }
 
     report = render(children, results)

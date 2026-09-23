@@ -1,6 +1,6 @@
 """
 What this file is for:
-The single entry point. Runs all five stages in order, so nothing has to be
+The single entry point. Runs all six stages in order, so nothing has to be
 run by hand.
 
 High-level role in the pipeline:
@@ -23,10 +23,11 @@ import build_gensec_dataset
 import build_reference_map
 import evaluate
 import generate_nbest
+import run_analysis
 import train
 from config import load_config
 
-TOTAL_STAGES = 5
+TOTAL_STAGES = 6
 
 
 def archive_previous_results(results_dir: Path, history_dir: Path) -> None:
@@ -73,9 +74,8 @@ def main() -> None:
     print(f"Media:  {config['media_dir']}")
     print(f"Output: {config['data_dir']}")
 
-    # Stages 1, 3, 5 and 6 take seconds and read data that can still be
-    # growing, so they always rerun rather than caching a stale answer. Only
-    # the two expensive stages are skipped once they have output.
+    # Stages 1, 3, 5 and 6 always rerun on the current data and predictions.
+    # Only the two expensive stages can reuse existing output.
     with stage(1, "BUILD REFERENCE MAP"):
         build_reference_map.main(config)
 
@@ -102,6 +102,9 @@ def main() -> None:
         )
 
         evaluate.main(config)
+
+    with stage(6, "CHILD-LEVEL MIXED-MODEL ANALYSIS"):
+        run_analysis.main()
 
     # Keep the settings next to the numbers they produced.
     shutil.copy(config["config_path"], config["results_dir"] / "config_used.yaml")

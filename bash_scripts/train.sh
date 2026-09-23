@@ -7,7 +7,7 @@
 # It activates the environment, checks dependencies, and runs the one Python
 # pipeline that builds the reference map, generates Whisper n-best output,
 # builds the correction dataset, fine-tunes FLAN-T5, runs inference,
-# and scores WER.
+# scores WER, and runs the per-child mixed-model analysis.
 
 #SBATCH --job-name=gensec
 #SBATCH --partition=gpu
@@ -65,12 +65,12 @@ export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 cd "$PROJECT_ROOT"
 
 echo "===== DEPENDENCY CHECK ====="
-if python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml" >/dev/null 2>&1; then
+if python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml, scipy, statsmodels" >/dev/null 2>&1; then
   echo "Dependencies are already installed."
 else
   echo "Dependencies missing or broken; installing the pinned requirements..."
   python -m pip install -r "$PROJECT_ROOT/envs/requirements.txt"
-  python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml"
+  python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml, scipy, statsmodels"
   echo "Dependencies installed successfully."
 fi
 python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
