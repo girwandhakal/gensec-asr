@@ -1,23 +1,16 @@
 """
 What this file is for:
-Stage 2. Runs the child-speech Whisper model over every clip and keeps the
-top N candidate transcripts for each one, not just the best.
+Stage 2. Runs the child-speech Whisper model over every clip, storing a greedy
+ASR baseline and distinct sampled alternatives for correction.
 
 High-level role in the pipeline:
 This is where the raw material for correction comes from, and it sets the
 ceiling on everything downstream: the corrector cannot recover a word that
 appears in none of these candidates.
 
-Which decoding strategy runs is set by `asr_do_sample` in baseline.yaml, and it
-matters more than it looks. Under sampling - the current setting - generate()
-returns num_return_sequences independent draws in NO order, so `rank` is the
-order they happened to come back in and `1best_text` is an arbitrary draw
-rather than a best of anything. The `whisper_1best` evaluation baseline is then a random sample at
-temperature 0.6, which flatters the
-correction result by an unmeasured amount. Beam search gives a genuine ranking;
-it has twice collapsed to one distinct string per clip at the settings in
-decode_arguments(), and diverse beam search (asr_beam_groups > 1) is the
-untested candidate fix. See the notes in baseline.yaml.
+The first decode is deterministic greedy search. A separate, larger sampling
+pool supplies alternatives. The deterministic transcript is always first in
+the n-best input, and `1best_text` is never taken from the sampling pool.
 
 This is the long stage. It saves as it goes and skips clips it has already
 done, so a job that runs out of walltime just needs resubmitting.
@@ -28,6 +21,7 @@ from __future__ import annotations
 import json
 import sys
 import time
+from collections import Counter
 from pathlib import Path
 
 import librosa
@@ -36,7 +30,7 @@ from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import clip_seconds, load_config
-from text import clean_whisper_text
+from text import clean_whisper_text, normalize_for_scoring
 
 
 def load_model(model_id: str):
@@ -62,68 +56,47 @@ def load_model(model_id: str):
     return processor, model, device, dtype
 
 
-def unique_hypotheses(texts: list[str], scores: list, limit: int) -> list[dict]:
-    """The distinct candidates for one clip, in the order generate() returned them.
-
-    Under beam search that order is by sequence score, so rank 1 is a genuine
-    1-best. Under sampling it is not an order at all - the draws are
-    independent and rank 1 is whichever landed first. `rank` therefore means
-    "position as returned", and only carries best-first meaning when
-    asr_do_sample is false.
-    """
-    ranked: list[tuple[str, float | None]] = []
-    seen: set[str] = set()
-
-    for text, score in zip(texts, scores):
+def unique_hypotheses(greedy_text: str, sampled_texts: list[str], limit: int) -> list[dict]:
+    """Keep greedy first, then frequent sampled alternatives with distinct words."""
+    greedy = clean_whisper_text(greedy_text)
+    greedy_key = normalize_for_scoring(greedy)
+    counts: Counter[str] = Counter()
+    representatives: dict[str, str] = {}
+    first_seen: dict[str, int] = {}
+    for position, text in enumerate(sampled_texts):
         cleaned = clean_whisper_text(text)
-        if cleaned and cleaned not in seen:
-            seen.add(cleaned)
-            ranked.append((cleaned, score))
+        key = normalize_for_scoring(cleaned)
+        if not key:
+            continue
+        counts[key] += 1
+        representatives.setdefault(key, cleaned)
+        first_seen.setdefault(key, position)
 
-    # Fewer distinct strings than asked for is a real signal about this clip -
-    # don't pad it out with duplicates.
+    chosen: list[tuple[str, str]] = [(greedy_key, greedy)] if greedy_key else []
+    remaining = set(counts) - {greedy_key}
+    while remaining and len(chosen) < limit:
+        selected_words = set().union(*(set(key.split()) for key, _ in chosen))
+        key = max(
+            remaining,
+            key=lambda candidate: (
+                counts[candidate],
+                bool(set(candidate.split()) - selected_words),
+                -first_seen[candidate],
+            ),
+        )
+        chosen.append((key, representatives[key]))
+        remaining.remove(key)
+
     return [
-        {"rank": i + 1, "text": text, "score": score}
-        for i, (text, score) in enumerate(ranked[:limit])
-    ]
-
-
-def decode_arguments(config: dict) -> dict:
-    """Whichever decoding strategy the config asks for.
-
-    Beam search is the default. Sampling gave no ranking at all - rank 1 was
-    whichever draw happened to land first - so the 1-best baseline it produced
-    was not a best of anything, and 44% of clips collapsed to a single distinct
-    string. Sampling stays available for ablation.
-    """
-    if config["asr_do_sample"]:
-        return {
-            "do_sample": True,
-            "num_beams": 1,
-            "temperature": config["temperature"],
-            "top_p": config["top_p"],
-            "top_k": config["top_k"],
+        {
+            "rank": rank,
+            "text": text,
+            "score": None,
+            "source": "greedy" if rank == 1 and key == greedy_key and greedy_key else "sampled",
+            "sample_count": counts[key],
         }
-
-    # early_stopping=True was tried here (2026-08-27) to bound runtime, but it
-    # stops the search the instant num_beams sequences hit EOS - with
-    # num_beams == num_return_sequences that left no room for beams to diverge
-    # into different word choices, and candidate diversity collapsed (98% of
-    # clips down to one distinct string). Runtime is bounded by max_new_tokens
-    # (decode_budget below) instead, so early stopping is left at its default
-    # and the beam margin in configs/baseline.yaml does the diversity work.
-    arguments = {
-        "do_sample": False,
-        "num_beams": config["asr_num_beams"],
-    }
-
-    # Grouped beams spread the candidates further apart. Transformers rejects a
-    # diversity penalty when there is only one group, so only send it when asked.
-    if config["asr_beam_groups"] > 1:
-        arguments["num_beam_groups"] = config["asr_beam_groups"]
-        arguments["diversity_penalty"] = config["asr_diversity_penalty"]
-
-    return arguments
+        for rank, (key, text) in enumerate(chosen, start=1)
+    ]
 
 
 def decode_budget(audio_arrays, config) -> int:
@@ -139,7 +112,7 @@ def decode_budget(audio_arrays, config) -> int:
     return max(config["asr_token_margin"], budget)
 
 
-def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> list[list[dict]]:
+def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> list[dict]:
     inputs = processor(
         audio_arrays,
         sampling_rate=config["sample_rate"],
@@ -147,33 +120,43 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
     )
     input_features = inputs.input_features.to(device=device, dtype=dtype)
 
+    budget = decode_budget(audio_arrays, config)
     with torch.inference_mode():
-        # Deliberately NOT output_scores/return_dict_in_generate. Getting
-        # sequences_scores out of transformers requires output_scores, which
-        # also retains the full per-step logits: 448 steps x (batch x beams) x
-        # 51,865 vocab is several GB per batch and exhausted an 80 GB H100.
-        # Beam search already returns candidates best-first, so rank carries the
-        # ordering and the numeric score was only ever a nice-to-have.
-        sequences = model.generate(
+        greedy_sequences = model.generate(
             input_features,
             language="english",
             task="transcribe",
-            num_return_sequences=config["num_return_sequences"],
-            max_new_tokens=decode_budget(audio_arrays, config),
-            **decode_arguments(config),
+            do_sample=False,
+            num_beams=1,
+            num_return_sequences=1,
+            max_new_tokens=budget,
+        )
+        sampled_sequences = model.generate(
+            input_features,
+            language="english",
+            task="transcribe",
+            do_sample=True,
+            num_beams=1,
+            num_return_sequences=config["asr_sample_pool_size"],
+            temperature=config["temperature"],
+            top_p=config["top_p"],
+            top_k=config["top_k"],
+            max_new_tokens=budget,
         )
 
-    texts = processor.batch_decode(sequences, skip_special_tokens=True)
-    scores = [None] * len(texts)
-
-    # generate() returns the sequences for each clip back to back.
-    per_clip = config["num_return_sequences"]
+    greedy_texts = processor.batch_decode(greedy_sequences, skip_special_tokens=True)
+    sampled_texts = processor.batch_decode(sampled_sequences, skip_special_tokens=True)
+    per_clip = config["asr_sample_pool_size"]
+    if len(greedy_texts) != len(audio_arrays) or len(sampled_texts) != len(audio_arrays) * per_clip:
+        raise RuntimeError("Whisper returned an unexpected number of transcripts")
     return [
-        unique_hypotheses(
-            texts[i * per_clip:(i + 1) * per_clip],
-            scores[i * per_clip:(i + 1) * per_clip],
-            per_clip,
-        )
+        {
+            "1best_text": clean_whisper_text(greedy_texts[i]),
+            "nbest": unique_hypotheses(
+                greedy_texts[i], sampled_texts[i * per_clip:(i + 1) * per_clip],
+                config["num_return_sequences"],
+            ),
+        }
         for i in range(len(audio_arrays))
     ]
 
@@ -185,10 +168,8 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
 # archived next to the results.
 DECODE_SIGNATURE_KEYS = (
     "asr_model_id",
-    "asr_do_sample",
-    "asr_num_beams",
-    "asr_beam_groups",
-    "asr_diversity_penalty",
+    "seed",
+    "asr_sample_pool_size",
     "temperature",
     "top_p",
     "top_k",
@@ -203,14 +184,7 @@ DECODE_SIGNATURE_KEYS = (
 
 def decode_signature(config: dict) -> str:
     payload = {key: config[key] for key in DECODE_SIGNATURE_KEYS if key in config}
-    if config.get("asr_do_sample"):
-        # Beam settings cannot affect a sampled decode; excluding them keeps an
-        # unrelated edit from invalidating a corpus it did not change.
-        for key in ("asr_num_beams", "asr_beam_groups", "asr_diversity_penalty"):
-            payload.pop(key, None)
-    else:
-        for key in ("temperature", "top_p", "top_k"):
-            payload.pop(key, None)
+    payload["decode_method"] = "greedy_plus_sampled_v2"
     return json.dumps(payload, sort_keys=True, default=str)
 
 
@@ -227,12 +201,12 @@ def check_decode_signature(config: dict, output_path: Path, cached: int) -> None
     current = decode_signature(config)
 
     if not stamp_path.is_file():
-        # First run under signature tracking: adopt the existing corpus as
-        # matching the current config, which holds as long as the decode
-        # settings were not edited between generating it and now.
-        stamp_path.write_text(current, encoding="utf-8")
         if cached:
-            print(f"Stamped {cached:,} existing clips with the current decode signature")
+            raise SystemExit(
+                f"{output_path.name} has {cached:,} cached clips but no decode signature; "
+                "its baseline cannot be verified. Move it aside before regenerating."
+            )
+        stamp_path.write_text(current, encoding="utf-8")
         return
 
     previous = stamp_path.read_text(encoding="utf-8")
@@ -286,6 +260,7 @@ def generate_nbest(config: dict) -> None:
         return
 
     processor, model, device, dtype = load_model(config["asr_model_id"])
+    torch.manual_seed(config["seed"])
 
     started = time.perf_counter()
     done = 0
@@ -303,20 +278,17 @@ def generate_nbest(config: dict) -> None:
         if not batch_audio:
             return
 
-        def record(utterance_id: str, nbest: list[dict]) -> None:
+        def record(utterance_id: str, entry: dict) -> None:
             nonlocal done
-            results[utterance_id] = {
-                "nbest": nbest,
-                "1best_text": nbest[0]["text"] if nbest else "",
-            }
+            results[utterance_id] = entry
             done += 1
 
         failure = None
         try:
-            for utterance_id, nbest in zip(
+            for utterance_id, entry in zip(
                 batch_ids, transcribe_batch(batch_audio, processor, model, device, dtype, config)
             ):
-                record(utterance_id, nbest)
+                record(utterance_id, entry)
         except Exception as error:
             failure = f"{type(error).__name__}: {error}"
 

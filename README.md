@@ -33,9 +33,9 @@ and the two expensive stages (2 and 4) skip work that exists. The cheap stages
 always rerun, so a dataset that has grown since the last run is picked up
 rather than cached.
 
-To retrain after more audio arrives, delete
-`data/predictions/test_predictions_*.csv` and resubmit — otherwise stage 4
-reuses the model it already trained.
+After more audio arrives, resubmit the same job. Stage 4 fingerprints the
+processed examples and training settings, so changed data retrains the model
+and regenerates predictions even when the number of rows is unchanged.
 
 ## Layout
 
@@ -53,7 +53,7 @@ evaluation_results/       WER report and metrics
 ```mermaid
 flowchart TD
     A["data/media/*.mp3<br/>+ media_download_report.csv"] --> B[1. build_reference_map.py<br/>CHAT markup to plain text]
-    A --> C[2. generate_nbest.py<br/>Whisper, sampled decoding]
+    A --> C[2. generate_nbest.py<br/>Whisper greedy baseline + sampled alternatives]
     B --> D[3. build_gensec_dataset.py]
     C --> D
     D --> E[4. train.py<br/>fine-tune FLAN-T5, then infer]
@@ -64,7 +64,7 @@ flowchart TD
 | Stage | Script | Produces |
 |---|---|---|
 | 1 | `build_reference_map.py` | `data/utterance_id_to_reference.json` |
-| 2 | `generate_nbest.py` | `data/utterance_id_to_nbest.json` |
+| 2 | `generate_nbest.py` | `data/utterance_id_to_nbest_greedy_sample10.json` |
 | 3 | `build_gensec_dataset.py` | `data/processed_gensec.json`, `data/dropped_gensec.json` |
 | 4 | `train.py` | `data/splits/*.csv`, `data/predictions/test_predictions_<mode>.csv` |
 | 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
@@ -121,18 +121,19 @@ training target and the scoring reference can never drift apart.
 no timestamp columns and so cannot be joined back to clip filenames. The report
 CSV is the only artifact carrying the clip-to-text link.
 
-## Why decoding is sampled, not beam-searched
+## ASR baseline and correction candidates
 
-Beam search collapses into near-identical strings. The corrector only has
-something to work with when the hypotheses actually disagree, so stage 2 samples
-(`temperature 0.6`, `top_p 0.95`) and keeps the distinct candidates.
+Stage 2 decodes each clip once with deterministic greedy search. That transcript
+is the ASR baseline and the first GenSEC input. It also draws 10 transcripts at
+temperature 0.8, removes duplicates after scoring normalization, and retains up
+to four sampled alternatives. Candidates sampled more often are preferred, with
+distinct word choices breaking ties. The correction input has at most five
+transcripts; it is never padded with duplicates. The older sampled-only n-best
+file remains untouched, while the new path forces a full ASR regeneration.
 
-**The number to watch is the kept/dropped ratio printed by stage 3.** An
-utterance whose candidates all agree teaches the corrector nothing and gets
-dropped. In the earlier `child-whispr-annotation` run, 65% of utterances were
-dropped for exactly this reason, and clips here are short (median ~2s), where
-Whisper is confident and every sample agrees. If the kept rate comes back very
-low, the lever is decoding diversity, not the correction model.
+The useful-diversity checks are the number of distinct candidates and the
+oracle n-best WER, not the kept/dropped ratio: single-candidate utterances are
+still included for training.
 
 ## Clips that get skipped
 

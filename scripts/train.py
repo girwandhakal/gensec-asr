@@ -12,6 +12,7 @@ like.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import random
@@ -314,7 +315,7 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     tokenizer.save_pretrained(str(final_checkpoint))
     (final_checkpoint / "train_rows.txt").write_text(str(len(train_frame)), encoding="utf-8")
     (final_checkpoint / "training_signature.txt").write_text(
-        config["methodology_version"], encoding="utf-8"
+        training_signature(config), encoding="utf-8"
     )
     print(f"Saved model to {final_checkpoint}")
 
@@ -462,6 +463,7 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
 INFERENCE_SIGNATURE_KEYS = (
     "methodology_version",
     "gensec_model_id",
+    "num_train_epochs",
     "seed",
     "test_size",
     "min_hypotheses",
@@ -480,10 +482,30 @@ INFERENCE_SIGNATURE_KEYS = (
 )
 
 
+def training_signature(config: dict) -> str:
+    """Fingerprint the examples and settings that determine the fine-tune."""
+    if "_processed_sha256" not in config:
+        digest = hashlib.sha256()
+        with config["processed_path"].open("rb") as handle:
+            for block in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(block)
+        config["_processed_sha256"] = digest.hexdigest()
+    keys = (
+        "methodology_version", "gensec_model_id", "seed", "test_size",
+        "eval_size", "num_train_epochs", "learning_rate", "train_batch_size",
+        "max_source_length", "max_target_length", "min_hypotheses",
+        "max_hypotheses", "consensus_min_support", "consensus_max_words",
+    )
+    payload = {key: config[key] for key in keys if key in config}
+    payload["processed_sha256"] = config["_processed_sha256"]
+    return json.dumps(payload, sort_keys=True, default=str)
+
+
 def inference_signature(config: dict, mode: str, train_rows: int, test_rows: int) -> str:
     """A stable description of everything the predictions depend on."""
     payload = {key: config[key] for key in INFERENCE_SIGNATURE_KEYS if key in config}
     payload["mode"] = mode
+    payload["training_signature"] = training_signature(config)
     payload["train_rows"] = train_rows
     payload["test_rows"] = test_rows
     return json.dumps(payload, sort_keys=True, default=str)
@@ -556,7 +578,7 @@ def main(config: dict | None = None) -> None:
     if (
         final_checkpoint.is_dir()
         and stamp == str(len(train_frame))
-        and signature == config["methodology_version"]
+        and signature == training_signature(config)
     ):
         print(
             f"Using existing fine-tune: {final_checkpoint} "
@@ -568,7 +590,7 @@ def main(config: dict | None = None) -> None:
             print(
                 f"Discarding fine-tune at {final_checkpoint}: trained on "
                 f"{stamp or 'an unknown number of'} rows / {signature or 'unknown methodology'}, "
-                f"current split has {len(train_frame):,} / {config['methodology_version']} "
+                f"current split has {len(train_frame):,} / {training_signature(config)} "
                 "- retraining"
             )
         model = fine_tune(train_frame, tokenizer, config)
