@@ -25,40 +25,14 @@ audio_extension: .mp3
 sample_rate: 16000
 max_clip_seconds: 30      # Whisper's window; 91 clips exceed it, longest is 75 min
 min_clip_seconds: 0.1     # 135 clips are effectively zero-length
-num_return_sequences: 5
-
-# Beam search, not sampling. Sampling returned candidates in no order at all, so
-# "1best" was an arbitrary draw rather than a best - an indefensible baseline -
-# and 44% of clips collapsed to one distinct string, which is the ceiling the
-# corrector then ran into. Beams give ranked, genuinely distinct candidates.
-#
-# num_beams > num_return_sequences on purpose: with them equal (tried on
-# 2026-08-27) and early_stopping=True, search stopped the instant all 5 beams
-# hit EOS, with no spare beams left to diverge into different word choices -
-# 98% of clips collapsed to a single distinct string, worse than sampling ever
-# was. The 3 spare beams restore exploration room; early_stopping is off so
-# search doesn't cut that exploration short again. Runtime stays bounded by
-# the max_new_tokens budget below, not by early_stopping.
-asr_do_sample: true            # false switches to beam search (see decode_arguments) - reverted
-                                # 2026-08-31: the only real full-corpus result with a sane WER
-                                # (5867a60, gensec_zero_shot 50.8%) was scored on data this
-                                # sampling path generated (75,340/139,348 kept, 54.1%). Beam
-                                # search has since run to full completion twice at the settings
-                                # in decode_arguments() and collapsed to a single hypothesis on
-                                # 99.9% of clips both times - not a resume artifact, reproduced
-                                # fresh. Diverse beam search (asr_beam_groups) was identified as
-                                # the likely fix but never tested; revisit before trying beam
-                                # search again.
-asr_num_beams: 8
-asr_beam_groups: 1             # >1 switches on diverse beam search
-asr_diversity_penalty: 0.5     # only used when asr_beam_groups > 1
-
-# Sampling parameters, kept for the ablation. Ignored unless asr_do_sample.
-temperature: 0.6
+nbest_filename: utterance_id_to_nbest_greedy_sample10.json
+num_return_sequences: 5       # total GenSEC inputs: greedy 1-best plus up to 4 sampled alternatives
+asr_sample_pool_size: 10      # draw more than we retain, then deduplicate
+temperature: 0.8
 top_p: 0.95
 top_k: 50
 
-asr_batch_size: 8             # 8 beams x 8 clips; the cross-attention cache is the limit
+asr_batch_size: 4             # 10 samples per clip use more memory than the old 5
 
 # Whisper decodes toward its 448-token limit even on a 2-second clip. Sampling
 # hid that (each draw stopped at its own EOS); beam search does not, and
@@ -69,14 +43,14 @@ asr_save_every: 500       # checkpoint the n-best JSON this often, so the job re
 asr_limit: null           # set to an integer for a quick smoke test
 
 # Stage 3: dataset construction.
-max_hypotheses: 5         # beam search returns 5 ranked candidates; show the model all of them
+max_hypotheses: 5         # greedy transcript plus up to 4 distinct sampled alternatives
 min_hypotheses: 1         # 1 keeps utterances where candidates agree so LM learns identity mapping
 
 # Stage 4: the correction model.
 gensec_model_id: google/flan-t5-base
 max_source_length: 512
 max_target_length: 128
-num_train_epochs: 5
+num_train_epochs: 10
 learning_rate: 3.0e-5
 train_batch_size: 8
 eval_batch_size: 16
@@ -89,16 +63,9 @@ no_repeat_ngram_size: 3        # 0 disables
 repetition_penalty: 1.2        # 1.0 disables
 generation_length_slack: 1.5   # cap output at this multiple of the longest input hypothesis
 
-# Consensus-aware selective correction. The model sees explicit word support
-# counts, and the gate falls back to Whisper 1-best when generated evidence is
-# weak. The raw and selective predictions are both written and evaluated.
+# The correction prompt includes word counts showing agreement across hypotheses.
 consensus_min_support: 2        # minimum number of hypotheses supporting a word
 consensus_max_words: 40         # keep prompts bounded on long utterances
-selective_min_score: 0.50       # generation confidence x evidence-adjusted support
-selective_min_support: 0.35     # minimum average word support across the n-best list
-
-# Thresholds reported as a risk/coverage curve in addition to the fixed gate.
-selective_report_thresholds: [0.30, 0.40, 0.50, 0.60, 0.70]
 
 # The harder cap: what the clip could physically hold. Whisper writes whole
 # sentences onto near-silent audio - the worst rows of 2026-08-27 were 100 ms
