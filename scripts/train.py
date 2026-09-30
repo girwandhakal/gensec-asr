@@ -16,6 +16,7 @@ import hashlib
 import json
 import math
 import random
+import shutil
 import sys
 from collections import Counter
 from pathlib import Path
@@ -280,6 +281,12 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     split = dataset.train_test_split(test_size=config["eval_size"], seed=config["seed"])
     print(f"Fine-tune on {len(split['train']):,} | validate on {len(split['test']):,}")
 
+    # Leftovers from earlier runs that saved per-epoch checkpoints.
+    for stale in Path(config["work_dir"]).glob("checkpoint-*"):
+        if stale.is_dir():
+            print(f"Removing stale Trainer checkpoint: {stale}")
+            shutil.rmtree(stale, ignore_errors=True)
+
     model = AutoModelForSeq2SeqLM.from_pretrained(config["gensec_model_id"])
     arguments = Seq2SeqTrainingArguments(
         output_dir=str(config["work_dir"]),
@@ -287,9 +294,13 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
         per_device_eval_batch_size=config["eval_batch_size"],
         learning_rate=config["learning_rate"],
         num_train_epochs=config["num_train_epochs"],
-        save_strategy="epoch",
+        # No per-epoch Trainer checkpoints. trainer.train() below never resumes,
+        # so they were dead weight: each one is weights + AdamW state (~3 GB for
+        # flan-t5-base), and HF writes the new one before deleting the old, so
+        # even save_total_limit=1 held two at once and filled work_directory to
+        # 7.5 GB. The only artifact that matters is final_checkpoint.
+        save_strategy="no",
         eval_strategy="epoch",
-        save_total_limit=1,
         logging_steps=100,
         # NOT fp16. T5 was pretrained in bfloat16 and overflows fp16's range:
         # the gradient scaler then skips every optimizer step, so the loss logs
