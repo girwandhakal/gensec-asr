@@ -18,7 +18,6 @@ import math
 import random
 import shutil
 import sys
-from collections import Counter
 from pathlib import Path
 
 import pandas as pd
@@ -54,38 +53,12 @@ def format_hypotheses(hypotheses: list[str]) -> str:
     return "\n".join(f"{i}. {text}" for i, text in enumerate(hypotheses, start=1))
 
 
-def consensus_evidence(hypotheses: list[str], config: dict) -> str:
-    """Render word support across hypotheses as explicit model evidence."""
-    word_counts = Counter()
-    for hypothesis in hypotheses:
-        # Count a word once per hypothesis: repeated words in one transcript
-        # should not masquerade as agreement between candidates.
-        word_counts.update(set(normalize(hypothesis).split()))
-
-    minimum = min(config.get("consensus_min_support", 2), len(hypotheses))
-    supported = [
-        (word, count)
-        for word, count in word_counts.items()
-        if count >= minimum
-    ]
-    supported.sort(key=lambda item: (-item[1], item[0]))
-    supported = supported[: config.get("consensus_max_words", 40)]
-
-    if not supported:
-        return "none"
-    total = max(len(hypotheses), 1)
-    return ", ".join(f"{word} ({count}/{total})" for word, count in supported)
+def hypotheses_block(hypotheses: list[str]) -> str:
+    return f"Hypotheses:\n{format_hypotheses(hypotheses)}"
 
 
-def hypotheses_block(hypotheses: list[str], config: dict) -> str:
-    return (
-        f"Hypotheses:\n{format_hypotheses(hypotheses)}\n"
-        f"Consensus evidence (word support): {consensus_evidence(hypotheses, config)}"
-    )
-
-
-def build_nbest_prompt(hypotheses: list[str], config: dict) -> str:
-    return f"{INSTRUCTION}\n\n{hypotheses_block(hypotheses, config)}"
+def build_nbest_prompt(hypotheses: list[str]) -> str:
+    return f"{INSTRUCTION}\n\n{hypotheses_block(hypotheses)}"
 
 
 def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
@@ -103,13 +76,13 @@ def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
         # never saw, which put zero-shot inference off-distribution and made
         # the model echo the hypothesis list back instead of correcting it.
         if not demos:
-            return build_nbest_prompt(hyps, config)
+            return build_nbest_prompt(hyps)
 
         blocks = [INSTRUCTION]
         for demo in demos:
             demo_hyps = demo["input"][:config["icl_demo_hypotheses"]]
-            blocks.append(f"{hypotheses_block(demo_hyps, config)}\nCorrected: {demo['output']}")
-        blocks.append(f"{hypotheses_block(hyps, config)}\nCorrected:")
+            blocks.append(f"{hypotheses_block(demo_hyps)}\nCorrected: {demo['output']}")
+        blocks.append(f"{hypotheses_block(hyps)}\nCorrected:")
         return "\n\n".join(blocks)
 
     def token_count(text: str) -> int:
@@ -264,7 +237,7 @@ class AbortOnDeadTraining(TrainerCallback):
 
 def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
     def tokenize(batch):
-        prompts = [build_nbest_prompt(h, config) for h in batch["input"]]
+        prompts = [build_nbest_prompt(h) for h in batch["input"]]
         model_inputs = tokenizer(
             prompts, max_length=config["max_source_length"], truncation=True
         )
@@ -486,8 +459,6 @@ INFERENCE_SIGNATURE_KEYS = (
     "generation_length_slack",
     "generation_tokens_per_second",
     "generation_min_tokens",
-    "consensus_min_support",
-    "consensus_max_words",
     "few_shot_examples",
     "icl_demo_hypotheses",
 )
@@ -505,9 +476,11 @@ def training_signature(config: dict) -> str:
         "methodology_version", "gensec_model_id", "seed", "test_size",
         "eval_size", "num_train_epochs", "learning_rate", "train_batch_size",
         "max_source_length", "max_target_length", "min_hypotheses",
-        "max_hypotheses", "consensus_min_support", "consensus_max_words",
+        "max_hypotheses",
     )
     payload = {key: config[key] for key in keys if key in config}
+    # Reject checkpoints trained with an earlier prompt format.
+    payload["prompt_format"] = "instruction_hypotheses_v1"
     payload["processed_sha256"] = config["_processed_sha256"]
     return json.dumps(payload, sort_keys=True, default=str)
 

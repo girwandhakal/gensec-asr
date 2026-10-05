@@ -63,10 +63,6 @@ no_repeat_ngram_size: 3        # 0 disables
 repetition_penalty: 1.2        # 1.0 disables
 generation_length_slack: 1.5   # cap output at this multiple of the longest input hypothesis
 
-# The correction prompt includes word counts showing agreement across hypotheses.
-consensus_min_support: 2        # minimum number of hypotheses supporting a word
-consensus_max_words: 40         # keep prompts bounded on long utterances
-
 # The harder cap: what the clip could physically hold. Whisper writes whole
 # sentences onto near-silent audio - the worst rows of 2026-08-27 were 100 ms
 # clips against one-word references - and no hypothesis-derived bound catches
