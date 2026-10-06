@@ -1,0 +1,14 @@
+﻿corpus,TD_children,CD_children,total_children,transcripts_with_extracted_utterances,TD_utterances,CD_utterances,identity_note
+Braunwald,1,0,1,4,1007,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+EHS,34,0,34,72,6702,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+ENNI,194,51,245,245,16792,4478,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+EllisWeismer,36,36,72,72,2097,2056,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+Gelman,17,0,17,17,1640,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+Gleason,1,0,1,2,596,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+HSLLD,49,0,49,72,5510,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+MacWhinney,1,0,1,128,12438,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+Nippold,3,0,3,3,247,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+OCSC,160,0,160,160,80523,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+POLER,12,0,12,12,283,0,Corpus-scoped retained child identity; counts refer to extracted target-child speech
+Rescorla,,,,86,3197,4768,52 retained child codes (21 TD / 31 LT); unique identities and classification unresolved
+TOTAL,,,Not certified,873,131032,11302,Rescorla identity ambiguity prevents certified participant total

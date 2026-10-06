@@ -76,7 +76,7 @@ def main() -> None:
 
     # Stages 1, 3, 5 and 6 always rerun on the current data and predictions.
     # Only the two expensive stages can reuse existing output.
-    with stage(1, "BUILD REFERENCE MAP"):
+    with stage(1, "IMPORT FINALIZED AUDIO/REFERENCE PAIRS"):
         build_reference_map.main(config)
 
     with stage(2, "GENERATE WHISPER N-BEST"):

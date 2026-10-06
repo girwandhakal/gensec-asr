@@ -15,11 +15,10 @@ import random
 import sys
 from pathlib import Path
 
-import pandas as pd
-
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import clip_seconds, load_config, predictions_path
-from text import normalize_for_scoring
+from text import normalize_prediction_for_scoring
+from reference_io import read_prediction_rows
 
 WORST_EXAMPLES = 10
 
@@ -88,11 +87,11 @@ def oracle_best_hypothesis(reference_text: str, hypotheses: list[str]) -> str:
     the n-best list is worth at all; the gap between it and the model is how
     much of that the model captured.
     """
-    reference = normalize_for_scoring(reference_text).split()
+    reference = reference_text.split()
 
     best_text, fewest = "", None
     for text in hypotheses:
-        errors = sum(count_errors(reference, normalize_for_scoring(text).split()))
+        errors = sum(count_errors(reference, normalize_prediction_for_scoring(text).split()))
         if fewest is None or errors < fewest:
             best_text, fewest = text, errors
 
@@ -111,12 +110,12 @@ def score_compositional_oracle(triples: list[tuple[str, str, list[str]]]) -> dic
     reference_words = 0
 
     for _, reference_text, hypotheses in triples:
-        reference = normalize_for_scoring(reference_text).split()
+        reference = reference_text.split()
         reference_words += len(reference)
 
         reachable: set[int] = set()
         for text in hypotheses:
-            steps = align(reference, normalize_for_scoring(text).split())
+            steps = align(reference, normalize_prediction_for_scoring(text).split())
             reachable.update(index for operation, index in steps if operation == "M")
 
         unreachable += len(reference) - len(reachable)
@@ -141,8 +140,8 @@ def score(pairs: list[tuple[str, str, str]]) -> dict:
     worst = []
 
     for utterance_id, reference_text, hypothesis_text in pairs:
-        reference = normalize_for_scoring(reference_text).split()
-        hypothesis = normalize_for_scoring(hypothesis_text).split()
+        reference = reference_text.split()
+        hypothesis = normalize_prediction_for_scoring(hypothesis_text).split()
 
         substitutions, deletions, insertions = count_errors(reference, hypothesis)
         totals["substitutions"] += substitutions
@@ -171,8 +170,8 @@ def utterance_errors(pairs: list[tuple[str, str, str]]) -> list[int]:
     """Total errors per utterance, in the order given."""
     return [
         sum(count_errors(
-            normalize_for_scoring(reference).split(),
-            normalize_for_scoring(hypothesis).split(),
+            reference.split(),
+            normalize_prediction_for_scoring(hypothesis).split(),
         ))
         for _, reference, hypothesis in pairs
     ]
@@ -232,16 +231,16 @@ def candidates(nbest: dict, utterance_id: str) -> list[str]:
 def collect_systems(config: dict) -> dict[str, list[tuple[str, str, str]]]:
     """Build (id, truth, prediction) triples for each system, on the same utterances."""
     mode = config["inference_modes"][0]
-    frame = pd.read_csv(predictions_path(config, mode)).fillna("")
+    rows = read_prediction_rows(predictions_path(config, mode))
     nbest = json.loads(config["nbest_path"].read_text(encoding="utf-8"))
 
     systems = {
         "whisper_1best": [
             (row["id"], row["truth"], nbest.get(row["id"], {}).get("1best_text", ""))
-            for row in frame.to_dict("records")
+            for row in rows
         ],
         f"gensec_{mode}": [
-            (row["id"], row["truth"], row["prediction"]) for row in frame.to_dict("records")
+            (row["id"], row["truth"], row["prediction"]) for row in rows
         ],
     }
 
@@ -249,7 +248,7 @@ def collect_systems(config: dict) -> dict[str, list[tuple[str, str, str]]]:
     # 5% is most of what there was, 4% of a reachable 40% is barely a start.
     systems["oracle_nbest"] = [
         (row["id"], row["truth"], oracle_best_hypothesis(row["truth"], candidates(nbest, row["id"])))
-        for row in frame.to_dict("records")
+        for row in rows
     ]
 
     return systems
@@ -446,7 +445,7 @@ def main(config: dict | None = None) -> None:
     for label, low, high in LENGTH_BUCKETS:
         lines += breakdown(
             systems,
-            lambda t, lo=low, hi=high: lo <= len(normalize_for_scoring(t[1]).split()) <= hi,
+            lambda t, lo=low, hi=high: lo <= len(t[1].split()) <= hi,
             label,
         )
 
@@ -474,7 +473,7 @@ def main(config: dict | None = None) -> None:
     lines.append("-" * 72)
     lines.append(f"{'':<28}{'utts':>8}{'WER':>10}{'exact':>10}")
     lines += breakdown(
-        systems, lambda t: len(normalize_for_scoring(t[1]).split()) >= 3, "3+ words"
+        systems, lambda t: len(t[1].split()) >= 3, "3+ words"
     )
 
     for name, result in results.items():

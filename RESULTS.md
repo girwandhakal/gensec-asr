@@ -1,76 +1,75 @@
-# Results — per-child analysis
+# Results — child-level comparison
 
-163 children (29 LT, 134 TD), 27,412 test utterances. WER accumulated per child
-as total errors / total reference words. Source: `evaluation_results/analysis/`.
+The held-out predictions contain 27,412 utterances from 167 children. The
+analysis retains 163 children (29 in the combined LT/SLI group, labeled LT;
+134 typically developing, labeled TD) with at least five test utterances each,
+covering 27,400 utterances. Each
+child's WER is its total word errors divided by its total reference words;
+cell means give each retained child equal weight. These are absolute WER
+percentage-point changes, not the relative reductions in `wer_report.txt`.
 
-## Per-child WER
-
-| Group | n | Whisper | Whisper+LLM | Improvement |
+| Group | Children | Whisper WER | Whisper + LLM WER | Mean improvement |
 |---|---:|---:|---:|---:|
-| LT | 29 | 68.77% | 64.46% | 4.31pp |
-| TD | 134 | 57.54% | 50.34% | 7.19pp |
+| LT | 29 | 68.53% | 64.48% | 4.04 pp |
+| TD | 134 | 55.74% | 49.72% | 6.02 pp |
 
-## Tests
+## Factorial model and paired comparisons
 
-One mixed-effects model (random intercept per child), fitted to all three
-effects at once. `b` is the WER difference in proportion units.
+The random-intercept mixed model includes group, model, and their interaction.
+Its coefficient p-values are model-based Wald tests. With LT and Whisper as
+reference levels, the group coefficient describes the **Whisper** LT–TD gap,
+and the model coefficient describes the **LT** Whisper-to-LLM change. Neither
+coefficient alone is a marginal effect across both levels.
 
-| Effect | b | MixedLM p | Verdict |
+| Coefficient | Estimate | Wald p | Meaning |
 |---|---:|---:|---|
-| Model (Whisper → +LLM) | −0.0431 | **.023** | Correction lowers WER |
-| Group (LT → TD) | −0.1123 | **.031** | LT worse under both models |
-| Group × model | −0.0288 | .168 | Not significant |
+| TD vs LT under Whisper | −12.78 pp | .0109 | Lower mean WER for TD under Whisper |
+| LLM vs Whisper within LT | −4.04 pp | .0075 | Lower mean WER after correction in LT |
+| Group × model | −1.98 pp | .2354 | Additional TD improvement; uncertain |
 
-The interaction coefficient (−0.0288) *is* the 2.88pp gap in improvement
-between groups. Because those improvement scores are severely non-normal, it is
-re-tested below without distributional assumptions; both routes agree.
+Paired child-level tests of improvement within each group give LT
+`p = 0.000982`, `dz = 0.68` and TD `p = 5.95e-13`, `dz = 0.70`
+(Holm-adjusted across the two tests). These show average gains within each
+group; they do not establish that the groups' gains differ.
 
-Simple effects — correction helped both groups: LT p<.0001, dz=0.89;
-TD p<.0001, dz=0.65 (Holm-corrected).
+## Interaction sensitivity
 
-## The interaction
+TD's observed mean improvement exceeds LT's by 1.98 pp. The current tests
+give the following results:
 
-TD improves 2.88pp more than LT. Not statistically supported:
-
-| Test | p | |
+| Test | p | Assumption or estimand |
 |---|---:|---|
-| MixedLM (Wald) | .168 | model-based |
-| permutation | .156 | ← reported, assumes nothing |
-| Student t | .173 | |
-| Mann-Whitney | .224 | |
-| Yuen (20% trim) | .221 | |
-| Welch t | **.031** | ← the only one under .05 |
+| Mixed-model Wald | .2354 | Random-intercept normal-error model |
+| Unstudentized label permutation | .2347 | Exchangeable child improvement distributions |
+| Student equal-variance t | .2400 | Equal variances |
+| Welch unequal-variance t | .1410 | Difference in means, unequal variances |
+| Mann–Whitney | .3387 | Rank-based distribution comparison |
+| Yuen 20% trimmed | .5032 | Difference in trimmed means |
+| Studentized permutation | .1438 | Welch statistic, 20,000 seeded draws |
 
-MixedLM and the permutation test agree (.168, .156). Welch is the lone
-dissenter.
+The improvement standard deviations are 5.92 pp (LT) and 8.60 pp (TD).
+TD's Shapiro p-value is `3.69e-11`. The unstudentized permutation requires
+exchangeable group improvement distributions; unequal variances make that
+assumption uncertain. None of the reported child-level interaction tests
+crosses the .05 threshold in this run. The observed 1.98 pp difference is
+therefore descriptive, without clear evidence of different gains by group.
 
-TD improvements are severely non-normal (Shapiro p<10⁻¹⁵): per-child WER is a
-small-denominator ratio with no upper bound. Welch clears .05 *because* of that
-skew — its unequal-variance weighting gives the high-variance group extra
-leverage. Reporting it would be choosing the test by its answer.
+## Scope of the comparison
 
-## Power
+All 29 LT children come from ENNI, Rescorla, or EllisWeismer. Only 42 of the
+134 TD children come from those three corpora. Group differences therefore
+also reflect corpus composition; this analysis cannot attribute them solely
+to developmental group. Twelve retained test children also occur in the
+training split through different source transcripts, even though no source
+transcript or utterance ID overlaps. This limits claims about completely
+unseen children.
 
-Hedges' g = 0.279. The current design has **27% power** — it would miss a real
-effect this size three times in four.
+The `wer_report.txt` group comparison is a different estimand: relative WER
+reduction with utterance-level bootstrap resampling. Its small p-value does
+not substitute for child-level uncertainty because utterances within a child
+are correlated.
 
-| LT children | Power |
-|---:|---:|
-| 29 (current) | 0.27 |
-| 60 | 0.43 |
-| 100 | 0.56 |
-| 150 | 0.65 |
-| 200 | 0.70 |
-
-80% power needs ~203 per group. Even all 140 LT children in the corpus falls
-short.
-
-## Conclusion
-
-Correction significantly helps both groups. The LT/TD gap persists under both
-models. TD gaining more is a **trend the data cannot confirm at n=29 LT**.
-
-Note: `wer_report.txt` gives the LT/TD gap p<0.002, but that bootstrap resamples
-*utterances* — treating 75 utterances from one child as 75 independent
-observations. Per-child is the conservative unit, and at the child level the
-interaction is not there.
+The old `anova_report.txt` power section used the observed effect size in a
+two-sample equal-variance t-test calculation. That post-hoc calculation does
+not establish that sample size caused the uncertain interaction and is no
+longer part of the analysis report.

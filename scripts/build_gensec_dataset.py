@@ -6,9 +6,8 @@ supervised correction dataset.
 High-level role in the pipeline:
 This is the step that turns speech recognition into a text-to-text problem:
 input is a short list of competing hypotheses, target is the true transcript.
-Utterances whose candidates all agree carry no information for the corrector,
-so they are dropped here - and the drop log is worth reading, because a high
-drop rate means the decoding wasn't diverse enough.
+Single-hypothesis examples are retained when min_hypotheses is 1.
+Ground-truth strings are copied unchanged from the upstream reference map.
 """
 
 from __future__ import annotations
@@ -47,7 +46,7 @@ def build_dataset(config: dict) -> tuple[list[dict], list[dict]]:
 
     for utterance_id, entry in nbest.items():
         hypotheses = collect_hypotheses(entry, config["max_hypotheses"])
-        reference = (references.get(utterance_id) or "").strip()
+        reference = references.get(utterance_id) or ""
 
         if utterance_id not in references:
             reason = "no_reference_transcript"

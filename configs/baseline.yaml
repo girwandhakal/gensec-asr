@@ -1,52 +1,40 @@
 seed: 42
-# Bumping this invalidates the saved fine-tune and the saved predictions, which
-# is the point: v2 is the first version whose test set is disjoint from its
-# training set. Under v1 the split was drawn over utterances, so all 867 test
-# transcripts and all 821 test children were also in training and 11.0% of test
-# rows were verbatim training pairs. Every v1 number measures memorization as
-# much as correction and none of them carry over.
-methodology_version: transcript_split_v2
+# Cache version
+methodology_version: finalized_reference_csv_v3
 
-# Audio and reference transcripts prepared by asr-dataset-pipelines.
-# The label CSV lives at the root of the media directory, so config.py derives
-# it from whichever media copy is in use rather than declaring it twice.
+# Upstream media and references
 hpc_media_dir: /bighome/gdhakal/child_asr/data/media
 local_media_dir: ../asr-dataset-pipelines/data/media
 reference_report_filename: media_download_report.csv
 
-# Reference transcripts are raw CHILDES CHAT markup. Whisper can never emit
-# "xxx" for unintelligible speech, so keeping it would count as errors the
-# model cannot avoid.
-remove_unintelligible: true
+# Ground-truth cleaning is owned by asr-dataset-pipelines.
 
-# Stage 2: Whisper n-best generation.
+# Whisper n-best generation
 asr_model_id: rishabhjain16/whisper_medium_to_myst55h
 audio_extension: .mp3
 sample_rate: 16000
-max_clip_seconds: 30      # Whisper's window; 91 clips exceed it, longest is 75 min
-min_clip_seconds: 0.1     # 135 clips are effectively zero-length
+max_clip_seconds: 30  # Whisper window
+min_clip_seconds: 0.1  # Minimum clip duration
 nbest_filename: utterance_id_to_nbest_greedy_sample10.json
-num_return_sequences: 5       # total GenSEC inputs: greedy 1-best plus up to 4 sampled alternatives
-asr_sample_pool_size: 10      # draw more than we retain, then deduplicate
+num_return_sequences: 5  # Greedy plus sampled alternatives
+asr_sample_pool_size: 10  # Sampling pool before deduplication
 temperature: 0.8
 top_p: 0.95
 top_k: 50
 
-asr_batch_size: 4             # 10 samples per clip use more memory than the old 5
+asr_batch_size: 4  # Sampling batch size
 
-# Whisper decodes toward its 448-token limit even on a 2-second clip. Sampling
-# hid that (each draw stopped at its own EOS); beam search does not, and
-# uncapped it ran stage 2 at 0.13 clips/sec - twelve days for the corpus.
+# Duration-based decoding limits
 asr_tokens_per_second: 8
-asr_token_margin: 16          # floor, and headroom above the spoken content
-asr_save_every: 500       # checkpoint the n-best JSON this often, so the job resumes
-asr_limit: null           # set to an integer for a quick smoke test
+asr_token_margin: 16  # Token floor and headroom
+asr_save_every: 500  # Checkpoint interval
+asr_limit: null  # Optional smoke-test limit
 
-# Stage 3: dataset construction.
-max_hypotheses: 5         # greedy transcript plus up to 4 distinct sampled alternatives
-min_hypotheses: 1         # 1 keeps utterances where candidates agree so LM learns identity mapping
+# Dataset construction
+max_hypotheses: 5  # Maximum distinct hypotheses
+min_hypotheses: 1  # Retain single-hypothesis utterances
 
-# Stage 4: the correction model.
+# Correction model
 gensec_model_id: google/flan-t5-base
 max_source_length: 512
 max_target_length: 128
@@ -54,32 +42,25 @@ num_train_epochs: 40
 learning_rate: 3.0e-5
 train_batch_size: 8
 eval_batch_size: 16
-generation_batch_size: 4       # beam search is far heavier per row than eval; keep this small
+generation_batch_size: 4  # Beam-search batch size
 num_beams: 8
 
-# Repetition control at generation time. References average 5.2 words, so an
-# unbounded 128-token decode is pure room for a loop to run in.
-no_repeat_ngram_size: 3        # 0 disables
-repetition_penalty: 1.2        # 1.0 disables
-generation_length_slack: 1.5   # cap output at this multiple of the longest input hypothesis
+# Repetition control
+no_repeat_ngram_size: 3  # Disabled at 0
+repetition_penalty: 1.2  # Disabled at 1.0
+generation_length_slack: 1.5  # Longest-hypothesis length multiplier
 
-# The harder cap: what the clip could physically hold. Whisper writes whole
-# sentences onto near-silent audio - the worst rows of 2026-08-27 were 100 ms
-# clips against one-word references - and no hypothesis-derived bound catches
-# that. 8 tokens/s is deliberately generous against ~3 words/s of child speech.
+# Audio-duration output cap
 generation_tokens_per_second: 8
-generation_min_tokens: 6       # floor. 4 cut 262 predictions mid-word ("i don'"), all on sub-1s clips
-# Held out by whole source transcript, stratified by LT/TD (see make_splits).
-# Never by utterance: utterances from one recording session share a child, a
-# recording setup and a vocabulary, so an utterance-level split lets the
-# corrector memorize sessions it is then scored on.
+generation_min_tokens: 6  # Minimum output tokens
+# Transcript splits stratified by LT/TD
 test_size: 0.2
-eval_size: 0.02                # held out of the fine-tune for a per-epoch loss check
-inference_modes: [zero_shot]   # also available: one_shot, few_shot
+eval_size: 0.02  # Validation fraction
+inference_modes: [zero_shot]  # Options: zero_shot, one_shot, few_shot
 few_shot_examples: 5
-icl_demo_hypotheses: 3         # hypotheses shown per in-context demonstration
+icl_demo_hypotheses: 3  # Hypotheses per demonstration
 
-# Stage 6: how many resamples behind the LT/TD confidence intervals.
+# LT/TD confidence-interval resamples
 bootstrap_iterations: 1000
 
 data_dir: data

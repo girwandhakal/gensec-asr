@@ -1,0 +1,19 @@
+# Dataset summary after MLU-based selection and timestamp filtering
+
+Counts describe the 873 transcripts with timestamped target-child utterances. CD pools the pipeline LT category, including SLI. Repeated recordings of a child count as separate transcripts. Ages reproduce the existing manifest summary metadata. Duration is the sum of utterance timestamp intervals, not unique recording time. This stage precedes subsequent ASR filtering.
+
+| Corpus | Reported age (years;months) | TD transcripts | CD transcripts | Total transcripts | TD utterances | CD utterances | Total utterances | TD audio (seconds) | CD audio (seconds) | Total audio (hours) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Braunwald | 5;10–7;00 | 4 | 0 | 4 | 1007 | 0 | 1007 | 1894.567 | 0.0 | 0.526 |
+| EHS | 5;00–6;06 | 72 | 0 | 72 | 6702 | 0 | 6702 | 11881.663 | 0.0 | 3.3 |
+| ENNI | 5;00–9;00 | 194 | 51 | 245 | 16792 | 4478 | 21270 | 54332.161 | 14742.081 | 19.187 |
+| EllisWeismer | 5;06 | 36 | 36 | 72 | 2097 | 2056 | 4153 | 4946.5 | 4932.389 | 2.744 |
+| Gelman | 5;06 | 17 | 0 | 17 | 1640 | 0 | 1640 | 3061.074 | 0.0 | 0.85 |
+| Gleason | 5;02 | 2 | 0 | 2 | 596 | 0 | 596 | 1555.395 | 0.0 | 0.432 |
+| HSLLD | 5;00–9;00 | 72 | 0 | 72 | 5510 | 0 | 5510 | 11338.937 | 0.0 | 3.15 |
+| MacWhinney | 5;02–7;08 | 128 | 0 | 128 | 12438 | 0 | 12438 | 40417.208 | 0.0 | 11.227 |
+| Nippold | 7;06–9;00 | 3 | 0 | 3 | 247 | 0 | 247 | 795.43 | 0.0 | 0.221 |
+| OCSC | 5;00–9;00 | 160 | 0 | 160 | 80523 | 0 | 80523 | 129484.055 | 0.0 | 35.968 |
+| POLER | 5;03–8;11 | 12 | 0 | 12 | 283 | 0 | 283 | 1734.69 | 0.0 | 0.482 |
+| Rescorla | 5;00–9;00 | 33 | 53 | 86 | 3197 | 4768 | 7965 | 12563.271 | 28792.436 | 11.488 |
+| TOTAL | 5;00–9;00 | 733 | 140 | 873 | 131032 | 11302 | 142334 | 274004.951 | 48466.906 | 89.576 |

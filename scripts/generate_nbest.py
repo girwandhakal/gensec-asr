@@ -5,8 +5,8 @@ ASR baseline and distinct sampled alternatives for correction.
 
 High-level role in the pipeline:
 This is where the raw material for correction comes from, and it sets the
-ceiling on everything downstream: the corrector cannot recover a word that
-appears in none of these candidates.
+information available downstream; the corrector can also generate words
+absent from these candidates.
 
 The first decode is deterministic greedy search. A separate, larger sampling
 pool supplies alternatives. The deterministic transcript is always first in
@@ -30,7 +30,7 @@ from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import clip_seconds, load_config
-from text import clean_whisper_text, normalize_for_scoring
+from text import clean_whisper_text, normalize_prediction_for_scoring
 
 
 def load_model(model_id: str):
@@ -59,13 +59,13 @@ def load_model(model_id: str):
 def unique_hypotheses(greedy_text: str, sampled_texts: list[str], limit: int) -> list[dict]:
     """Keep greedy first, then frequent sampled alternatives with distinct words."""
     greedy = clean_whisper_text(greedy_text)
-    greedy_key = normalize_for_scoring(greedy)
+    greedy_key = normalize_prediction_for_scoring(greedy)
     counts: Counter[str] = Counter()
     representatives: dict[str, str] = {}
     first_seen: dict[str, int] = {}
     for position, text in enumerate(sampled_texts):
         cleaned = clean_whisper_text(text)
-        key = normalize_for_scoring(cleaned)
+        key = normalize_prediction_for_scoring(cleaned)
         if not key:
             continue
         counts[key] += 1
@@ -246,7 +246,17 @@ def generate_nbest(config: dict) -> None:
 
     check_decode_signature(config, output_path, len(results))
 
-    clips = sorted(config["media_dir"].rglob("*" + config["audio_extension"]))
+    metadata = json.loads(config["metadata_path"].read_text(encoding="utf-8"))
+    references = json.loads(config["reference_map_path"].read_text(encoding="utf-8"))
+    if metadata.keys() != references.keys():
+        raise ValueError("Reference and audio metadata ID sets differ; rerun stage 1")
+    # Only the finalized paired rows can schedule Whisper. Never scan the folder.
+    clips = sorted(config["media_dir"] / entry["audio_path"] for entry in metadata.values())
+    eligible = {p.stem for p in clips}
+    removed = len(results.keys() - eligible)
+    results = {uid: entry for uid, entry in results.items() if uid in eligible}
+    if removed:
+        print(f"Ignoring {removed:,} cached clips outside finalized audio/reference pairs")
     if config["asr_limit"]:
         clips = clips[:config["asr_limit"]]
     # Longest-clip-wins is how the decode budget is set, so group similar
@@ -257,6 +267,8 @@ def generate_nbest(config: dict) -> None:
     print(f"Clips found: {len(clips):,} | to transcribe: {len(todo):,}")
 
     if not todo:
+        if removed:
+            output_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
         return
 
     processor, model, device, dtype = load_model(config["asr_model_id"])

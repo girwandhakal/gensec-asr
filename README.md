@@ -52,8 +52,8 @@ evaluation_results/       WER and child-level analysis reports
 
 ```mermaid
 flowchart TD
-    A["data/media/*.mp3<br/>+ media_download_report.csv"] --> B[1. build_reference_map.py<br/>CHAT markup to plain text]
-    A --> C[2. generate_nbest.py<br/>Whisper greedy baseline + sampled alternatives]
+    A["data/media/*.mp3<br/>+ media_download_report.csv (finalized)"] --> B[1. build_reference_map.py<br/>Import references unchanged]
+    B --> C[2. generate_nbest.py<br/>Whisper greedy baseline + sampled alternatives]
     B --> D[3. build_gensec_dataset.py]
     C --> D
     D --> E[4. train.py<br/>fine-tune FLAN-T5, then infer]
@@ -219,3 +219,27 @@ Left out to keep the first result interpretable:
 
 [PLAN.md](PLAN.md) records the design, what was borrowed from the earlier
 `child-whispr-annotation` and `Ecolang/Pose` work, and the open questions.
+
+
+## Ground-truth boundary
+
+`asr-dataset-pipelines/data/media/media_download_report.csv` is the authoritative
+handoff. Its `utterance` column is final cleaned ground truth, `raw_utterance`
+preserves CHAT source text, and `audio_path` links a clip relative to the media
+folder. Only rows with nonempty cleaned utterances and audio paths are imported. Ground truth is copied
+unchanged through dataset construction, training, and WER evaluation; only model
+outputs are normalized locally. Old raw-only reports fail with an explicit
+instruction to run the upstream ground-truth finalizer. Whisper processes only
+paired clips, never orphan audio discovered through a folder scan.
+
+Prediction CSVs are read as literal strings: words such as `NA`, `null`, and
+`nan`, numeric-looking transcripts, case, and spacing are preserved in the human
+reference. Training reads targets directly from JSON without automatic type
+inference. Blank-reference checks validate or skip records; they do not rewrite
+the text. WER tokenizes finalized references directly and normalizes predictions
+with `normalize_prediction_for_scoring` only.
+
+The methodology version and processed-data fingerprint invalidate stale training
+and prediction caches. Existing published counts/results describe the earlier
+pipeline; regenerate downstream datasets and results before reporting new ones.
+Audio files and existing decoding of eligible clips can be reused.

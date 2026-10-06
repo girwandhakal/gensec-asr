@@ -29,3 +29,8 @@ __pycache__/
 
 
 docs/
+
+figures/
+
+# Downloaded third-party reference checkouts
+temp_reference/

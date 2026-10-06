@@ -23,12 +23,11 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-import pandas as pd
-
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import load_config, predictions_path
 from evaluate import align
-from text import normalize_for_scoring
+from text import normalize_prediction_for_scoring
+from reference_io import read_prediction_rows
 
 TOP = 25
 
@@ -40,8 +39,8 @@ def tally(pairs) -> tuple[Counter, Counter, Counter]:
     insertions: Counter = Counter()
 
     for reference_text, hypothesis_text in pairs:
-        reference = normalize_for_scoring(reference_text).split()
-        hypothesis = normalize_for_scoring(hypothesis_text).split()
+        reference = reference_text.split()
+        hypothesis = normalize_prediction_for_scoring(hypothesis_text).split()
 
         # align() walks backwards, so track both cursors to recover the words.
         i, j = len(reference), len(hypothesis)
@@ -85,8 +84,7 @@ def main(config: dict | None = None) -> None:
     if not source.is_file():
         raise SystemExit(f"Missing predictions: {source}")
 
-    frame = pd.read_csv(source).fillna("")
-    rows = frame.to_dict("records")
+    rows = read_prediction_rows(source)
     print(f"Utterances: {len(rows):,} ({mode})\n")
 
     substitutions, deletions, insertions = tally(

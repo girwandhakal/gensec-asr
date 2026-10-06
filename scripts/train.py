@@ -45,7 +45,7 @@ Preserve the original wording as much as possible.
 Output only the corrected transcript."""
 
 
-def normalize(text: str) -> str:
+def normalize_hypothesis(text: str) -> str:
     return collapse_whitespace(str(text or "").lower())
 
 
@@ -100,13 +100,15 @@ def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
 
 
 def load_examples(config: dict) -> pd.DataFrame:
-    """Read the processed dataset, normalize it, and drop anything unusable."""
-    frame = pd.read_json(config["processed_path"])
+    """Preserve finalized targets; normalize only input hypotheses."""
+    frame = pd.DataFrame(json.loads(config["processed_path"].read_text(encoding="utf-8")))
 
     rows = []
     for example in frame.to_dict("records"):
-        target = normalize(example["output"])
-        hypotheses = [h for h in (normalize(h) for h in example["input"]) if h]
+        target = example["output"]
+        if not isinstance(target, str) or not target.strip():
+            raise ValueError(f"Invalid finalized reference for {example['id']}")
+        hypotheses = [h for h in (normalize_hypothesis(h) for h in example["input"]) if h]
         # Deduplicate again: two hypotheses can collide once lowercased.
         hypotheses = list(dict.fromkeys(hypotheses))
 

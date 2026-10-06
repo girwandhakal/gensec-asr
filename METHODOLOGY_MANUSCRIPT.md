@@ -1,0 +1,49 @@
+# Methods: ASR hypothesis generation and generative correction
+
+## Speech data and reference preparation
+
+We used target-child utterance clips and their corresponding CHAT transcripts from an upstream CHILDES dataset pipeline. The upstream selection searched English-language audio or video records in the Clinical-Eng, Eng-NA, and Eng-UK collections for children aged 60–108 months with typically developing (TD), late-talker (LT), or specific language impairment (SLI) labels. The upstream processing retained target-child speech, cut timestamped utterances into mono, 16-kHz MP3 clips, and balanced the selected TD and clinical-group children by mean length of utterance. For the present analysis, upstream SLI and LT labels were combined into the LT group. Clip identifiers encode the source transcript, start and end times in milliseconds, and utterance ordinal. The upstream pipeline and its input selection are necessary to reconstruct the audio corpus; the present pipeline begins with its `data/media/` directory and `media_download_report.csv`.
+
+We matched clips on disk to rows in the media report using the clip identifier. The report's raw CHAT utterance was converted to a plain-text reference by removing bracketed annotation codes, event and special-form markers, unspoken `0` forms, and the unintelligibility tokens `xxx`, `yyy`, and `www`. Words inside angle brackets and clipped forms in parentheses were retained. Text was Unicode-normalized, lowercased, stripped of punctuation other than apostrophes, and reduced to single spaces. Clips without a matching nonempty reference were excluded from the correction dataset. The same cleaned reference was used as the training target and the evaluation reference.
+
+## Whisper transcription and candidate construction
+
+Audio was decoded to mono at 16 kHz. Clips outside 0.1–30 seconds were excluded before ASR. We used `rishabhjain16/whisper_medium_to_myst55h`, a Whisper-medium checkpoint adapted to child speech, with English transcription forced at generation. Each clip was decoded once with greedy search (`num_beams=1`, `do_sample=False`) to obtain the uncorrected ASR baseline. Separately, we drew 10 sampled complete-utterance transcriptions (`num_beams=1`, temperature 0.8, nucleus probability 0.95, top-k 50). The greedy result was always the first correction candidate. Sampled outputs were cleaned of Whisper control tokens and deduplicated after scoring normalization. Up to four distinct sampled alternatives were retained, ranked primarily by their frequency in the 10-draw pool, then by whether they added words absent from candidates already selected, then by draw order. Thus each utterance supplied one to five candidates, without padding with duplicates; utterances with only one candidate were retained. Whisper generation used batches of four clips and a batch-specific limit of `floor(8 × longest clip duration in seconds) + 16` new tokens. Random seed 42 was set before sampled decoding.
+
+For each audio clip, we used its utterance ID to match the 1-best utterance and the other Whisper hypotheses to the truth transcript. Whisper generated hypotheses for 139,348 clips. Of these, 137,003 had a matching truth transcript and were used in the correction dataset. The other 2,345 clips were left out because they had no matching truth transcript.
+
+## Partitioning and correction model
+
+Correction examples were split by **source recording transcript**, identified by the prefix of the clip identifier, rather than by utterance. Within each LT/TD group, transcript identifiers were sorted and shuffled using seed 42; whole transcripts were added to the test partition until the selected utterance count was closest to 20% of that group's total. The resulting split contained 109,591 training examples and 27,412 held-out test examples from 703 and 170 source transcripts, respectively. The implementation asserts that no source transcript occurs in both partitions. This is a session-held-out test, not a child-held-out test: 12 children with multiple recordings occurred in both partitions. A further 2% of the training examples (2,192 examples) were randomly held out with seed 42 for per-epoch validation loss, leaving 107,399 examples for weight updates. This validation split was made at the example level and was not used for the final test score.
+
+We fine-tuned `google/flan-t5-base` as a sequence-to-sequence corrector. Inputs were the lowercased, numbered Whisper candidates preceded by the instruction shown below. The target was the lowercased cleaned human transcript. The prompt also provided consensus evidence: each distinct word was counted once per candidate, words supported by at least two candidates were listed in descending support order (alphabetical order for ties), and the list was limited to 40 words. For a single-candidate example, the support threshold was one. The denominator was the number of available candidates.
+
+> You are correcting ASR output.  
+> Below are multiple recognition hypotheses for the same utterance.  
+> Choose the single most likely correct transcript.  
+> Do not paraphrase.  
+> Do not add information.  
+> Preserve the original wording as much as possible.  
+> Output only the corrected transcript.  
+>  
+> Hypotheses:  
+> 1. `<candidate 1>`  
+> 2. `<candidate 2>`  
+> ...  
+> Consensus evidence (word support): `<word>` (`<count>/<number of candidates>`), ...
+
+The FLAN-T5 source and target sequences were truncated at 512 and 128 tokenizer tokens, respectively. Training used 10 epochs, learning rate `3 × 10⁻⁵`, per-device training batch size 8, per-device validation batch size 16, and seed 42. The Hugging Face `Seq2SeqTrainer` saved and evaluated at each epoch; the final model after epoch 10 was saved for inference, without validation-based checkpoint selection or early stopping. Bfloat16 was enabled only when supported by the CUDA device; otherwise training used the trainer's default precision. Other optimizer and scheduler settings were the defaults of the pinned Transformers version, 4.44.2.
+
+## Held-out inference and evaluation
+
+The fine-tuned model received the same instruction and candidate/consensus format for each test example, without in-context demonstrations. Inference used deterministic eight-beam decoding, batches of four, `no_repeat_ngram_size=3`, and `repetition_penalty=1.2`. Generated output was bounded by the smaller of 128 tokens, `floor(1.5 × longest candidate token count) + 5`, and `floor(8 × longest clip duration in the batch)`; the limit had a six-token minimum. An additional per-utterance guard truncated outputs to at most `max(2, ceil(4 × clip duration in seconds) + 1)` words. After decoding, whitespace was normalized. No repeated-word or repeated-phrase deletion stage was applied; repeated speech could be genuine child speech.
+
+The greedy Whisper output and corrected FLAN-T5 output were scored on the identical 27,412 test utterances. Before scoring, references and hypotheses underwent the same Unicode normalization, lowercasing, punctuation removal (apostrophes retained), and whitespace collapse. A predefined set of nasal-hum spellings (`mm`, `mmm`, `mhm`, `mmhm`, `mmhmm`, `hm`, `hmm`, `hmhm`, `mhmm`) was mapped to `mm` on both sides. Word error rate was calculated as corpus-level `(S + D + I) / N`, where substitutions, deletions, and insertions were obtained by word-level Levenshtein alignment and `N` was the total number of reference words. Exact-match rate was the fraction of utterances with identical normalized reference and output. The run also computed the best available candidate per utterance as an oracle comparison; this oracle used references to select a candidate and was not an inference system.
+
+For child-level analysis, errors and reference words were summed within child before calculating each child's WER. Children with fewer than five test utterances were excluded from those analyses. The resulting sample comprised 163 children (29 LT, 134 TD) and 27,400 utterances. A random-intercept mixed-effects model with child as the grouping factor estimated fixed effects for LT/TD group, Whisper/corrected system, and their interaction. Paired within-group tests and child-level interaction sensitivity analyses were also computed. Because the source-transcript split allowed 12 test children to appear in training through other recordings, these results assess generalization to unseen recording sessions rather than entirely unseen children.
+
+## Reproduction record
+
+The code used for this run is in the `gensec-asr` repository at commit `b0013caf2499f55502cfafad7522d7c9aba31cc3`, with its parameters archived in `evaluation_results/config_used.yaml`. The environment specifies Python 3.10, `ffmpeg`, PyTorch 2.4.1 with CUDA 12.1, Transformers 4.44.2, Datasets 2.21.0, Accelerate 0.34.2, and the other pinned packages in `envs/requirements.txt`. On the Slurm cluster the pipeline was submitted with `sbatch bash_scripts/train.sh`, requesting one GPU, eight CPU cores, 64 GB RAM, and a 48-hour wall time. The batch script invokes `scripts/run_pipeline.py`, which builds the reference map, generates ASR candidates, constructs examples, trains and runs the corrector, scores predictions, and performs child-level analysis. A rerun can resume candidate generation, and cached training or prediction artifacts are reused only when their recorded signatures match the current settings and processed data.
+
+**Data provenance to supply with a submission.** The upstream TalkBank search/export date, master-file checksum, transcript-archive checksums or data release identifier, upstream dataset-pipeline commit, and exact Hugging Face model revisions were not recorded in this repository's run configuration. These should be archived with the manuscript or released reproduction package. Access to the selected TalkBank audio and transcript data may require the reader's own credentials.

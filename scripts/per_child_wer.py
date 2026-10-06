@@ -27,7 +27,8 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from config import load_config, predictions_path
 from evaluate import count_errors
-from text import normalize_for_scoring
+from text import normalize_prediction_for_scoring
+from reference_io import read_prediction_rows
 
 # A child with two test utterances produces a WER whose denominator is a
 # handful of words - it moves by tens of points on a single misheard token.
@@ -64,7 +65,7 @@ def accumulate(frame: pd.DataFrame, metadata: dict) -> pd.DataFrame:
         if not child or not group:
             continue
 
-        reference = normalize_for_scoring(row["truth"]).split()
+        reference = row["truth"].split()
         if not reference:
             continue
 
@@ -87,7 +88,7 @@ def accumulate(frame: pd.DataFrame, metadata: dict) -> pd.DataFrame:
         entry["ref_words"] += len(reference)
 
         for name, column in SYSTEMS.items():
-            hypothesis = normalize_for_scoring(row.get(column) or "").split()
+            hypothesis = normalize_prediction_for_scoring(row.get(column) or "").split()
             entry[f"{name}_errors"] += sum(count_errors(reference, hypothesis))
 
     rows = []
@@ -106,7 +107,7 @@ def per_child_wer(config: dict, mode: str = "zero_shot") -> pd.DataFrame:
     if not path.is_file():
         raise SystemExit(f"Missing predictions: {path}")
 
-    frame = pd.read_csv(path).fillna("")
+    frame = pd.DataFrame(read_prediction_rows(path))
     metadata = load_metadata(config)
 
     print(f"Predictions: {len(frame):,} test utterances")
