@@ -10,14 +10,14 @@
     "exact_match_rate": 0.1689406099518459
   },
   "gensec_zero_shot": {
-    "substitutions": 32002,
-    "deletions": 14424,
-    "insertions": 9845,
+    "substitutions": 30727,
+    "deletions": 15007,
+    "insertions": 8509,
     "reference_words": 132348,
     "utterances": 27412,
-    "total_errors": 56271,
-    "wer": 0.4251745398494877,
-    "exact_match_rate": 0.28111775864584854
+    "total_errors": 54243,
+    "wer": 0.40985130111524165,
+    "exact_match_rate": 0.29122282212169853
   },
   "oracle_nbest": {
     "substitutions": 29650,
@@ -42,26 +42,26 @@
   "significance": {
     "overall": {
       "utterances": 27412,
-      "reduction": 0.10466355868828461,
-      "ci_low": 0.09652509652509653,
-      "ci_high": 0.11315433033224444
+      "reduction": 0.1369313752008783,
+      "ci_low": 0.1289610846417037,
+      "ci_high": 0.14542983881044608
     },
     "LT": {
       "utterances": 2235,
-      "reduction": 0.05017594161344976,
-      "ci_low": 0.027327405857740586,
-      "ci_high": 0.0726395409494001
+      "reduction": 0.07910856249185455,
+      "ci_low": 0.05889281507656066,
+      "ci_high": 0.09930804715530497
     },
     "TD": {
       "utterances": 25177,
-      "reduction": 0.1122408293460925,
-      "ci_low": 0.10301005773210849,
-      "ci_high": 0.12115787400870016
+      "reduction": 0.14497245179063362,
+      "ci_low": 0.13680077081098768,
+      "ci_high": 0.1530834643418608
     },
     "TD_minus_LT": {
-      "difference": 0.062064887732642744,
-      "ci_low": 0.03948987552282088,
-      "ci_high": 0.08541064986816856,
+      "difference": 0.06586388929877907,
+      "ci_low": 0.04508419844154499,
+      "ci_high": 0.08757133624128162,
       "p_value": 0.0,
       "p_below": 0.002,
       "significant": true

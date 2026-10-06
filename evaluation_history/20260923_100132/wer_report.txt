@@ -5,11 +5,11 @@ Test utterances: 27,412
 system                             WER     exact        S        D        I
 ------------------------------------------------------------------------
 whisper_1best                  47.49%    16.89%   34,437   18,337   10,075
-gensec_zero_shot               42.52%    28.11%   32,002   14,424    9,845
+gensec_zero_shot               40.99%    29.12%   30,727   15,007    8,509
 oracle_nbest                   40.07%    21.74%   29,650   16,831    6,545
 oracle_compositional           33.58%     0.00%        0   44,446        0
 
-gensec_zero_shot vs whisper_1best: +10.47% relative WER reduction (better)
+gensec_zero_shot vs whisper_1best: +13.69% relative WER reduction (better)
 
 oracle_nbest vs whisper_1best: +15.63% relative WER reduction (better)
 
@@ -19,11 +19,11 @@ oracle_compositional vs whisper_1best: +29.28% relative WER reduction (better)
 Significance (1,000 bootstrap resamples of the utterance set)
 ------------------------------------------------------------------------
 gensec_zero_shot vs whisper_1best
-  overall        27412    10.47%   95% CI [+9.65%, +11.32%]
-  LT              2235     5.02%   95% CI [+2.73%, +7.26%]
-  TD             25177    11.22%   95% CI [+10.30%, +12.12%]
+  overall        27412    13.69%   95% CI [+12.90%, +14.54%]
+  LT              2235     7.91%   95% CI [+5.89%, +9.93%]
+  TD             25177    14.50%   95% CI [+13.68%, +15.31%]
 
-  TD - LT                  6.21%   95% CI [+3.95%, +8.54%]
+  TD - LT                  6.59%   95% CI [+4.51%, +8.76%]
   p < 0.002 - significant at p<0.05
 
 
@@ -32,11 +32,11 @@ By group (LT = late talker, TD = typically developing)
                                 utts       WER     exact
 LT
   whisper_1best                 2235    64.38%     9.44%
-  gensec_zero_shot              2235    61.15%    12.26%
+  gensec_zero_shot              2235    59.29%    13.33%
   oracle_nbest                  2235    55.14%    12.21%
 TD
   whisper_1best                25177    45.82%    17.56%
-  gensec_zero_shot             25177    40.67%    29.52%
+  gensec_zero_shot             25177    39.17%    30.52%
   oracle_nbest                 25177    38.57%    22.58%
 
 
@@ -45,23 +45,23 @@ By reference length
                                 utts       WER     exact
 1 word
   whisper_1best                 5496    89.12%    28.55%
-  gensec_zero_shot              5496   106.90%    34.19%
+  gensec_zero_shot              5496   110.46%    33.39%
   oracle_nbest                  5496    71.89%    34.75%
 2 words
   whisper_1best                 3757    79.00%    16.69%
-  gensec_zero_shot              3757    73.82%    29.57%
+  gensec_zero_shot              3757    71.68%    31.12%
   oracle_nbest                  3757    67.19%    21.93%
 3-5 words
   whisper_1best                 8651    57.88%    13.46%
-  gensec_zero_shot              8651    51.52%    26.84%
+  gensec_zero_shot              8651    48.39%    29.14%
   oracle_nbest                  8651    49.10%    17.88%
 6-10 words
   whisper_1best                 7357    40.59%    14.29%
-  gensec_zero_shot              7357    33.83%    27.13%
+  gensec_zero_shot              7357    32.58%    28.07%
   oracle_nbest                  7357    34.28%    18.84%
 11+ words
   whisper_1best                 2151    32.72%    10.23%
-  gensec_zero_shot              2151    28.48%    18.50%
+  gensec_zero_shot              2151    27.49%    18.27%
   oracle_nbest                  2151    27.70%    13.53%
 
 
@@ -70,31 +70,31 @@ By reference audio duration
                                 utts       WER     exact
 under 0.5s
   whisper_1best                 2104    90.37%    15.68%
-  gensec_zero_shot              2104    91.61%    22.43%
+  gensec_zero_shot              2104    92.82%    22.43%
   oracle_nbest                  2104    81.10%    19.77%
 0.5-1s
   whisper_1best                 7866    71.90%    23.37%
-  gensec_zero_shot              7866    71.98%    31.85%
+  gensec_zero_shot              7866    72.35%    31.96%
   oracle_nbest                  7866    62.23%    28.95%
 1-2s
   whisper_1best                 7546    49.55%    15.92%
-  gensec_zero_shot              7546    44.17%    29.18%
+  gensec_zero_shot              7546    41.69%    31.51%
   oracle_nbest                  7546    41.42%    20.95%
 2-3s
   whisper_1best                 3989    40.60%    15.29%
-  gensec_zero_shot              3989    35.99%    29.28%
+  gensec_zero_shot              3989    33.99%    30.26%
   oracle_nbest                  3989    33.90%    20.26%
 3-5s
   whisper_1best                 3632    37.39%    13.30%
-  gensec_zero_shot              3632    31.88%    26.38%
+  gensec_zero_shot              3632    30.54%    27.48%
   oracle_nbest                  3632    30.81%    17.81%
 5-10s
   whisper_1best                 1968    39.43%     7.67%
-  gensec_zero_shot              1968    32.73%    18.70%
+  gensec_zero_shot              1968    31.29%    19.31%
   oracle_nbest                  1968    32.97%    10.72%
 10s+
   whisper_1best                  307    54.67%     5.86%
-  gensec_zero_shot               307    39.72%    10.75%
+  gensec_zero_shot               307    37.77%    11.07%
   oracle_nbest                   307    47.95%     5.86%
 
 
@@ -103,7 +103,7 @@ References of 3+ words only (comparable to published child GenSEC work)
                                 utts       WER     exact
 3+ words
   whisper_1best                18159    43.59%    13.41%
-  gensec_zero_shot             18159    37.58%    25.97%
+  gensec_zero_shot             18159    35.85%    27.42%
   oracle_nbest                 18159    36.89%    17.75%
 
 
@@ -143,36 +143,36 @@ e09541a7_1123065_1123166_308  sentence_wer=11.00
 
 Worst utterances - gensec_zero_shot
 ------------------------------------------------------------------------
+b2e50fe2_804285_817962_116  sentence_wer=23.00
+  ref: there
+  hyp: there's a sound of screw tapping on metal tapped on metal tap on metal tapping on meassing on metal tipping on metal fingernails
 b2e50fe2_326760_331264_56  sentence_wer=20.00
   ref: now
   hyp: one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty
-309d1202_144788_147790_27  sentence_wer=14.00
-  ref: mm
-  hyp: he's the best pet you can get yet better than a dog or cat
-925d8c44_1826550_1830730_85  sentence_wer=14.00
-  ref: in
-  hyp: he's the best pet you can get yet better than a dog or cat
 286c4c29_71308_75418_5  sentence_wer=13.00
   ref: nuhhuh
   hyp: by the way note the non restrictive relative clause earlier in the sentence
-c907189f_198180_206678_3  sentence_wer=13.00
-  ref: alright
-  hyp: i don't like that part at the end because it's not that good
-0c638c0f_2160819_2171584_726  sentence_wer=10.00
-  ref: okay
-  hyp: i don't know if i can hit all of them
 5db5ca14_804884_809668_68  sentence_wer=9.50
   ref: oh yeah
-  hyp: and then he showed oh yeah she showed me that number four which is also on the dark green tree was
-716ad597_2840362_2842324_577  sentence_wer=9.00
-  ref: mm
-  hyp: he's the best pet you can get yet better
+  hyp: and then he showed oh yeah he show me that number four which is also on the dark green tree was
+c5f744ad_174850_179215_8  sentence_wer=9.00
+  ref: ow
+  hyp: and the the frog fell out of the window
 5db5ca14_886570_893026_78  sentence_wer=9.00
   ref: mm
   hyp: it's just interesting for the use of in fact
-72e744d5_1126881_1128878_290  sentence_wer=8.00
-  ref: here
-  hyp: mommy i'm coming over to see if there's
+eb5b5cb4_209422_212604_54  sentence_wer=8.00
+  ref: twenty
+  hyp: sixteen that's why i told you to wait
+4ad311a3_746374_747997_147  sentence_wer=7.00
+  ref: cancoon
+  hyp: and he and the giraffe are happy
+72e744d5_1565965_1568240_439  sentence_wer=7.00
+  ref: there
+  hyp: and bring it back to the bear
+66c5f561_993421_1000572_39  sentence_wer=7.00
+  ref: tony
+  hyp: you mean the second third place people
 
 
 Worst utterances - oracle_nbest
