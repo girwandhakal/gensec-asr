@@ -12,13 +12,10 @@
 #SBATCH --job-name=gensec
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
-# Any GPU the partition hands out. Previously pinned to a specific model
-# (h100-80, then a100-80) to dodge weaker cards, but pinning also means the
-# job sits PD if that exact model's nodes go UnavailableNodes (2026-09-03:
-# happened to h100-80). Unpinned so Slurm can schedule onto whatever's free;
-# this partition offers v100, t4, l4, a100-80, h100-80
-# (sinfo -p gpu -o "%N %G").
-#SBATCH --gres=gpu:1
+# Request an H100 for consistent training throughput and BF16 support.
+# A generic GPU request can land on a T4, forcing FP32 training and running
+# roughly 7.5x slower than the previous H100 run. Wait for an H100 if needed.
+#SBATCH --gres=gpu:h100-80:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
