@@ -152,6 +152,8 @@ def transcribe_batch(audio_arrays, processor, model, device, dtype, config) -> l
     return [
         {
             "1best_text": clean_whisper_text(greedy_texts[i]),
+            # Preserve the complete decoded pool before cleaning or deduplication.
+            "sampled_texts": sampled_texts[i * per_clip:(i + 1) * per_clip],
             "nbest": unique_hypotheses(
                 greedy_texts[i], sampled_texts[i * per_clip:(i + 1) * per_clip],
                 config["num_return_sequences"],
@@ -225,6 +227,11 @@ def check_decode_signature(config: dict, output_path: Path, cached: int) -> None
 def generate_nbest(config: dict) -> None:
     output_path = config["nbest_path"]
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    samples_path = config["whisper_samples_path"]
+    samples_path.parent.mkdir(parents=True, exist_ok=True)
+    samples: dict[str, dict] = {}
+    if samples_path.is_file():
+        samples = json.loads(samples_path.read_text(encoding="utf-8"))
 
     results: dict[str, dict] = {}
     if output_path.is_file():
@@ -245,6 +252,15 @@ def generate_nbest(config: dict) -> None:
             print(f"Discarding {len(stale):,} stale/collapsed entries for regeneration")
 
     check_decode_signature(config, output_path, len(results))
+    check_decode_signature(config, samples_path, len(samples))
+
+    def save() -> None:
+        # Save telemetry first so a persisted n-best entry has its raw samples.
+        for path, records in ((samples_path, samples), (output_path, results)):
+            temporary = path.with_suffix(".tmp")
+            with temporary.open("w", encoding="utf-8") as handle:
+                json.dump(records, handle, ensure_ascii=False, indent=2)
+            temporary.replace(path)
 
     metadata = json.loads(config["metadata_path"].read_text(encoding="utf-8"))
     references = json.loads(config["reference_map_path"].read_text(encoding="utf-8"))
@@ -255,6 +271,11 @@ def generate_nbest(config: dict) -> None:
     eligible = {p.stem for p in clips}
     removed = len(results.keys() - eligible)
     results = {uid: entry for uid, entry in results.items() if uid in eligible}
+    samples = {uid: entry for uid, entry in samples.items() if uid in eligible}
+    missing_samples = len(results.keys() - samples.keys())
+    if missing_samples:
+        print(f"Raw samples unavailable for {missing_samples:,} cached clips; "
+              "only future decoding can record the original sampling pool")
     if removed:
         print(f"Ignoring {removed:,} cached clips outside finalized audio/reference pairs")
     if config["asr_limit"]:
@@ -267,8 +288,7 @@ def generate_nbest(config: dict) -> None:
     print(f"Clips found: {len(clips):,} | to transcribe: {len(todo):,}")
 
     if not todo:
-        if removed:
-            output_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+        save()
         return
 
     processor, model, device, dtype = load_model(config["asr_model_id"])
@@ -281,10 +301,6 @@ def generate_nbest(config: dict) -> None:
     batch_ids: list[str] = []
     batch_audio: list = []
 
-    def save() -> None:
-        with output_path.open("w", encoding="utf-8") as handle:
-            json.dump(results, handle, ensure_ascii=False, indent=2)
-
     def flush() -> None:
         nonlocal done, failed, batch_ids, batch_audio
         if not batch_audio:
@@ -292,6 +308,10 @@ def generate_nbest(config: dict) -> None:
 
         def record(utterance_id: str, entry: dict) -> None:
             nonlocal done
+            samples[utterance_id] = {
+                "greedy_text": entry["1best_text"],
+                "sampled_texts": entry.pop("sampled_texts"),
+            }
             results[utterance_id] = entry
             done += 1
 
@@ -363,6 +383,7 @@ def generate_nbest(config: dict) -> None:
     print(f"Failed:             {failed:,}")
     print(f"Time:               {elapsed / 60:.1f} min")
     print(f"Wrote {output_path}")
+    print(f"Wrote {samples_path}")
 
 
 def main(config: dict | None = None) -> None:

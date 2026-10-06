@@ -34,6 +34,7 @@ def load_config(path: Path | None = None) -> dict:
     config["reference_map_path"] = data_dir / "utterance_id_to_reference.json"
     config["metadata_path"] = data_dir / "utterance_metadata.json"
     config["nbest_path"] = data_dir / config.get("nbest_filename", "utterance_id_to_nbest.json")
+    config["whisper_samples_path"] = data_dir / "utterance_id_to_whisper_samples.json"
     config["processed_path"] = data_dir / "processed_gensec.json"
     config["dropped_path"] = data_dir / "dropped_gensec.json"
     config["splits_dir"] = data_dir / "splits"

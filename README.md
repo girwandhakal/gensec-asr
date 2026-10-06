@@ -65,7 +65,7 @@ flowchart TD
 | Stage | Script | Produces |
 |---|---|---|
 | 1 | `build_reference_map.py` | `data/utterance_id_to_reference.json` |
-| 2 | `generate_nbest.py` | `data/utterance_id_to_nbest_greedy_sample10.json` |
+| 2 | `generate_nbest.py` | `data/utterance_id_to_nbest_greedy_sample10.json`, `data/utterance_id_to_whisper_samples.json` |
 | 3 | `build_gensec_dataset.py` | `data/processed_gensec.json`, `data/dropped_gensec.json` |
 | 4 | `train.py` | `data/splits/*.csv`, `data/predictions/test_predictions_<mode>.csv` |
 | 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
@@ -132,6 +132,16 @@ to four sampled alternatives. Candidates sampled more often are preferred, with
 distinct word choices breaking ties. The correction input has at most five
 transcripts; it is never padded with duplicates. The older sampled-only n-best
 file remains untouched, while the new path forces a full ASR regeneration.
+
+Stage 2 also checkpoints `data/utterance_id_to_whisper_samples.json` for analysis.
+Each utterance ID maps to `greedy_text` (the cleaned baseline) and `sampled_texts`
+(all 10 decoded samples in generation order, including duplicates and empty
+strings, before text cleaning or deduplication). Special model tokens are omitted
+by the decoder. The sample count follows `asr_sample_pool_size` if changed.
+Its adjacent `.signature.json` records the decoding settings. The existing n-best
+schema and correction inputs are unchanged. Cached clips decoded before this
+logging was added remain cached and have no raw-sample entry; stage 2 reports
+that coverage gap. Their discarded samples cannot be reconstructed from n-best.
 
 The useful-diversity checks are the number of distinct candidates and the
 oracle n-best WER, not the kept/dropped ratio: single-candidate utterances are
