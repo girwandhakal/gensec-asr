@@ -119,88 +119,54 @@ def load_examples(config: dict) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def make_splits(examples: pd.DataFrame, config: dict, metadata: dict):
-    """Split by source transcript, stratified by LT/TD.
-
-    Splitting on utterances - which is what this did until 2026-09-07 - puts
-    every test session in the training set too: all 867 test transcripts and
-    all 821 test children also appeared in training. A corrector can score well
-    on that by memorizing a session's vocabulary rather than by correcting, so
-    the number it produced was not a measure of correction.
-
-    Transcripts are held out whole. Stratifying by group matters because LT is
-    the small side - 140 of 873 transcripts - and the LT/TD gap is the finding
-    this project reports, so LT cannot be left to the luck of one draw.
-
-    What this does NOT fix, so nobody goes looking for it: ~11% of test rows
-    are a verbatim (hypotheses, target) pair that also occurs in training, and
-    that figure is identical before and after this change. They are one-word
-    utterances - `yeah` 1,875 times corpus-wide, `no` 592 - recurring across
-    hundreds of transcripts. That is the frequency of short child speech, not
-    leakage, and no split can separate it.
-    """
+def make_splits(examples: pd.DataFrame, config: dict, metadata: dict, *, save=True):
+    """Keep all recordings of each child together, stratified by LT/TD."""
     positions: dict[str, dict[str, list[int]]] = {}
     for position, utterance_id in enumerate(examples["id"]):
-        group = metadata.get(utterance_id, {}).get("group", "")
-        transcript = transcript_id(utterance_id)
-        positions.setdefault(group, {}).setdefault(transcript, []).append(position)
+        child = metadata[utterance_id]["child_id"]
+        if not child:
+            raise ValueError(f"Missing child ID for {utterance_id}")
+        group = metadata[utterance_id]["group"]
+        positions.setdefault(group, {}).setdefault(child, []).append(position)
 
     test_positions: list[int] = []
     for group in sorted(positions):
-        transcripts = positions[group]
-        total = sum(len(rows) for rows in transcripts.values())
+        children = positions[group]
+        total = sum(len(rows) for rows in children.values())
         target = config["test_size"] * total
-
-        # Sort before shuffling so the draw depends on the seed alone, not on
-        # whatever order the rows happened to arrive in.
-        order = sorted(transcripts)
+        order = sorted(children)
         random.Random(f"{config['seed']}:{group}").shuffle(order)
 
-        # Transcripts run from 1 to 866 utterances, so taking them until the
-        # target is passed can overshoot badly. Stop at whichever side of the
-        # target is closer instead.
+        # Keep whole children and stop on the closer side of the requested utterance count.
         taken = 0
         held_out = 0
-        for transcript in order:
-            size = len(transcripts[transcript])
+        for child in order:
+            size = len(children[child])
             if taken and abs(taken + size - target) > abs(taken - target):
                 break
-            test_positions.extend(transcripts[transcript])
+            test_positions.extend(children[child])
             taken += size
             held_out += 1
-
         print(
-            f"  {group or '(no group)'}: {held_out}/{len(transcripts)} transcripts, "
+            f"  {group}: {held_out}/{len(children)} children, "
             f"{taken:,}/{total:,} utterances held out ({taken / total:.1%})"
         )
 
-    # Positional, not label-based: load_examples builds a fresh RangeIndex but
-    # nothing here should depend on that staying true.
     test_mask = pd.Series(False, index=examples.index)
     test_mask.iloc[test_positions] = True
     train_frame, test_frame = examples[~test_mask.to_numpy()], examples[test_mask.to_numpy()]
-
-    config["splits_dir"].mkdir(parents=True, exist_ok=True)
-    train_frame.to_csv(config["splits_dir"] / "train_split.csv", index=False)
-    test_frame.to_csv(config["splits_dir"] / "test_split.csv", index=False)
-    print(f"Train: {len(train_frame):,} | Test: {len(test_frame):,}")
-
-    # Leakage is the thing this function exists to prevent, so it is asserted
-    # rather than assumed. A child recorded across several sessions can still
-    # span the split; that residual is reported so it stays a known quantity.
+    train_children = {metadata[i]["child_id"] for i in train_frame["id"]}
+    test_children = {metadata[i]["child_id"] for i in test_frame["id"]}
+    assert not train_children & test_children, "child leaked across the split"
     train_transcripts = {transcript_id(i) for i in train_frame["id"]}
     test_transcripts = {transcript_id(i) for i in test_frame["id"]}
     assert not train_transcripts & test_transcripts, "transcript leaked across the split"
 
-    train_children = {metadata.get(i, {}).get("child_id") for i in train_frame["id"]}
-    test_children = {metadata.get(i, {}).get("child_id") for i in test_frame["id"]}
-    shared = (train_children & test_children) - {None, ""}
-    if shared:
-        print(
-            f"Note: {len(shared)} children appear on both sides (recorded across "
-            "several sessions). Split on child_id instead if that has to be zero."
-        )
-
+    if save:
+        config["splits_dir"].mkdir(parents=True, exist_ok=True)
+        train_frame.to_csv(config["splits_dir"] / "train_split.csv", index=False)
+        test_frame.to_csv(config["splits_dir"] / "test_split.csv", index=False)
+    print(f"Train: {len(train_frame):,} | Held out: {len(test_frame):,}")
     return train_frame, test_frame
 
 
@@ -237,7 +203,7 @@ class AbortOnDeadTraining(TrainerCallback):
             )
 
 
-def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
+def fine_tune(train_frame: pd.DataFrame, tokenizer, config, metadata):
     def tokenize(batch):
         prompts = [build_nbest_prompt(h) for h in batch["input"]]
         model_inputs = tokenizer(
@@ -248,12 +214,13 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config):
         )["input_ids"]
         return model_inputs
 
-    dataset = Dataset.from_pandas(train_frame[["input", "output"]], preserve_index=False)
-    dataset = dataset.map(tokenize, batched=True, remove_columns=dataset.column_names)
-
-    # A slice held out of training, purely so the loss curve has something to
-    # be checked against per epoch. The scored test split is separate.
-    split = dataset.train_test_split(test_size=config["eval_size"], seed=config["seed"])
+    training, validation = make_splits(
+        train_frame, {**config, "test_size": config["eval_size"]}, metadata, save=False
+    )
+    split = {}
+    for name, frame in [("train", training), ("test", validation)]:
+        dataset = Dataset.from_pandas(frame[["input", "output"]], preserve_index=False)
+        split[name] = dataset.map(tokenize, batched=True, remove_columns=dataset.column_names)
     print(f"Fine-tune on {len(split['train']):,} | validate on {len(split['test']):,}")
 
     # Leftovers from earlier runs that saved per-epoch checkpoints.
@@ -579,7 +546,7 @@ def main(config: dict | None = None) -> None:
                 f"current split has {len(train_frame):,} / {training_signature(config)} "
                 "- retraining"
             )
-        model = fine_tune(train_frame, tokenizer, config)
+        model = fine_tune(train_frame, tokenizer, config, metadata)
 
     for mode in modes:
         if predictions_are_current(config, mode, len(train_frame), len(test_frame)):

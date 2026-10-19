@@ -1,6 +1,6 @@
 seed: 42
 # Cache version
-methodology_version: finalized_reference_csv_v3
+methodology_version: child_split_v4
 
 # Upstream media and references
 hpc_media_dir: /bighome/gdhakal/child_asr/data/media
@@ -53,7 +53,7 @@ generation_length_slack: 1.5  # Longest-hypothesis length multiplier
 # Audio-duration output cap
 generation_tokens_per_second: 8
 generation_min_tokens: 6  # Minimum output tokens
-# Transcript splits stratified by LT/TD
+# Child splits stratified by LT/TD
 test_size: 0.2
 eval_size: 0.02  # Validation fraction
 inference_modes: [zero_shot]  # Options: zero_shot, one_shot, few_shot
