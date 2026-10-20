@@ -1,0 +1,209 @@
+GenSEC evaluation
+========================================================================
+Test utterances: 27,412
+
+system                             WER     exact        S        D        I
+------------------------------------------------------------------------
+whisper_1best                  47.49%    16.89%   34,437   18,337   10,075
+gensec_zero_shot               42.52%    28.11%   32,002   14,424    9,845
+oracle_nbest                   40.07%    21.74%   29,650   16,831    6,545
+oracle_compositional           33.58%     0.00%        0   44,446        0
+
+gensec_zero_shot vs whisper_1best: +10.47% relative WER reduction (better)
+
+oracle_nbest vs whisper_1best: +15.63% relative WER reduction (better)
+
+oracle_compositional vs whisper_1best: +29.28% relative WER reduction (better)
+
+
+Significance (1,000 bootstrap resamples of the utterance set)
+------------------------------------------------------------------------
+gensec_zero_shot vs whisper_1best
+  overall        27412    10.47%   95% CI [+9.65%, +11.32%]
+  LT              2235     5.02%   95% CI [+2.73%, +7.26%]
+  TD             25177    11.22%   95% CI [+10.30%, +12.12%]
+
+  TD - LT                  6.21%   95% CI [+3.95%, +8.54%]
+  p < 0.002 - significant at p<0.05
+
+
+By group (LT = late talker, TD = typically developing)
+------------------------------------------------------------------------
+                                utts       WER     exact
+LT
+  whisper_1best                 2235    64.38%     9.44%
+  gensec_zero_shot              2235    61.15%    12.26%
+  oracle_nbest                  2235    55.14%    12.21%
+TD
+  whisper_1best                25177    45.82%    17.56%
+  gensec_zero_shot             25177    40.67%    29.52%
+  oracle_nbest                 25177    38.57%    22.58%
+
+
+By reference length
+------------------------------------------------------------------------
+                                utts       WER     exact
+1 word
+  whisper_1best                 5496    89.12%    28.55%
+  gensec_zero_shot              5496   106.90%    34.19%
+  oracle_nbest                  5496    71.89%    34.75%
+2 words
+  whisper_1best                 3757    79.00%    16.69%
+  gensec_zero_shot              3757    73.82%    29.57%
+  oracle_nbest                  3757    67.19%    21.93%
+3-5 words
+  whisper_1best                 8651    57.88%    13.46%
+  gensec_zero_shot              8651    51.52%    26.84%
+  oracle_nbest                  8651    49.10%    17.88%
+6-10 words
+  whisper_1best                 7357    40.59%    14.29%
+  gensec_zero_shot              7357    33.83%    27.13%
+  oracle_nbest                  7357    34.28%    18.84%
+11+ words
+  whisper_1best                 2151    32.72%    10.23%
+  gensec_zero_shot              2151    28.48%    18.50%
+  oracle_nbest                  2151    27.70%    13.53%
+
+
+By reference audio duration
+------------------------------------------------------------------------
+                                utts       WER     exact
+under 0.5s
+  whisper_1best                 2104    90.37%    15.68%
+  gensec_zero_shot              2104    91.61%    22.43%
+  oracle_nbest                  2104    81.10%    19.77%
+0.5-1s
+  whisper_1best                 7866    71.90%    23.37%
+  gensec_zero_shot              7866    71.98%    31.85%
+  oracle_nbest                  7866    62.23%    28.95%
+1-2s
+  whisper_1best                 7546    49.55%    15.92%
+  gensec_zero_shot              7546    44.17%    29.18%
+  oracle_nbest                  7546    41.42%    20.95%
+2-3s
+  whisper_1best                 3989    40.60%    15.29%
+  gensec_zero_shot              3989    35.99%    29.28%
+  oracle_nbest                  3989    33.90%    20.26%
+3-5s
+  whisper_1best                 3632    37.39%    13.30%
+  gensec_zero_shot              3632    31.88%    26.38%
+  oracle_nbest                  3632    30.81%    17.81%
+5-10s
+  whisper_1best                 1968    39.43%     7.67%
+  gensec_zero_shot              1968    32.73%    18.70%
+  oracle_nbest                  1968    32.97%    10.72%
+10s+
+  whisper_1best                  307    54.67%     5.86%
+  gensec_zero_shot               307    39.72%    10.75%
+  oracle_nbest                   307    47.95%     5.86%
+
+
+References of 3+ words only (comparable to published child GenSEC work)
+------------------------------------------------------------------------
+                                utts       WER     exact
+3+ words
+  whisper_1best                18159    43.59%    13.41%
+  gensec_zero_shot             18159    37.58%    25.97%
+  oracle_nbest                 18159    36.89%    17.75%
+
+
+Worst utterances - whisper_1best
+------------------------------------------------------------------------
+6f8ba677_910693_915417_80  sentence_wer=52.00
+  ref: woo
+  hyp: woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo woo
+c7ef2ab5_1049160_1062952_52  sentence_wer=23.33
+  ref: pooocha pun pooch
+  hyp: punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch
+4ad311a3_73398_75780_7  sentence_wer=17.50
+  ref: c cookies
+  hyp: cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie cookie
+c8292606_382901_383042_113  sentence_wer=14.00
+  ref: forty
+  hyp: oh and i just wanted to make sure i got all the right ones
+54d8faf3_20366_20696_3  sentence_wer=14.00
+  ref: yeah
+  hyp: and then you put that in a different bowl and then you mix that
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
+e09541a7_1123065_1123166_308  sentence_wer=11.00
+  ref: the
+  hyp: i just wanted to say thank you so much for watching
+5db5ca14_804884_809668_68  sentence_wer=10.50
+  ref: oh yeah
+  hyp: and then he showed oh yeah he showed me that number four which is also on the dark green tree was colored black
+6f8ba677_240355_259015_34  sentence_wer=9.75
+  ref: is this a cereal
+  hyp: mark made a in a bowl mark put cherries and blueberries i think and fritos and chocolate chips and he told me it was a cereal later on ross came in was sort of nibbling from it and said is this a cereal
+66c5f561_993421_1000572_39  sentence_wer=9.00
+  ref: tony
+  hyp: you mean the second third place people mm mm
+
+
+Worst utterances - gensec_zero_shot
+------------------------------------------------------------------------
+b2e50fe2_326760_331264_56  sentence_wer=20.00
+  ref: now
+  hyp: one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty
+309d1202_144788_147790_27  sentence_wer=14.00
+  ref: mm
+  hyp: he's the best pet you can get yet better than a dog or cat
+925d8c44_1826550_1830730_85  sentence_wer=14.00
+  ref: in
+  hyp: he's the best pet you can get yet better than a dog or cat
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
+c907189f_198180_206678_3  sentence_wer=13.00
+  ref: alright
+  hyp: i don't like that part at the end because it's not that good
+0c638c0f_2160819_2171584_726  sentence_wer=10.00
+  ref: okay
+  hyp: i don't know if i can hit all of them
+5db5ca14_804884_809668_68  sentence_wer=9.50
+  ref: oh yeah
+  hyp: and then he showed oh yeah she showed me that number four which is also on the dark green tree was
+716ad597_2840362_2842324_577  sentence_wer=9.00
+  ref: mm
+  hyp: he's the best pet you can get yet better
+5db5ca14_886570_893026_78  sentence_wer=9.00
+  ref: mm
+  hyp: it's just interesting for the use of in fact
+72e744d5_1126881_1128878_290  sentence_wer=8.00
+  ref: here
+  hyp: mommy i'm coming over to see if there's
+
+
+Worst utterances - oracle_nbest
+------------------------------------------------------------------------
+286c4c29_71308_75418_5  sentence_wer=13.00
+  ref: nuhhuh
+  hyp: by the way note the non restrictive relative clause earlier in the sentence
+5db5ca14_804884_809668_68  sentence_wer=10.50
+  ref: oh yeah
+  hyp: and then he showed oh yeah he showed me that number four which is also on the dark green tree was colored black
+c7ef2ab5_1049160_1062952_52  sentence_wer=10.33
+  ref: pooocha pun pooch
+  hyp: bunch bunch bunch bunch bunch bunch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch punch
+6f8ba677_240355_259015_34  sentence_wer=9.75
+  ref: is this a cereal
+  hyp: mark made a in a bowl mark put cherries and blueberries i think and fritos and chocolate chips and he told me it was a cereal later on ross came in was sort of nibbling from it and said is this a cereal
+66c5f561_993421_1000572_39  sentence_wer=9.00
+  ref: tony
+  hyp: you mean the second third place people mm mm
+4ad311a3_1930644_1948325_367  sentence_wer=9.00
+  ref: mm
+  hyp: what would you do there um what are these
+eb5b5cb4_209422_212604_54  sentence_wer=8.00
+  ref: twenty
+  hyp: sixteen thats what i told you to wait
+5db5ca14_886570_893026_78  sentence_wer=7.00
+  ref: mm
+  hyp: just interesting for the use of infact
+017eb8da_206105_219001_28  sentence_wer=7.00
+  ref: and little boy took one home
+  hyp: and thats it right thats really good did you remember that from last week no wow you did a really good job you know what were gonna do now even though you did a good job that time um i wanna try to
+6f8ba677_677539_682452_56  sentence_wer=6.50
+  ref: oh ugh
+  hyp: looked at the dish washer and saw that they had an instead of

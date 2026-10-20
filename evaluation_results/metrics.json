@@ -1,70 +1,70 @@
 {
   "whisper_1best": {
-    "substitutions": 34437,
-    "deletions": 18337,
-    "insertions": 10075,
-    "reference_words": 132348,
-    "utterances": 27412,
-    "total_errors": 62849,
-    "wer": 0.4748768398464654,
-    "exact_match_rate": 0.1689406099518459
+    "substitutions": 28376,
+    "deletions": 15032,
+    "insertions": 7431,
+    "reference_words": 111377,
+    "utterances": 21964,
+    "total_errors": 50839,
+    "wer": 0.45645869434443376,
+    "exact_match_rate": 0.1622199963576762
   },
   "gensec_zero_shot": {
-    "substitutions": 32002,
-    "deletions": 14424,
-    "insertions": 9845,
-    "reference_words": 132348,
-    "utterances": 27412,
-    "total_errors": 56271,
-    "wer": 0.4251745398494877,
-    "exact_match_rate": 0.28111775864584854
+    "substitutions": 26605,
+    "deletions": 11165,
+    "insertions": 8949,
+    "reference_words": 111377,
+    "utterances": 21964,
+    "total_errors": 46719,
+    "wer": 0.4194672149546136,
+    "exact_match_rate": 0.2704425423420142
   },
   "oracle_nbest": {
-    "substitutions": 29650,
-    "deletions": 16831,
-    "insertions": 6545,
-    "reference_words": 132348,
-    "utterances": 27412,
-    "total_errors": 53026,
-    "wer": 0.400655846707166,
-    "exact_match_rate": 0.2173500656646724
+    "substitutions": 24213,
+    "deletions": 13775,
+    "insertions": 4832,
+    "reference_words": 111377,
+    "utterances": 21964,
+    "total_errors": 42820,
+    "wer": 0.3844599872505095,
+    "exact_match_rate": 0.2092970315061009
   },
   "oracle_compositional": {
     "substitutions": 0,
-    "deletions": 44446,
+    "deletions": 36373,
     "insertions": 0,
-    "reference_words": 132348,
-    "utterances": 27412,
-    "total_errors": 44446,
-    "wer": 0.33582675975458637,
+    "reference_words": 111377,
+    "utterances": 21964,
+    "total_errors": 36373,
+    "wer": 0.326575504816973,
     "exact_match_rate": 0.0
   },
   "significance": {
     "overall": {
-      "utterances": 27412,
-      "reduction": 0.10466355868828461,
-      "ci_low": 0.09652509652509653,
-      "ci_high": 0.11315433033224444
+      "utterances": 21964,
+      "reduction": 0.08104014634434194,
+      "ci_low": 0.07304522692322858,
+      "ci_high": 0.0895358847929874
     },
     "LT": {
-      "utterances": 2235,
-      "reduction": 0.05017594161344976,
-      "ci_low": 0.027327405857740586,
-      "ci_high": 0.0726395409494001
+      "utterances": 2232,
+      "reduction": 0.10215979859546839,
+      "ci_low": 0.07940580688723835,
+      "ci_high": 0.12700273544353263
     },
     "TD": {
-      "utterances": 25177,
-      "reduction": 0.1122408293460925,
-      "ci_low": 0.10301005773210849,
-      "ci_high": 0.12115787400870016
+      "utterances": 19732,
+      "reduction": 0.07735840340016631,
+      "ci_low": 0.06897341888175985,
+      "ci_high": 0.08585259140310457
     },
     "TD_minus_LT": {
-      "difference": 0.062064887732642744,
-      "ci_low": 0.03948987552282088,
-      "ci_high": 0.08541064986816856,
-      "p_value": 0.0,
-      "p_below": 0.002,
-      "significant": true
+      "difference": -0.024801395195302084,
+      "ci_low": -0.04945410320111872,
+      "ci_high": 0.0021589404721240046,
+      "p_value": 0.064,
+      "p_below": null,
+      "significant": false
     }
   }
 }

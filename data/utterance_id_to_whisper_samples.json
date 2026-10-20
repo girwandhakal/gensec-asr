@@ -1,1 +1,2732 @@
-{}
+{
+  "57c594cf_105306_105806_11": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      " yeah",
+      " yeah"
+    ]
+  },
+  "57c594cf_106507_107007_12": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " yeah",
+      " yeah",
+      "yeah",
+      " um",
+      " you",
+      " bye",
+      " uh oh",
+      " yes",
+      " yeah",
+      " yeah"
+    ]
+  },
+  "57c594cf_108388_108888_13": {
+    "greedy_text": "what",
+    "sampled_texts": [
+      " one",
+      " one",
+      " what",
+      "what",
+      "what",
+      " what",
+      " what",
+      " what",
+      "what",
+      "what"
+    ]
+  },
+  "57c594cf_110630_111130_14": {
+    "greedy_text": "is with that",
+    "sampled_texts": [
+      " is whether",
+      " cause i ",
+      " what was i talking about",
+      " What was I ",
+      " is with that",
+      " is with that",
+      " what was i talking about",
+      " what is with that",
+      " what was i talking about",
+      " what is with that"
+    ]
+  },
+  "57c594cf_307245_307745_20": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah"
+    ]
+  },
+  "57c594cf_35375_35875_1": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      "yeah",
+      "yeah",
+      " yeah",
+      " yeah",
+      " yeah",
+      "yeah",
+      " yeah",
+      "yeah",
+      " yeah",
+      "yeah"
+    ]
+  },
+  "57c594cf_396555_397055_24": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " okay",
+      " you",
+      " you",
+      " you",
+      " You",
+      " you",
+      " you",
+      " yeah",
+      " oh",
+      " you"
+    ]
+  },
+  "57c594cf_427626_428126_30": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " you",
+      " you",
+      " yeah",
+      " oh yeah",
+      " you",
+      " you",
+      " i need help",
+      " yeah",
+      " you",
+      " you"
+    ]
+  },
+  "57c594cf_55405_55905_4": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " yeah",
+      " yeah",
+      " yeah",
+      " sorry",
+      " Yeah",
+      " Yeah",
+      " uh uh",
+      " okay",
+      " uh huh",
+      " you"
+    ]
+  },
+  "57c594cf_608785_609285_42": {
+    "greedy_text": "what",
+    "sampled_texts": [
+      "what",
+      "what",
+      "what",
+      "what",
+      "what",
+      "what",
+      " what",
+      "what",
+      "what",
+      "what"
+    ]
+  },
+  "57c594cf_609626_610126_43": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay"
+    ]
+  },
+  "57c594cf_647674_648174_45": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " you",
+      " you",
+      " you",
+      " bye",
+      " you",
+      " you",
+      " you",
+      " yeah",
+      " you",
+      " you"
+    ]
+  },
+  "57c594cf_72113_72613_7": {
+    "greedy_text": "what you",
+    "sampled_texts": [
+      "what did you say",
+      "ouch",
+      " which is",
+      " wait",
+      "okay",
+      "but you",
+      " ma",
+      " which have been",
+      "what you been",
+      " what did you"
+    ]
+  },
+  "e6785eb2_103280_103780_13": {
+    "greedy_text": "challenge",
+    "sampled_texts": [
+      "okay",
+      " oh",
+      "china",
+      "okay",
+      "okay",
+      "okay",
+      "okay",
+      " okay",
+      "okay",
+      " oh"
+    ]
+  },
+  "e6785eb2_110990_111490_14": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " okay",
+      " Okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " bye",
+      " okay"
+    ]
+  },
+  "e6785eb2_122316_122816_15": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " you",
+      " you",
+      " you",
+      " you",
+      " bye",
+      " you",
+      " you",
+      " bye",
+      " you",
+      " you"
+    ]
+  },
+  "e6785eb2_155142_155642_18": {
+    "greedy_text": "yay",
+    "sampled_texts": [
+      "yay",
+      "yay",
+      "yeah",
+      "yay",
+      "yay",
+      "yay",
+      "yeah",
+      "yay",
+      "yay",
+      "yeah"
+    ]
+  },
+  "e6785eb2_182848_183348_23": {
+    "greedy_text": "to",
+    "sampled_texts": [
+      "what you",
+      "to",
+      "take one two",
+      "one two",
+      "to",
+      "are they watching",
+      "one two",
+      "to",
+      "two",
+      "what youre"
+    ]
+  },
+  "e6785eb2_18351_18851_4": {
+    "greedy_text": "oh",
+    "sampled_texts": [
+      " come on",
+      " i need help",
+      " oh",
+      " yeah",
+      " okay",
+      " bye",
+      " oh",
+      " oh",
+      " oh",
+      " oh"
+    ]
+  },
+  "e6785eb2_29586_30086_6": {
+    "greedy_text": "bye",
+    "sampled_texts": [
+      " perfect",
+      " i",
+      " bye",
+      " okay",
+      " hey",
+      " bye",
+      " bye",
+      " okay",
+      " bye",
+      " yeah"
+    ]
+  },
+  "e6785eb2_46245_46745_7": {
+    "greedy_text": "mmm hmm",
+    "sampled_texts": [
+      " mmm hmm",
+      " hmm",
+      " mmm hmm",
+      " mmm hmm",
+      " mmm hmm",
+      " mmm hmm",
+      " hm hmm",
+      " mmm hmm",
+      " mmm hmm",
+      " hmm"
+    ]
+  },
+  "e6785eb2_92505_93005_11": {
+    "greedy_text": "oh",
+    "sampled_texts": [
+      " oh",
+      " oh",
+      " score",
+      " oh",
+      " it is",
+      " just pour it",
+      " oh",
+      " oh",
+      " i just wanna",
+      " oh"
+    ]
+  },
+  "77f5f3cc_102636_103136_6": {
+    "greedy_text": "serah",
+    "sampled_texts": [
+      "syrra",
+      "sherah",
+      "sira",
+      "serah",
+      "sira",
+      "series",
+      "serah",
+      "serah",
+      "syrah",
+      "sira"
+    ]
+  },
+  "77f5f3cc_300981_301481_14": {
+    "greedy_text": "how about",
+    "sampled_texts": [
+      "how about",
+      "how about",
+      "how about",
+      "how about",
+      "how about",
+      "how about",
+      "how about",
+      "how about",
+      " how about",
+      "how about"
+    ]
+  },
+  "77f5f3cc_320992_321492_16": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " bye",
+      " yeah",
+      " yeah",
+      " yeah",
+      " yeah",
+      " yeah",
+      " hey hey hey hey hey",
+      " yeah",
+      " yeah",
+      " yeah"
+    ]
+  },
+  "77f5f3cc_7490_7990_1": {
+    "greedy_text": "are you ready",
+    "sampled_texts": [
+      " are you ready",
+      " are you ready",
+      " Okay.",
+      " okay ready",
+      " Okay, are you ready",
+      " are you ready",
+      " ready",
+      " okay ready",
+      " are you ready",
+      " Are you ready"
+    ]
+  },
+  "77f5f3cc_83053_83553_2": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " yeah",
+      " oh",
+      " yeah",
+      " yeah",
+      " yeah",
+      " yeah",
+      " yeah",
+      " yeah",
+      " yeah",
+      " yeah"
+    ]
+  },
+  "9faefae5_11894_12394_1": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " you",
+      "you",
+      " you",
+      "you",
+      " we have",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you"
+    ]
+  },
+  "9faefae5_267909_268409_10": {
+    "greedy_text": "hungry",
+    "sampled_texts": [
+      "hungry",
+      "were you hungry",
+      "hungry",
+      "hungry",
+      "hungry",
+      "hungry",
+      "hungry",
+      "hungry",
+      "hungry",
+      "hung"
+    ]
+  },
+  "9faefae5_269432_269932_11": {
+    "greedy_text": "beep",
+    "sampled_texts": [
+      " beep",
+      " hmm",
+      " bye",
+      "um",
+      " up",
+      " beep",
+      " hmm",
+      " oh",
+      " bye",
+      " um"
+    ]
+  },
+  "5bdd3c70_1398080_1398580_61": {
+    "greedy_text": "hey",
+    "sampled_texts": [
+      " hey",
+      " hey",
+      " hey",
+      " hey",
+      " hey",
+      " hey",
+      " hey",
+      " okay",
+      " hey",
+      " hey"
+    ]
+  },
+  "5bdd3c70_1484975_1485475_67": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      "okay",
+      " okay",
+      " you",
+      " okay",
+      " okay",
+      "okay",
+      " okay",
+      " perfect",
+      " okay",
+      " go"
+    ]
+  },
+  "5bdd3c70_1496504_1497004_69": {
+    "greedy_text": "no",
+    "sampled_texts": [
+      " i dont know",
+      " no",
+      " good",
+      " no",
+      " uh huh",
+      " no",
+      " no",
+      " you",
+      " yeah",
+      " yeah"
+    ]
+  },
+  "5bdd3c70_1501969_1502469_70": {
+    "greedy_text": "off of his",
+    "sampled_texts": [
+      " off of this",
+      " off his",
+      " off of his",
+      " off this",
+      " off his",
+      " off of his",
+      " office",
+      "office",
+      " office",
+      " i was just going to say that the data is just kind of a complex system which"
+    ]
+  },
+  "5bdd3c70_158311_158811_4": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " you",
+      " see you next time",
+      " mmm hmm",
+      " okay",
+      " yeah",
+      " okay",
+      " you",
+      " Okay",
+      " i dont really know",
+      " okay"
+    ]
+  },
+  "5bdd3c70_162599_163099_5": {
+    "greedy_text": "hi",
+    "sampled_texts": [
+      " Hi",
+      " hi",
+      " hi",
+      " it",
+      " Hi.",
+      " hi",
+      " Hi",
+      " items",
+      " hi",
+      " Okay"
+    ]
+  },
+  "5bdd3c70_1628396_1628896_71": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " You",
+      " .",
+      " yeah",
+      " yeah",
+      " bye",
+      " .",
+      " Thanks for watching and please like and subscribe",
+      " bye",
+      " i need help",
+      " next wwe wwe wwe"
+    ]
+  },
+  "5bdd3c70_1631258_1631758_72": {
+    "greedy_text": "kidding",
+    "sampled_texts": [
+      "kidding",
+      "kidding",
+      "today",
+      "kidding",
+      "kidding",
+      "finding",
+      "kidding",
+      " kidding",
+      "kidding",
+      "kidding"
+    ]
+  },
+  "5bdd3c70_1638904_1639404_73": {
+    "greedy_text": "it",
+    "sampled_texts": [
+      "yeah",
+      "it",
+      "yeah",
+      " es",
+      " it",
+      " its",
+      " Is",
+      "it",
+      "it is",
+      "is"
+    ]
+  },
+  "5bdd3c70_196212_196712_7": {
+    "greedy_text": "hmm",
+    "sampled_texts": [
+      "no",
+      "hmm",
+      "no",
+      "no",
+      "hmm",
+      "no",
+      "hmm",
+      "no",
+      "um",
+      "hmm"
+    ]
+  },
+  "5bdd3c70_403693_404193_11": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " Thank you",
+      " okay",
+      "okay",
+      " bye",
+      " next video bye",
+      " Thank you",
+      "the end",
+      " okay",
+      " Okay.",
+      " Okay"
+    ]
+  },
+  "5bdd3c70_473524_474024_14": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " Okay",
+      "okay",
+      "okay",
+      "okay",
+      "okay",
+      "okay",
+      " okay",
+      "okay",
+      "okay",
+      "okay"
+    ]
+  },
+  "5bdd3c70_479052_479552_15": {
+    "greedy_text": ".",
+    "sampled_texts": [
+      " u",
+      " thank you",
+      " thank you",
+      " and we will be right back",
+      " yes ma'am",
+      " Yes, ma'am",
+      " Yes, ma'am",
+      " uh huh",
+      " uh uh",
+      " Take care."
+    ]
+  },
+  "5bdd3c70_486962_487462_17": {
+    "greedy_text": "that corner",
+    "sampled_texts": [
+      "that corner",
+      "that corner",
+      "that corner",
+      "that corner",
+      "that corner",
+      "that corner",
+      "take away that corner",
+      "that corner",
+      "that corner",
+      "that corner"
+    ]
+  },
+  "5bdd3c70_501301_501801_19": {
+    "greedy_text": "can grab",
+    "sampled_texts": [
+      " you",
+      "can you grab",
+      " can you grab",
+      "you",
+      " you",
+      "could grab",
+      " i can ground",
+      "you can grab",
+      " i came to",
+      " brown"
+    ]
+  },
+  "5bdd3c70_505330_505830_20": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      "im",
+      "yeah",
+      "yeah",
+      "yeah",
+      "ane",
+      "yeah",
+      " yeah",
+      "yeah",
+      "um",
+      " mmm hmm"
+    ]
+  },
+  "5bdd3c70_50640_51140_2": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " sorry",
+      " Thanks",
+      " okay",
+      " Yes",
+      " .",
+      " Okay.",
+      " OK",
+      " Okay",
+      " okay",
+      " Thanks"
+    ]
+  },
+  "5bdd3c70_507034_507534_21": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      "and",
+      "yeah",
+      "i dont know",
+      " And",
+      " you",
+      "e",
+      "yeah",
+      " Okay",
+      " bye",
+      " i dont really know"
+    ]
+  },
+  "5bdd3c70_604366_604866_33": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      "are you",
+      "yeah",
+      "there",
+      "well",
+      "yeah",
+      "yeah",
+      "oh",
+      "yeah",
+      "yeah",
+      "yeah"
+    ]
+  },
+  "5bdd3c70_784638_785138_45": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " yeah",
+      " yeah",
+      " yeah",
+      " here",
+      " yeah",
+      " okay",
+      " yeah",
+      " period",
+      " here",
+      " yeah"
+    ]
+  },
+  "5bdd3c70_915685_916185_49": {
+    "greedy_text": "wait wait no",
+    "sampled_texts": [
+      "why do i have to",
+      "w",
+      " wait wait no",
+      "what did you play",
+      "wait wait",
+      " did i say playno",
+      "yeah",
+      " what did you say plato",
+      "w",
+      "wait wait no"
+    ]
+  },
+  "5bdd3c70_99869_100369_3": {
+    "greedy_text": "been",
+    "sampled_texts": [
+      "beal freedom",
+      "youre free to move",
+      "been ",
+      "ate",
+      " feel free to",
+      " feel free to",
+      "beal free to",
+      "if youre freedom",
+      "be your freedom",
+      "been "
+    ]
+  },
+  "5bdd3c70_1432818_1433338_65": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " um",
+      " uh huh",
+      " yeah",
+      " yes",
+      " uh huh",
+      " i cant",
+      " um",
+      " um",
+      " uh yeah",
+      " okay"
+    ]
+  },
+  "77f5f3cc_156243_156783_9": {
+    "greedy_text": "no",
+    "sampled_texts": [
+      " no",
+      " oh",
+      " hello",
+      " no",
+      " no",
+      " hooo",
+      " no",
+      " no",
+      " no",
+      " hello"
+    ]
+  },
+  "5bdd3c70_472182_472723_13": {
+    "greedy_text": "that\"TMs what i do",
+    "sampled_texts": [
+      "sai yung",
+      "thats what i did",
+      "try and do",
+      "thatâ€™s what i do",
+      "its fine ",
+      "ats right",
+      "thatâ€™s what i do",
+      "ats right",
+      "ats right",
+      "thatâ€™s how you do it"
+    ]
+  },
+  "5bdd3c70_1168635_1169183_56": {
+    "greedy_text": "that looks good",
+    "sampled_texts": [
+      "and ",
+      "thatâ€™s great",
+      "and ",
+      "underscwering",
+      "one thats better",
+      "and ",
+      "looks good",
+      "that looks good",
+      "and thats it",
+      "undersperse"
+    ]
+  },
+  "77f5f3cc_318288_318868_15": {
+    "greedy_text": "oh",
+    "sampled_texts": [
+      " mmm hmm",
+      " oh",
+      " uh",
+      " oh",
+      " woo woo",
+      " oh",
+      " move",
+      " oh",
+      " mmm hmm",
+      " oh"
+    ]
+  },
+  "5bdd3c70_1656440_1657020_75": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " okay",
+      " there",
+      " beep",
+      " okay",
+      " yes",
+      " yeah",
+      " yeah",
+      " there",
+      " okay",
+      " okay"
+    ]
+  },
+  "5bdd3c70_658493_659073_39": {
+    "greedy_text": "bye",
+    "sampled_texts": [
+      " good night",
+      " bye",
+      " you",
+      " you",
+      " yeah",
+      " yeah",
+      " bye",
+      " bye",
+      " see you next week bye",
+      " yeah"
+    ]
+  },
+  "e6785eb2_151597_152197_17": {
+    "greedy_text": "ha ha",
+    "sampled_texts": [
+      " ha ha",
+      " ha ha ha",
+      " ha ha",
+      " i better start",
+      "a better",
+      " ha",
+      " ah",
+      " i better start",
+      " a better",
+      " i"
+    ]
+  },
+  "e6785eb2_182548_183148_22": {
+    "greedy_text": "apple",
+    "sampled_texts": [
+      "apple",
+      "apple",
+      "apple",
+      "apple",
+      "apple",
+      "apple ",
+      "apple",
+      "apple ",
+      "apple",
+      "apple two"
+    ]
+  },
+  "77f5f3cc_207288_207948_13": {
+    "greedy_text": "this",
+    "sampled_texts": [
+      "this",
+      "this",
+      "it is",
+      "this",
+      "this",
+      "this",
+      "please",
+      "this",
+      "this",
+      "it is"
+    ]
+  },
+  "57c594cf_539274_539954_35": {
+    "greedy_text": "i think i got it",
+    "sampled_texts": [
+      " i think i forgot to add salt",
+      " i",
+      " i think it was",
+      " are two of",
+      "oh ",
+      " i",
+      " i think i'm gonna ",
+      " i think i left",
+      " i think i lost track of time",
+      " i think i want to"
+    ]
+  },
+  "e6785eb2_207106_207786_26": {
+    "greedy_text": "so fast",
+    "sampled_texts": [
+      " so fast",
+      "so fast",
+      "so bad",
+      "so fast",
+      "its so bad",
+      "so bad",
+      "so sad",
+      "so fast",
+      "so fast",
+      "so fast"
+    ]
+  },
+  "e6785eb2_72482_73162_9": {
+    "greedy_text": "took",
+    "sampled_texts": [
+      "at two",
+      "took",
+      "to",
+      "took",
+      "to",
+      "to",
+      "took me",
+      "2p",
+      "to",
+      "took"
+    ]
+  },
+  "e6785eb2_93086_93766_12": {
+    "greedy_text": "bye",
+    "sampled_texts": [
+      " bye",
+      " bye",
+      " bye",
+      " bye",
+      " bye",
+      " bye",
+      " bye",
+      " bye",
+      " bye",
+      " bye"
+    ]
+  },
+  "5bdd3c70_1487657_1488337_68": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " m",
+      " yeah",
+      " yeah",
+      " yeah",
+      " Yeah",
+      " yeah",
+      " yeah",
+      " e",
+      " yeah",
+      " yeah"
+    ]
+  },
+  "9faefae5_63639_64320_3": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " yeah",
+      " you",
+      " yeah",
+      " okay",
+      " yeah",
+      " um",
+      " yeah",
+      " oh",
+      " you",
+      " yeah"
+    ]
+  },
+  "57c594cf_354286_354986_23": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " um",
+      " bye",
+      " yeah",
+      " yeah",
+      " okay",
+      " yeah",
+      " so",
+      " so",
+      " oh",
+      " so"
+    ]
+  },
+  "5bdd3c70_572664_573364_30": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " okay",
+      " yeah",
+      " okay",
+      " bye",
+      " hey",
+      " uh uh",
+      " yeah",
+      " bye",
+      " you",
+      " yeah"
+    ]
+  },
+  "5bdd3c70_667810_668510_40": {
+    "greedy_text": "you can",
+    "sampled_texts": [
+      " You can ",
+      " you can ",
+      " You can turn it off now.",
+      " You can turn it off now",
+      " You can time it up now.",
+      " You can turn it off now.",
+      " you can ",
+      " You can ",
+      " you can turn it off",
+      " You can "
+    ]
+  },
+  "77f5f3cc_190593_191333_11": {
+    "greedy_text": "i am",
+    "sampled_texts": [
+      " i am",
+      " i can",
+      " i am",
+      " i am",
+      " i am",
+      " i am",
+      " i can",
+      " i am",
+      " i am",
+      " i am"
+    ]
+  },
+  "5bdd3c70_521942_522682_22": {
+    "greedy_text": "say bye",
+    "sampled_texts": [
+      "take five",
+      "say bye",
+      "it looks like fire",
+      "its like fire",
+      "okay bye",
+      "bye",
+      "like that",
+      "sike bye",
+      " say bye",
+      "that makes sense"
+    ]
+  },
+  "5bdd3c70_622103_622843_36": {
+    "greedy_text": "oh",
+    "sampled_texts": [
+      " oh",
+      "um",
+      " okay",
+      " oh",
+      " oh",
+      " oh",
+      " oh",
+      "oh yeah",
+      " oh",
+      "up"
+    ]
+  },
+  "5bdd3c70_760787_761527_44": {
+    "greedy_text": "appreciate it",
+    "sampled_texts": [
+      " appreciate it",
+      " Yes",
+      " i appreciate it",
+      " appreciate it",
+      " Yeah",
+      " appreciate it",
+      " appreciate it",
+      " appreciate it",
+      " appreciate it",
+      " appreciate it"
+    ]
+  },
+  "e6785eb2_845_1605_1": {
+    "greedy_text": "here it goes",
+    "sampled_texts": [
+      " here it goes",
+      " here it goes",
+      " here it go",
+      " here it goes",
+      " here it goes",
+      " here it goes",
+      " here it goes",
+      " here it go",
+      " here we go",
+      " here it go"
+    ]
+  },
+  "e6785eb2_183049_183829_24": {
+    "greedy_text": "you can",
+    "sampled_texts": [
+      " you can",
+      "you can",
+      "you care",
+      " you can",
+      "tocare",
+      "to hair",
+      "to bear",
+      "two here",
+      "two here",
+      "to care"
+    ]
+  },
+  "77f5f3cc_376405_377185_20": {
+    "greedy_text": "the mommy",
+    "sampled_texts": [
+      "the mommy",
+      "the mommy",
+      "the mami",
+      "the mommys",
+      "mi mami",
+      "the mami",
+      "the mommy",
+      "the mommy",
+      "the mommys",
+      "the mommie"
+    ]
+  },
+  "5bdd3c70_1415030_1415832_64": {
+    "greedy_text": "i can not",
+    "sampled_texts": [
+      " like its",
+      " i can not",
+      " i can not yet",
+      "like it",
+      "i cant",
+      " like yet",
+      " i can not",
+      " i cant",
+      " i can not",
+      "and like it"
+    ]
+  },
+  "e6785eb2_57373_58193_8": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you"
+    ]
+  },
+  "5bdd3c70_937450_938270_53": {
+    "greedy_text": "oh yes it was",
+    "sampled_texts": [
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was",
+      "oh yes it was"
+    ]
+  },
+  "57c594cf_312729_313569_21": {
+    "greedy_text": "first",
+    "sampled_texts": [
+      " first i need to",
+      " first of all",
+      "â ",
+      " first",
+      " first",
+      " put it first ",
+      " what first",
+      " first",
+      " okay",
+      " first"
+    ]
+  },
+  "57c594cf_62955_63816_6": {
+    "greedy_text": "bye",
+    "sampled_texts": [
+      " bye",
+      " bye",
+      "bye",
+      "bye",
+      "okay bye",
+      "goodbye",
+      " bye",
+      "okay bye",
+      " bye",
+      " goodbye"
+    ]
+  },
+  "5bdd3c70_1377193_1378054_60": {
+    "greedy_text": "you're awesome",
+    "sampled_texts": [
+      " You're awesome",
+      " youre awesome",
+      " You're awesome",
+      " you're awesome",
+      " You're awesome",
+      " you're awesome",
+      " you're awesome",
+      " you're awesome",
+      " you know something",
+      " you're awesome"
+    ]
+  },
+  "e6785eb2_16388_17268_3": {
+    "greedy_text": "we have",
+    "sampled_texts": [
+      " we have",
+      " you have to",
+      " we have",
+      " we have ",
+      " we have",
+      " we have",
+      "we have",
+      " We have",
+      " we have",
+      "we have"
+    ]
+  },
+  "5bdd3c70_623885_624806_37": {
+    "greedy_text": "thing i got",
+    "sampled_texts": [
+      "thing i got",
+      "thing i lighted",
+      "thing i said",
+      "thing i lighted",
+      "thing i got it",
+      "ing",
+      "thing i let it",
+      "whats happening",
+      "thing i got",
+      "yep"
+    ]
+  },
+  "77f5f3cc_198155_199095_12": {
+    "greedy_text": "bye bye",
+    "sampled_texts": [
+      "do you guys",
+      " you guys",
+      " bye",
+      "doodle done",
+      " you little guy",
+      " see you guys",
+      "bye",
+      " do do guy",
+      "do you see",
+      "see you guys"
+    ]
+  },
+  "5bdd3c70_930305_931245_51": {
+    "greedy_text": "what is going on with that",
+    "sampled_texts": [
+      "why does it look like",
+      "what is all this about",
+      "what is going on with that",
+      "what is going on with that",
+      "what is all this about",
+      "why does it look like",
+      "what is going on with that",
+      "what is going on with that",
+      "what is going on with that",
+      "what is going on with that"
+    ]
+  },
+  "9faefae5_148226_149167_6": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "yeah",
+      "it was ",
+      "yeah"
+    ]
+  },
+  "57c594cf_666065_667021_46": {
+    "greedy_text": "i made it",
+    "sampled_texts": [
+      " i did it",
+      " i made it",
+      " i made it",
+      " i made it",
+      " i made it",
+      " i did it",
+      " i made it",
+      " i did it",
+      " i made it",
+      " i did it"
+    ]
+  },
+  "57c594cf_600181_601141_41": {
+    "greedy_text": "i need",
+    "sampled_texts": [
+      " no meat",
+      " i got it",
+      " i don't need",
+      " i need",
+      " i hate strawberries",
+      " i need",
+      " yeah",
+      " i need",
+      " i need",
+      " i got it"
+    ]
+  },
+  "77f5f3cc_173980_174941_10": {
+    "greedy_text": "not even",
+    "sampled_texts": [
+      "not even",
+      "not in a",
+      "not in a",
+      "not even",
+      " not in the",
+      " not anymore",
+      "not anymore",
+      "not even a move",
+      "not anymore",
+      " not in a"
+    ]
+  },
+  "77f5f3cc_364397_365377_19": {
+    "greedy_text": "what about that",
+    "sampled_texts": [
+      "what about that",
+      "what about that",
+      "what about that",
+      "what about that",
+      "what about that",
+      " what about that",
+      " what about that",
+      " what about that",
+      "what about that",
+      "what about that"
+    ]
+  },
+  "9faefae5_144124_145124_5": {
+    "greedy_text": "here",
+    "sampled_texts": [
+      " here",
+      " here look",
+      " here",
+      " yes",
+      " here",
+      " here",
+      " here",
+      " here",
+      " here",
+      " here"
+    ]
+  },
+  "57c594cf_56186_57207_5": {
+    "greedy_text": "um",
+    "sampled_texts": [
+      " uh",
+      " hi",
+      " hi",
+      " hi",
+      " uh",
+      " hi",
+      " uh",
+      " uh",
+      " uh",
+      " uh"
+    ]
+  },
+  "9faefae5_230265_231306_8": {
+    "greedy_text": "would you like me to",
+    "sampled_texts": [
+      "cute",
+      "would you like me to",
+      " would you like me to",
+      "would you like me to",
+      "would you like to eat it",
+      "cute",
+      "would you like me to",
+      "would you like me to",
+      "you need a would you like me to",
+      "yeah"
+    ]
+  },
+  "57c594cf_410355_411415_26": {
+    "greedy_text": "strong enough",
+    "sampled_texts": [
+      " strong enough",
+      " stronghold",
+      " strong move",
+      " strong ",
+      " strong enough",
+      " oh my",
+      " what is wrong with you",
+      " i just found out",
+      " so many",
+      " strong end"
+    ]
+  },
+  "57c594cf_414538_415598_27": {
+    "greedy_text": "d",
+    "sampled_texts": [
+      " different",
+      "d",
+      "d",
+      "d",
+      "d",
+      "d",
+      "d",
+      "d",
+      "d",
+      "d"
+    ]
+  },
+  "9faefae5_23191_24252_2": {
+    "greedy_text": "it got big",
+    "sampled_texts": [
+      "that big",
+      "it got big",
+      "and it got big",
+      "it got big",
+      "they got big",
+      "that big",
+      "you got ",
+      "and it got big",
+      "it got big",
+      "he got big"
+    ]
+  },
+  "5bdd3c70_1414325_1415409_63": {
+    "greedy_text": "just jump again",
+    "sampled_texts": [
+      "just do it in my head",
+      "this jory did a hand",
+      "this jel again right here",
+      "just jump again",
+      "just jump again",
+      "just like in my head",
+      "just do it in my head",
+      "just get like in right there",
+      "this jel again right here",
+      "just jellied in my head"
+    ]
+  },
+  "57c594cf_50978_52099_3": {
+    "greedy_text": "how about like this like that",
+    "sampled_texts": [
+      "how about like this",
+      "how about like this like that",
+      "how about like this like that",
+      "how about like this like that",
+      "how about like this like that",
+      "how about like this like that",
+      "how about like this like that",
+      "how about like this like that",
+      "how about like this like that",
+      "how about like this like that"
+    ]
+  },
+  "77f5f3cc_340318_341439_18": {
+    "greedy_text": "through",
+    "sampled_texts": [
+      "impro",
+      " prove",
+      " prove",
+      "through",
+      "produced by the prune",
+      " improve",
+      "through",
+      "through",
+      "through",
+      "the crew"
+    ]
+  },
+  "57c594cf_175576_176716_16": {
+    "greedy_text": "can i",
+    "sampled_texts": [
+      " i can not do any of this",
+      " can i ",
+      " can i have a bite",
+      "can i get rid of it",
+      " can i ",
+      "can not do any",
+      " can i have a minute",
+      "can i ",
+      " can i come with you",
+      " can i "
+    ]
+  },
+  "9faefae5_118949_120090_4": {
+    "greedy_text": "i am set",
+    "sampled_texts": [
+      " i am",
+      " iâ€™m set",
+      "i am sad",
+      " i am set",
+      " on sat",
+      " on seconds",
+      " im",
+      " i am set",
+      " i am sad",
+      " i am set"
+    ]
+  },
+  "e6785eb2_167800_168942_20": {
+    "greedy_text": "lets look at it",
+    "sampled_texts": [
+      "lets look at it",
+      "its ",
+      "let the chicken in",
+      "let the",
+      "its ",
+      "lets work on it",
+      "its ",
+      "just look at it",
+      " lets look at it",
+      "lets "
+    ]
+  },
+  "e6785eb2_184771_185932_25": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay",
+      " okay"
+    ]
+  },
+  "e6785eb2_26663_27824_5": {
+    "greedy_text": "some pressure",
+    "sampled_texts": [
+      " Can place it",
+      " compression",
+      " pressure",
+      " it's a pressure",
+      " presentation",
+      " it should be like that",
+      " compression",
+      " please",
+      " It's an efficient",
+      " can push it"
+    ]
+  },
+  "5bdd3c70_568361_569561_29": {
+    "greedy_text": "then its late",
+    "sampled_texts": [
+      "then its ready",
+      " then its free",
+      " Let me sleep",
+      " Then its late",
+      "that makes sense",
+      "then its complete",
+      "let me sleep",
+      " lets see if we can get any sleep",
+      "then its plate",
+      "ten minutes later"
+    ]
+  },
+  "57c594cf_582469_583690_39": {
+    "greedy_text": "perfect",
+    "sampled_texts": [
+      " perfect",
+      " perfect",
+      " perfect",
+      " okay",
+      " good boy",
+      " theyre red",
+      " perfect",
+      " youre red",
+      " good night",
+      " youre red"
+    ]
+  },
+  "5bdd3c70_495373_496594_18": {
+    "greedy_text": "it could be next turn",
+    "sampled_texts": [
+      "it could be next turn",
+      "its gonna be next turn",
+      "it could be next turn",
+      "it could be next turn",
+      "it could be next turn",
+      "it could be next turn",
+      "its going to be next turn",
+      "it could be next turn",
+      "it will be next turn",
+      "it would be next turn"
+    ]
+  },
+  "5bdd3c70_1255403_1256627_57": {
+    "greedy_text": "yup you did just the other side",
+    "sampled_texts": [
+      " yup you did just have a second",
+      " yup you did just the other side",
+      " yup you did just that",
+      "yeah",
+      " yup you did just that",
+      "yeah you did just",
+      "yeah",
+      " yep",
+      " yup you did just add salt",
+      " yup"
+    ]
+  },
+  "5bdd3c70_391285_392525_9": {
+    "greedy_text": "like shingles",
+    "sampled_texts": [
+      "like shining on your head",
+      "like shingles",
+      "like shingonai jump",
+      "like shaming it",
+      "i cant really see",
+      "like some kind of",
+      "like shingling it",
+      "like shingarap",
+      "like shingring it",
+      "like shaming it"
+    ]
+  },
+  "9faefae5_314547_315808_14": {
+    "greedy_text": "and then do a",
+    "sampled_texts": [
+      "turn them into a other",
+      "and then do a",
+      "and then do a",
+      "and then do a",
+      "turned into a",
+      "turned into a butterfly",
+      "turned into a",
+      "and then do a",
+      "and then do a",
+      "and then do a"
+    ]
+  },
+  "5bdd3c70_366729_367990_8": {
+    "greedy_text": "theyre not fitting the length",
+    "sampled_texts": [
+      " i need help",
+      "theyre not picking the little ones up",
+      "no no not ",
+      " we are not sitting ",
+      "theyre not picking the meat up",
+      "we need to ",
+      " we are not sitting ",
+      "oh my",
+      "oh my",
+      "theyre not fitting the width"
+    ]
+  },
+  "57c594cf_44449_45730_2": {
+    "greedy_text": "come and get her",
+    "sampled_texts": [
+      " come and get her",
+      " come and get em",
+      " come and take a look",
+      " come and get her",
+      " come and take turn",
+      "could come and pick him up",
+      " come and get him",
+      " come and get him",
+      " come and get em",
+      " come and get her"
+    ]
+  },
+  "5bdd3c70_531096_532377_25": {
+    "greedy_text": "thank you",
+    "sampled_texts": [
+      "thank you",
+      "thank you",
+      "thank you",
+      "thank you",
+      "thank you",
+      "thank you",
+      "thank you",
+      "thank you",
+      "thank you",
+      "thank you"
+    ]
+  },
+  "5bdd3c70_596377_597678_31": {
+    "greedy_text": "um",
+    "sampled_texts": [
+      " um",
+      "um",
+      "um",
+      "um",
+      " um",
+      "um",
+      "um",
+      "um",
+      "um",
+      "um"
+    ]
+  },
+  "e6785eb2_144469_145790_16": {
+    "greedy_text": "get out of my way",
+    "sampled_texts": [
+      " get out of my way",
+      "get out of my way",
+      "get out of my way",
+      " get out of my way",
+      "get out of my way",
+      " get out of here",
+      " get out of my way",
+      "get out of my way",
+      " get out of my way",
+      " get out of home"
+    ]
+  },
+  "57c594cf_460038_461400_33": {
+    "greedy_text": "i do talk",
+    "sampled_texts": [
+      " i do talk",
+      " i do talk",
+      "let me do the top",
+      " i do talk",
+      " i do talk",
+      " i do talk",
+      " i do talk",
+      " i do talk",
+      " i do talk",
+      " i do talk"
+    ]
+  },
+  "9faefae5_305364_306764_13": {
+    "greedy_text": "you a big gen",
+    "sampled_texts": [
+      " you a big jillionaire",
+      "you a big gen",
+      "you a big jam",
+      "you a big jim",
+      "you a big ding",
+      "you a biggen",
+      " you a big ding",
+      " you a big gen",
+      "you a big jam",
+      " you a big jim"
+    ]
+  },
+  "5bdd3c70_1433078_1434479_66": {
+    "greedy_text": "yeah probably",
+    "sampled_texts": [
+      "it probably can",
+      " yeah",
+      " yeah",
+      " it ",
+      " probably can",
+      " yeah probably",
+      " yeah probably can",
+      " yeah",
+      " yeah it probably can",
+      "it probably can"
+    ]
+  },
+  "e6785eb2_156504_157945_19": {
+    "greedy_text": "it can move the wire good job",
+    "sampled_texts": [
+      "it can still work",
+      "it can ",
+      "it can move the wire",
+      "i the ",
+      "it can restore",
+      "it the one",
+      "it can move the wire",
+      "it can use the wand",
+      "it can move",
+      "it can move the wire"
+    ]
+  },
+  "5bdd3c70_1400522_1402022_62": {
+    "greedy_text": "i think i forgot to add salt",
+    "sampled_texts": [
+      " i think ",
+      " oh it",
+      " i donâ€™t know",
+      " oh i",
+      "oh it",
+      " i think i just saw something",
+      " oh i",
+      " oh",
+      " oh",
+      " i told him "
+    ]
+  },
+  "57c594cf_77217_78738_8": {
+    "greedy_text": "please",
+    "sampled_texts": [
+      "please",
+      "please",
+      "please",
+      "please where you should go",
+      "please please",
+      "please where you should go",
+      "please where you should go",
+      "please ready to go",
+      "please where you should go",
+      "please where you should go"
+    ]
+  },
+  "57c594cf_184623_186164_17": {
+    "greedy_text": "a bear a bear",
+    "sampled_texts": [
+      " a bear a bear",
+      " a bear a bear",
+      "a bear a bear",
+      " a bear a bear",
+      " a bear a bear",
+      " a bear a bear",
+      " a bear a bear",
+      " a bear a bear",
+      " a bear a bear",
+      " a bear a bear"
+    ]
+  },
+  "57c594cf_242452_244074_19": {
+    "greedy_text": "put that right there",
+    "sampled_texts": [
+      " put that right there",
+      " put that right there",
+      " what is that right there",
+      " Put that right there",
+      " put that right there",
+      " put that right there",
+      " put that right there",
+      " put that right there",
+      " put that right there",
+      " put that right there"
+    ]
+  },
+  "e6785eb2_180866_182507_21": {
+    "greedy_text": "it ate one",
+    "sampled_texts": [
+      "it aint",
+      "it ate one",
+      "it ate one",
+      " it ate one",
+      "it ate one",
+      "it ate one",
+      " it ate one",
+      "it ate one",
+      "it a one",
+      "it ate one"
+    ]
+  },
+  "9faefae5_233631_235313_9": {
+    "greedy_text": "i dont",
+    "sampled_texts": [
+      "i dont",
+      " i dont",
+      "i dont",
+      "i dont",
+      "i dont",
+      "i dont",
+      "i dont",
+      " i dont",
+      "i dont",
+      "i dont"
+    ]
+  },
+  "5bdd3c70_564478_566179_27": {
+    "greedy_text": "well we have painted the leaves and the",
+    "sampled_texts": [
+      "well we have painted the leaf and",
+      "well we have painted the leaves and the leaves are ",
+      "well we have painted the leaves and the",
+      "well we have painted the leaves in black",
+      "well we have painted the leaves and the",
+      "well we have painted the leaves and the",
+      "well we have painted the leaves in different colors",
+      "well we have painted the leaves in white",
+      "well we have painted the leaves and the",
+      "well we have painted the leaves and the flowers"
+    ]
+  },
+  "5bdd3c70_484238_485940_16": {
+    "greedy_text": "what",
+    "sampled_texts": [
+      "what",
+      "whatâ€™s it",
+      "what",
+      "oh oh whats it",
+      "what",
+      "whatâ€™s it",
+      "whatâ€™s it",
+      " what",
+      "what does it",
+      "what it"
+    ]
+  },
+  "5bdd3c70_1346357_1348098_58": {
+    "greedy_text": "that is",
+    "sampled_texts": [
+      "that is",
+      " bunny bunny",
+      "that is that is",
+      "that is",
+      " bunny bunny",
+      "that is",
+      "that is",
+      "that is",
+      " bunny bunny",
+      " buddy let me"
+    ]
+  },
+  "5bdd3c70_1654819_1656560_74": {
+    "greedy_text": "what",
+    "sampled_texts": [
+      "what",
+      "what",
+      "what",
+      "with a magnet",
+      "what",
+      "what",
+      "what",
+      "what",
+      "what",
+      "what"
+    ]
+  },
+  "5bdd3c70_680937_682678_41": {
+    "greedy_text": "what is happening",
+    "sampled_texts": [
+      " i got this one take my stetho",
+      " is",
+      " do you like it",
+      " what is happening",
+      " i dont know",
+      " wait",
+      " uh yeah",
+      " i dont know",
+      " it goes on like that",
+      " he was "
+    ]
+  },
+  "77f5f3cc_115278_117039_7": {
+    "greedy_text": "and then this is",
+    "sampled_texts": [
+      "and then this is ",
+      "and then this is skyline",
+      "and then this is skyline",
+      "and then this is ",
+      "and then this is ",
+      "and then this is skyline",
+      "and then this is ",
+      "and then this is ",
+      "and then this is xylem",
+      " and then this is "
+    ]
+  },
+  "5bdd3c70_522422_524184_23": {
+    "greedy_text": "i can see you in my kitchen",
+    "sampled_texts": [
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen",
+      "i can see you in my kitchen"
+    ]
+  },
+  "5bdd3c70_705822_707584_43": {
+    "greedy_text": "theyd like to hear your story",
+    "sampled_texts": [
+      "did like to hear your story",
+      " did like to hear a story about",
+      "theyd like to hear your story",
+      " did like to hear your story",
+      "theyd like to hear your story",
+      "theyd like to hear your story",
+      "theyd like to hear a story about it",
+      " did like to hear your story",
+      " did like to hear your story",
+      "theyd like to hear your story"
+    ]
+  },
+  "57c594cf_417239_419180_28": {
+    "greedy_text": "i am the perfect kid",
+    "sampled_texts": [
+      " when im in the bathroom",
+      " i am a parlor",
+      " yeah",
+      " where are the faucets at",
+      " where are the glasses",
+      " well im gonna put on some lipstick",
+      " i am a plastic",
+      " land upon it",
+      " i need help",
+      " one on the bottom"
+    ]
+  },
+  "57c594cf_432850_434851_32": {
+    "greedy_text": "should i go like this",
+    "sampled_texts": [
+      " should i go like this",
+      "should i go like this",
+      "should i go like this",
+      "should i go like this",
+      " should i go like this",
+      " should go like this",
+      "should i go like this",
+      "should i go like this",
+      " should you go like this",
+      "should i go like this"
+    ]
+  },
+  "5bdd3c70_162820_164823_6": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " you",
+      " okay",
+      " okay",
+      " okay",
+      " get",
+      " okay",
+      " you",
+      " i need help",
+      " okay",
+      " okay"
+    ]
+  },
+  "5bdd3c70_425175_427178_12": {
+    "greedy_text": "shake it its right in the",
+    "sampled_texts": [
+      "shake it whats hiding in the cup",
+      "shake it its right in the",
+      "shake it",
+      "shake it its right in the",
+      "shake it its hiding in the cup",
+      "what does it say",
+      "whats she",
+      "shake it whats hiding in the cup",
+      "shake it its right in the cup",
+      "what is she"
+    ]
+  },
+  "57c594cf_200121_202243_18": {
+    "greedy_text": "im not but not gonna",
+    "sampled_texts": [
+      " im not but not gonna",
+      " im not but not gonna",
+      " im not but not going to",
+      " im not but not gonna",
+      " im not but not going up",
+      " im not but not going to",
+      " im not but not gonna",
+      " im not but not gonna",
+      " im not but not going up",
+      " im not but not gonna"
+    ]
+  },
+  "5bdd3c70_598040_600162_32": {
+    "greedy_text": "that that was really bad",
+    "sampled_texts": [
+      "that that is really bad",
+      "that that was really bad",
+      "this one doesnt really work",
+      "that that was really bad",
+      "that doesnt really work",
+      "that that was really bad",
+      "that that was really bad",
+      "that that was really bad",
+      "that doesnt really work",
+      "that that was really bad"
+    ]
+  },
+  "77f5f3cc_129747_131870_8": {
+    "greedy_text": "i think we need",
+    "sampled_texts": [
+      " i think",
+      " i think we got better",
+      " i think we should",
+      " i think we got that one",
+      " i think",
+      " i think we need ",
+      " i think",
+      " i think we need to turn it on again",
+      " i think we should let the others go",
+      " i think we need "
+    ]
+  },
+  "57c594cf_428127_430268_31": {
+    "greedy_text": "this is the big one",
+    "sampled_texts": [
+      "this is the big one",
+      "this is the bigger one",
+      "this is the big one",
+      "this is the big one",
+      "this is the big one",
+      "this is the big one",
+      "this is the big one",
+      "this is the big one",
+      "this is the big one",
+      "this is the big one"
+    ]
+  },
+  "5bdd3c70_955821_958024_55": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " i donâ€™t know",
+      " you",
+      " little",
+      " piece of ",
+      " piece of",
+      " okay",
+      " so",
+      " peace out",
+      " okay",
+      " please leave"
+    ]
+  },
+  "5bdd3c70_566019_568360_28": {
+    "greedy_text": "and then put the lace on top of the paper",
+    "sampled_texts": [
+      "and then put the lace on top of the paper",
+      "and then put the lace on top of the paper",
+      "and then put the lace on top of the paper",
+      "and then put the leaf on top of the paper",
+      "and then put the lace on top of the paper",
+      "and then put the lace on top of the paper",
+      "and then put the lace on top of the paper",
+      "and then put the leaves on top of the paper",
+      "and then put the lace on top of the paper",
+      "and then put the waste on top of the paper"
+    ]
+  },
+  "5bdd3c70_529055_531416_24": {
+    "greedy_text": "the boy thats trailing far i can see a boy in",
+    "sampled_texts": [
+      "the boy thats through far i can see a boy in",
+      "the boy thats trick or i can see a boy in",
+      "the boy thats ",
+      "the boy thats trapped far i can see a boy in",
+      "that the straight bar i can see a line",
+      "i can see a boy thats ",
+      "that the boy thats travelling i can see a boy in",
+      "the boy thats tretty far i can see a boy in",
+      "whats going on i can see a plane",
+      "the boy thats trail far i can see a boy in"
+    ]
+  },
+  "5bdd3c70_916446_918809_50": {
+    "greedy_text": "yeah see what you can make",
+    "sampled_texts": [
+      "see what you can make",
+      "see what you can make",
+      "yeah see what you can make",
+      "yeah see what you can make",
+      "yeah see what you can make",
+      "yeah see what you can make",
+      "see what you can make",
+      "see what you can make",
+      "yeah see what you can make",
+      "see what you can make"
+    ]
+  },
+  "77f5f3cc_84135_86598_3": {
+    "greedy_text": "there another one if you want a good burger",
+    "sampled_texts": [
+      "there another one if you want a good burger",
+      "theres another one if you want a good burger",
+      "taste another one if you want a different",
+      "theres another one if you wanted to give her",
+      "theres another one if you want a good bird",
+      "there is another one if you want a good burger",
+      "theres another one if you want a different",
+      " says another one if you want a good bird",
+      "theres another one if you want a good burger",
+      "theyve another one if you want a good burger"
+    ]
+  },
+  "e6785eb2_6373_8856_2": {
+    "greedy_text": "what",
+    "sampled_texts": [
+      " what",
+      " what",
+      " what",
+      " what",
+      "what",
+      " what",
+      "what",
+      "what",
+      " what",
+      " what"
+    ]
+  },
+  "57c594cf_616137_618641_44": {
+    "greedy_text": "im going to the bears",
+    "sampled_texts": [
+      "im going to the bears",
+      "im going to the bears",
+      "im going to the nearest",
+      "im going to the bears",
+      "im going to the bears",
+      "im going to the bears",
+      "im going to the bears",
+      "im going to the bears",
+      "im going to the berries",
+      "im going to the berries"
+    ]
+  },
+  "77f5f3cc_87620_90223_4": {
+    "greedy_text": "no",
+    "sampled_texts": [
+      " no",
+      " no",
+      " no",
+      " no",
+      " no",
+      " no",
+      " no",
+      " no",
+      " no",
+      " no"
+    ]
+  },
+  "5bdd3c70_617016_619619_35": {
+    "greedy_text": "theyre colder than they are",
+    "sampled_texts": [
+      "theyre colder than they are",
+      "theyre colder than theres",
+      "so cold oh yeah we can tell",
+      "theyre colder than they are",
+      "the codon we can tell",
+      "theyre colder than they are",
+      "theyre colder ",
+      "theyre colder than theres",
+      "theyre colder than they are",
+      "we can tell"
+    ]
+  },
+  "5bdd3c70_48059_50700_1": {
+    "greedy_text": "you",
+    "sampled_texts": [
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you",
+      " you"
+    ]
+  },
+  "57c594cf_114593_117294_15": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      "yeah",
+      "no",
+      "ne",
+      "no",
+      "yeah",
+      "and then",
+      "ime",
+      " What happened to you",
+      "what happened baby",
+      "what happened"
+    ]
+  },
+  "57c594cf_88565_91348_9": {
+    "greedy_text": "can you tell",
+    "sampled_texts": [
+      "can you tell",
+      "can you tell",
+      "can you tell",
+      "can you tell",
+      "can you tell",
+      "can you tell",
+      "can you tell",
+      "touch my belly",
+      "can you tell",
+      "can you tell"
+    ]
+  },
+  "5bdd3c70_634406_637208_38": {
+    "greedy_text": "but that one is really harder",
+    "sampled_texts": [
+      "but that one is really higher up",
+      "but that one is really harder ",
+      "but that one is really harder ",
+      "but that one is really harder ",
+      "but that one is really harder ",
+      "but that one is really harder ",
+      "but that one is really higher up",
+      "but that one is really harder ",
+      "but that one is really hard",
+      "but that one is really harder "
+    ]
+  },
+  "e6785eb2_78687_81509_10": {
+    "greedy_text": "please",
+    "sampled_texts": [
+      " please",
+      " Yes",
+      " please",
+      " please",
+      " please",
+      " please",
+      " please",
+      " hi",
+      " please",
+      " please"
+    ]
+  },
+  "57c594cf_405349_408273_25": {
+    "greedy_text": "with eyeballs what what can you make",
+    "sampled_texts": [
+      "with eyeballs what what can you make",
+      "with eyeballs what what can you make",
+      " with eyeballs what what can you make",
+      "with eyeballs what what can you make",
+      "should i go where can you make",
+      "should i go where can you make",
+      " with eyeballs what what can you make",
+      "with eyeballs what what can you make",
+      "the eyeballs what what can you make",
+      "with eyeballs what what can you make"
+    ]
+  },
+  "5bdd3c70_952055_955119_54": {
+    "greedy_text": "it wants to be open",
+    "sampled_texts": [
+      "it wants to be open",
+      "it wants to be open",
+      "it wants to get open",
+      "take one ",
+      "this one is open",
+      "it wants to get closer",
+      "it went in here",
+      "this one has ",
+      "it",
+      "it wants this thing open"
+    ]
+  },
+  "57c594cf_583290_586511_40": {
+    "greedy_text": "no you do the other one and ill turn it around",
+    "sampled_texts": [
+      "no you do the air and ill turn it red",
+      "no you did a yellow natural red",
+      "no you did a yellow not ",
+      "no you do the other one and ill turn it back on",
+      "no you did a yellow not to your right",
+      "no you do the other one and ill turn it around",
+      "no you do the other one and ill turn it around",
+      "no you do the other one and ill turn it right",
+      "no you did a yellow nausea right",
+      "no you do the other side and i will turn it around"
+    ]
+  },
+  "e6785eb2_223068_226354_27": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " hey",
+      " me",
+      " hmm",
+      " mmm hmm",
+      " come",
+      " hey",
+      " um",
+      " come here",
+      " okay",
+      " baby cooing"
+    ]
+  },
+  "5bdd3c70_695726_699131_42": {
+    "greedy_text": "hi",
+    "sampled_texts": [
+      "well done",
+      "like this",
+      " hi ",
+      "good high ",
+      "oh good hi ",
+      "okay hi ",
+      "okay hi ",
+      "no good hi ",
+      "oh",
+      " hi "
+    ]
+  },
+  "57c594cf_539634_543159_36": {
+    "greedy_text": "i dont know what i was thinking",
+    "sampled_texts": [
+      "i dont know what i was talking about",
+      "i dont know why they were never getting it done ",
+      "i dont know why i was looking at them it was ",
+      "i dont know what i was taking at them it was ",
+      "i dont know i was looking at them",
+      "i dont know what i was thinking at the beginning",
+      "er i dont really know what i was talking about",
+      "i dont know i was getting a feel",
+      "i dont know why i never look at micro",
+      "i dont know i dont really get in the middle"
+    ]
+  },
+  "5bdd3c70_394707_398449_10": {
+    "greedy_text": "they actually",
+    "sampled_texts": [
+      "the electricity is burning",
+      "the electric",
+      "can you please stay away from the animation",
+      "i dont really ",
+      "they were ",
+      "they actually ",
+      "they make their own food and plants",
+      "when you click it it will and then",
+      "the mechanical uh one of the many",
+      "the energy"
+    ]
+  },
+  "57c594cf_571022_574804_38": {
+    "greedy_text": "stack stack stack",
+    "sampled_texts": [
+      " stack stack stack",
+      " stack stack stack",
+      " stack stack stack",
+      " stack stack stack stack stack stack stack stack stack stack stack stack stack stack stack stack stack",
+      " stack stack stack stack stack stack stack stack stack stack stack stack stack",
+      " stack stack stack",
+      " stack stack stack",
+      " stack stack stack stack",
+      " stack stack stack stack stack stack stack",
+      " stack stack stack"
+    ]
+  },
+  "57c594cf_478925_482971_34": {
+    "greedy_text": "i have a meter",
+    "sampled_texts": [
+      " i have a meter",
+      " i have a meter all right",
+      " i have a movement",
+      " i had a moon burn",
+      " i have a neighbor a friend",
+      " i havent even",
+      " i have a move but alright",
+      " i have an either all right",
+      " i have an either",
+      " i have a meter i forgot"
+    ]
+  },
+  "5bdd3c70_896315_900437_47": {
+    "greedy_text": "lets see how do how do i do my",
+    "sampled_texts": [
+      "lets see how do how do i do my",
+      "lets see how do how do i do my",
+      "lets see how do how do i do my four eight something again",
+      "lets see how do how do i do my",
+      "lets see how do how do i do my",
+      "lets see how do how do i do my 28",
+      "lets see how do you how do i do my",
+      "lets see how do how do i do my ",
+      "well see how do how do i do my",
+      "lets see how do how do i do my"
+    ]
+  },
+  "5bdd3c70_560115_564557_26": {
+    "greedy_text": "it is my school really mmm hmm",
+    "sampled_texts": [
+      "there and at my school really mmm hmm well",
+      "it is my school really mmm hmm",
+      "it is my school really mmm hmm",
+      "it is my school really mmm hmm",
+      "it is my school really mmm hmm",
+      "i did it in my school really mmm hmm",
+      "it is my school really mmm hmm",
+      "i did in my school really mmm hmm",
+      "i was in high school really mmm hmm",
+      "i went to high school here and at my school really mmm hmm well"
+    ]
+  },
+  "5bdd3c70_884657_889120_46": {
+    "greedy_text": "yeah",
+    "sampled_texts": [
+      " um hmm",
+      " yeah perfect",
+      " yes anything else",
+      " yeah is it perfect",
+      " yeah okay",
+      " yeah",
+      " yeah perfect",
+      " yeah is it on",
+      " yeah perfect",
+      " yeah okay"
+    ]
+  },
+  "77f5f3cc_94545_99010_5": {
+    "greedy_text": "i dont like i dont make the",
+    "sampled_texts": [
+      "i dont like i dont like ",
+      "i dont like idoh make up ",
+      "i dont like i dont like ",
+      "i dont like i dont like to be around a ",
+      "i dont like i dont make the",
+      "i dont like i dont make the",
+      "i dont like idle make up",
+      "i dont like idles",
+      "i dont like i dont make the",
+      "i dont like i dont make the"
+    ]
+  },
+  "5bdd3c70_611631_616114_34": {
+    "greedy_text": "but i didnt get any lunch back there",
+    "sampled_texts": [
+      "well i didnt get any crunch back there",
+      "what i was getting ",
+      "but i dont get any punch back there",
+      "well i was getting ",
+      "for i dont get anyâ trump spot there",
+      "what i was getting ",
+      "but i didnt get any crunch back there",
+      "but i didnt get any crunch",
+      "but i dont get any drunks partying",
+      "but i didnt get any runs back there"
+    ]
+  },
+  "9faefae5_296796_301620_12": {
+    "greedy_text": "i dont know",
+    "sampled_texts": [
+      "i dont really know",
+      " with the magnet",
+      "and then say",
+      " with the needle and then",
+      " i dont know",
+      "with the magnet",
+      " lets see",
+      " when you put down the literals and then actually ",
+      " with the needle and then by the same do you",
+      " i donâ€™t know"
+    ]
+  },
+  "5bdd3c70_1347738_1352562_59": {
+    "greedy_text": "okay",
+    "sampled_texts": [
+      " okay",
+      " okay",
+      " okay",
+      " um hmm",
+      " uh huh",
+      " uh huh",
+      " um",
+      " i need",
+      " i need some air",
+      " ah"
+    ]
+  },
+  "9faefae5_196298_201304_7": {
+    "greedy_text": "you got one",
+    "sampled_texts": [
+      " you donâ€™t want to",
+      " here the bulb",
+      " you gotta move",
+      " you have to put",
+      " you got one",
+      " its a bug",
+      " you gotta run",
+      " you got one",
+      " its a bug",
+      " you done"
+    ]
+  },
+  "57c594cf_314671_319714_22": {
+    "greedy_text": "no",
+    "sampled_texts": [
+      "no",
+      " zero",
+      "no",
+      "no",
+      "well",
+      "no",
+      "no",
+      "cause its only",
+      "no",
+      "n no"
+    ]
+  },
+  "57c594cf_92310_97377_10": {
+    "greedy_text": "this",
+    "sampled_texts": [
+      "this this is not a dog so you and this is",
+      "this this is not a dog so you and missy",
+      "this see you in ",
+      "this see you in ",
+      "this see you in ",
+      "this this is never stop see you in this e",
+      "this this is not a dog so you and missy can be together",
+      "this is not a dog so you and missy can be together now",
+      "this ",
+      "this "
+    ]
+  },
+  "57c594cf_419501_424644_29": {
+    "greedy_text": "this one uh and the other one and the tiny balls",
+    "sampled_texts": [
+      "this one a other one and that kind of all",
+      "this one uh and the other one and the other one got tiny bubbles",
+      "this one uh and the other one and then the tiny balls",
+      "this one up and the other one and the tiny balls",
+      "this one uh and the other one and the tiny bones",
+      "this one uh and the other one and and the tiny balls",
+      "this one uh and the other one and the tiny balls",
+      "this one uh and the other one and the tiny bones",
+      "this one uh and the other one and and the tiny balls",
+      "this one uh and the other one and and the tiny balls"
+    ]
+  },
+  "77f5f3cc_334830_340658_17": {
+    "greedy_text": "or no it approved",
+    "sampled_texts": [
+      " or no it approved",
+      " or no one approved",
+      " i know it",
+      " i know it approved",
+      " or no one approved",
+      " i know it",
+      " or no it approved",
+      " ha ha ha ha i dont know what to do",
+      " or no one approved",
+      " or know it for sure"
+    ]
+  },
+  "5bdd3c70_930965_937329_52": {
+    "greedy_text": "its nice its nice its really",
+    "sampled_texts": [
+      "it clicks it clicks it really clicks",
+      " its nice its nice its nice",
+      " its nice its nice its really cool",
+      "it clicks it clicks it really clicks",
+      " its nice its nice",
+      "it reflects it reflects it really does",
+      " its nice its nice",
+      " its not its not its really ",
+      "the glass the glass the rivet was on",
+      " its not its not its not really a poison"
+    ]
+  },
+  "5bdd3c70_902019_909164_48": {
+    "greedy_text": "forty eight sixty nine sixty nine meter",
+    "sampled_texts": [
+      "forty eight sixty nine ",
+      "forty eight sixty nine sixteen sixteen sixteen",
+      "forty eight six nine",
+      "fourty eight eight four sixty nine sixty nine",
+      "fourty eight sixty nine ",
+      "forty eight sixty nine ",
+      "forty eight sixty nine",
+      "forty eight sixty nine sixteen fifteen sixteen",
+      "forty eight sixty nine sixty nine",
+      "forty eight detail sixty nine detail"
+    ]
+  },
+  "57c594cf_560515_569780_37": {
+    "greedy_text": "you can do a tetubar on top and tetubar on top thats not really",
+    "sampled_texts": [
+      "we can do a té chunks on top of the té chunks and thatâ€™s not making it tougher ",
+      "you can do a totty bear on top and totty bear on top ",
+      "i can do a tetty bear on top and tetty bear on top thats not my top",
+      "i can do a taddy bear on top and taddy bear on top ",
+      "you can do a tadry bear on top of a taddy bear on top of it its not made of top of it",
+      "we can do a tettie bear on top of the tettie bear on top thats not many top of thes",
+      "we can do a tetub rebab and tetub rebab and some ",
+      "you can do a therman on top and therman on top ",
+      "you can do a totty bear on top and tetty bear on top thats not ",
+      "you can do a t candy bear on top and t aty bear on top thats not what i meant to talk about"
+    ]
+  }
+}
