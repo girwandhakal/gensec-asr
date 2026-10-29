@@ -26,6 +26,7 @@ Whisper, FLAN-T5, and Qwen3 comparison. A fresh run is written under
 `shared_data/utterance_id_to_whisper_samples.json`; both correctors receive
 the same processed hypothesis lists and reference targets. The current
 configuration keeps at most five distinct hypotheses per input.
+Each model's figures are saved under `runs/comparison_<timestamp>/figures/<model>/`.
 
 To resume a partial run, pass its directory as `GENSEC_RUN_DIR` when
 resubmitting. The separate legacy pipeline can still be run directly with
@@ -79,7 +80,7 @@ flowchart TD
 | 4 | `train.py` | `data/splits/*.csv`, `data/predictions/test_predictions_<mode>.csv` |
 | 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
 | 6 | `run_analysis.py` | `evaluation_results/analysis/per_child_wer.csv`, `anova_report.txt`, `anova_metrics.json` |
-| 7 | `generate_figures.py` | `figure/wer_by_reference_length.png`, `figure/word_errors_by_type.png`, `figure/wer_change_by_corpus.png` |
+| 7 | `generate_figures.py` | WER, error-type, corpus, and unique-Whisper-hypothesis figures in `figure/` |
 
 ## Why there is no postprocessing stage
 
@@ -191,6 +192,8 @@ asr_limit: 200
 | `figure/wer_by_reference_length.png` | Grayscale reference-length WER figure, exported as a 600-dpi PNG |
 | `figure/word_errors_by_type.png` | Stacked substitution, deletion, and insertion counts, exported as a 600-dpi PNG |
 | `figure/wer_change_by_corpus.png` | Pooled WER reductions by corpus with test child and utterance counts, as a 600-dpi PNG |
+| `figure/unique_hypotheses_histogram.png` | Utterances by number of distinct transcripts among the ten raw Whisper samples |
+| `figure/unique_hypotheses_counts.json` | The exact histogram counts and number of included utterances |
 | `evaluation_results/config_used.yaml` | The settings that produced them |
 | `evaluation_history/<timestamp>/` | The previous run, archived automatically |
 | `data/dropped_gensec.json` | Every dropped utterance and why |
@@ -260,9 +263,14 @@ Audio files and existing decoding of eligible clips can be reused.
 
 ## Publication figures
 
-The final stage reads `evaluation_results/metrics.json` and saves three PNGs in
-`figure/`: `wer_by_reference_length.png`, `word_errors_by_type.png`, and
-`wer_change_by_corpus.png`.
+The final stage reads `evaluation_results/metrics.json` and saves four PNGs in
+`figure/`: `wer_by_reference_length.png`, `word_errors_by_type.png`,
+`wer_change_by_corpus.png`, and `unique_hypotheses_histogram.png`.
+The histogram counts distinct normalized transcripts among the ten raw sampled
+Whisper outputs for every decoded utterance. It excludes the separate greedy
+transcript and requires complete raw pools so old partial caches cannot produce
+a misleading figure. Exact bar counts are saved beside it as
+`unique_hypotheses_counts.json`.
 The reference-length figure uses `by_reference_length`. Evaluation computes these
 pooled WERs once for both the text report and the figure, so the plotted values
 and sample sizes stay aligned. Rerun evaluation first when using older metrics

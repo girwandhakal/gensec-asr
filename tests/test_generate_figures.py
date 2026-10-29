@@ -13,6 +13,28 @@ import generate_figures
 
 
 class FigureTests(unittest.TestCase):
+    def test_unique_whisper_histogram_counts_raw_ten_sample_pools(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            nbest_path = root / "nbest.json"
+            samples_path = root / "samples.json"
+            nbest_path.write_text(json.dumps({"repeated": {}, "varied": {}}))
+            samples_path.write_text(json.dumps({
+                "repeated": {"sampled_texts": ["Hello!"] * 5 + ["hello"] * 5},
+                "varied": {"sampled_texts": [f"word {number}" for number in range(10)]},
+            }))
+            config = {
+                "nbest_path": nbest_path,
+                "whisper_samples_path": samples_path,
+                "asr_sample_pool_size": 10,
+            }
+            counts = generate_figures.unique_sample_counts(config)
+            self.assertEqual(counts, {1: 1, 10: 1})
+
+            samples_path.write_text(json.dumps({"repeated": {"sampled_texts": ["hello"] * 10}}))
+            with self.assertRaisesRegex(ValueError, "missing for 1 decoded clips"):
+                generate_figures.unique_sample_counts(config)
+
     def metrics(self):
         # The 3–5-word bucket has one error in eight words: 12.5%, not the
         # 16.7% obtained by averaging the two utterance-level WERs.

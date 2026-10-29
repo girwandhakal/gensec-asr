@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import json
 import math
+from collections import Counter
 from pathlib import Path
 
 from config import load_config
+from text import normalize_prediction_for_scoring
 
 
 PLOT_STYLE = {
@@ -296,8 +298,59 @@ def save_corpus_figure(rows: list[dict], output_path: Path) -> None:
             plt.close(figure)
 
 
+def unique_sample_counts(config: dict) -> Counter:
+    """Count distinct transcripts among the ten sampled Whisper outputs per clip."""
+    samples = json.loads(config["whisper_samples_path"].read_text(encoding="utf-8"))
+    nbest = json.loads(config["nbest_path"].read_text(encoding="utf-8"))
+    missing = nbest.keys() - samples.keys()
+    if missing:
+        raise ValueError(
+            f"Raw Whisper samples are missing for {len(missing):,} decoded clips. "
+            "Regenerate the n-best and raw-samples caches together."
+        )
+
+    expected = config["asr_sample_pool_size"]
+    counts = Counter()
+    for utterance_id in nbest:
+        pool = samples[utterance_id].get("sampled_texts")
+        if not isinstance(pool, list) or len(pool) != expected:
+            raise ValueError(f"{utterance_id} has no complete {expected}-sample Whisper pool")
+        # Use the same transcript equivalence rule as n-best selection.
+        distinct = {normalize_prediction_for_scoring(text) for text in pool}
+        counts[len(distinct - {""})] += 1
+    return counts
+
+
+def save_unique_sample_histogram(counts: Counter, pool_size: int, output_path: Path) -> None:
+    """Draw the number of utterances with each possible unique-sample count."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+
+    values = [counts.get(number, 0) for number in range(pool_size + 1)]
+    with plt.rc_context(PLOT_STYLE):
+        figure, axes = plt.subplots(figsize=(7.2, 4.5))
+        figure.subplots_adjust(left=0.15, right=0.97, top=0.96, bottom=0.16)
+        axes.bar(range(pool_size + 1), values, color="0.35", edgecolor="0.15", width=0.75)
+        axes.set_xticks(range(pool_size + 1))
+        axes.set_xlabel(f"Unique hypotheses among {pool_size} Whisper samples")
+        axes.set_ylabel("Utterances")
+        axes.yaxis.set_major_locator(MaxNLocator(integer=True))
+        axes.grid(axis="y", color="0.9", linewidth=0.5)
+        axes.set_axisbelow(True)
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            figure.savefig(output_path, dpi=600, facecolor="white")
+        finally:
+            plt.close(figure)
+
+
 def main(config: dict | None = None) -> None:
     config = config or load_config()
+    unique_counts = unique_sample_counts(config)
     metrics_path = config["results_dir"] / "metrics.json"
     metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
     mode = config["inference_modes"][0]
@@ -316,6 +369,18 @@ def main(config: dict | None = None) -> None:
     output_path = config["figure_dir"] / "wer_change_by_corpus.png"
     save_corpus_figure(corpus_data, output_path)
     print(f"Wrote {output_path}")
+
+    output_path = config["figure_dir"] / "unique_hypotheses_histogram.png"
+    save_unique_sample_histogram(unique_counts, config["asr_sample_pool_size"], output_path)
+    print(f"Wrote {output_path}")
+    counts_path = config["figure_dir"] / "unique_hypotheses_counts.json"
+    counts_path.write_text(json.dumps({
+        "utterances": sum(unique_counts.values()),
+        "sample_pool_size": config["asr_sample_pool_size"],
+        "counts": {str(number): unique_counts.get(number, 0)
+                   for number in range(config["asr_sample_pool_size"] + 1)},
+    }, indent=2), encoding="utf-8")
+    print(f"Wrote {counts_path}")
 
 
 if __name__ == "__main__":
