@@ -54,7 +54,8 @@ echo "===== PREPARING ENVIRONMENT: $ENV_NAME ====="
 if ! conda env list | awk '{print $1}' | grep -qx "$ENV_NAME"; then
   conda create -y -n "$ENV_NAME" python=3.11 pip
 fi
-if ! conda run -n "$ENV_NAME" python -c "import torch, transformers; from packaging.version import Version; assert Version(torch.__version__.split('+')[0]) >= Version('2.6.0'); assert Version(transformers.__version__) >= Version('4.51.0')" >/dev/null 2>&1; then
+if ! conda run -n "$ENV_NAME" python -c "import torch, transformers, datasets, pyarrow, numpy; from packaging.version import Version; assert Version(torch.__version__.split('+')[0]) >= Version('2.6.0'); assert Version(transformers.__version__) >= Version('4.51.0'); assert pyarrow.__version__ == '17.0.0'; assert numpy.__version__ == '1.26.4'" >/dev/null 2>&1; then
+  echo "Installing or repairing pinned dependencies in $ENV_NAME"
   conda run -n "$ENV_NAME" python -m pip install -r "$PROJECT_ROOT/envs/qwen-requirements.txt"
 fi
 conda activate "$ENV_NAME"
@@ -70,7 +71,7 @@ export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 cd "$PROJECT_ROOT"
 
 echo "===== DEPENDENCY CHECK ====="
-python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml, scipy, statsmodels, matplotlib; assert torch.cuda.is_available(), 'CUDA GPU required'; print('GPU:', torch.cuda.get_device_name(0)); print('Transformers:', transformers.__version__)"
+python -c "import torch, transformers, datasets, pyarrow, numpy, librosa, pandas, sklearn, yaml, scipy, statsmodels, matplotlib; assert torch.cuda.is_available(), 'CUDA GPU required'; print('GPU:', torch.cuda.get_device_name(0)); print('Transformers:', transformers.__version__); print('PyArrow:', pyarrow.__version__, 'NumPy:', numpy.__version__)"
 
 echo "===== PYTHON PIPELINE ====="
 python -u "$PROJECT_ROOT/scripts/run_comparison.py"
