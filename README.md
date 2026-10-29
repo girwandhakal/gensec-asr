@@ -20,6 +20,10 @@ One command. There are no manual steps.
 sbatch bash_scripts/train.sh
 ```
 
+All job output, including errors and stage progress, is written to
+`training.txt` in the repository root. Each numbered stage logs when it starts,
+finishes, or fails.
+
 The job creates and activates `gensec_qwen_env` when needed, then runs the
 Whisper, FLAN-T5, and Qwen3 comparison. A fresh run is written under
 `runs/comparison_<timestamp>/`. The raw ten Whisper samples are saved in

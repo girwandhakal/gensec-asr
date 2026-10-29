@@ -19,15 +19,16 @@
 #SBATCH --mem=64G
 #SBATCH --time=48:00:00
 #SBATCH --chdir=/home/gdhakal/gensec-asr
-#SBATCH --output=/home/gdhakal/gensec-asr/gensec_training.txt
-#SBATCH --error=/home/gdhakal/gensec-asr/gensec_training.txt
+#SBATCH --output=/home/gdhakal/gensec-asr/training.txt
+#SBATCH --error=/home/gdhakal/gensec-asr/training.txt
 #SBATCH --open-mode=truncate
 
 set -euo pipefail
+trap 'echo "===== GENSEC JOB FAILED: $(date) =====" >&2' ERR
 
 PROJECT_ROOT="${GENSEC_PROJECT_ROOT:-/home/gdhakal/gensec-asr}"
 CONFIG_FILE="$PROJECT_ROOT/configs/baseline.yaml"
-LOG_FILE="$PROJECT_ROOT/gensec_training.txt"
+LOG_FILE="$PROJECT_ROOT/training.txt"
 
 # Slurm already sends both streams to the log. This makes a direct
 # `bash train.sh` behave the same way.
@@ -50,6 +51,7 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 set -u
 
 ENV_NAME="gensec_qwen_env"
+echo "===== PREPARING ENVIRONMENT: $ENV_NAME ====="
 if ! conda env list | awk '{print $1}' | grep -qx "$ENV_NAME"; then
   conda create -y -n "$ENV_NAME" python=3.11 pip
 fi
@@ -57,6 +59,7 @@ if ! conda run -n "$ENV_NAME" python -c "import torch, transformers; from packag
   conda run -n "$ENV_NAME" python -m pip install -r "$PROJECT_ROOT/envs/qwen-requirements.txt"
 fi
 conda activate "$ENV_NAME"
+echo "Environment ready: $ENV_NAME"
 
 export OMP_NUM_THREADS=8
 # Beam search allocates and frees large, unevenly sized blocks every step, which

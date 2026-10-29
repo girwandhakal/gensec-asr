@@ -6,6 +6,8 @@ import json
 import os
 import shutil
 import sys
+import time
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 
@@ -20,6 +22,29 @@ import train
 import train_qwen
 from config import PROJECT_ROOT, load_config, predictions_path
 from reference_io import read_prediction_rows
+
+TOTAL_STAGES = 12
+
+
+@contextmanager
+def stage(number: int, name: str):
+    started = time.perf_counter()
+    now = datetime.now().astimezone().isoformat(timespec="seconds")
+    print(f"\n===== STAGE {number}/{TOTAL_STAGES} START at {now}: {name} =====", flush=True)
+    try:
+        yield
+    except BaseException as error:
+        elapsed = time.perf_counter() - started
+        now = datetime.now().astimezone().isoformat(timespec="seconds")
+        print(
+            f"===== STAGE {number}/{TOTAL_STAGES} FAILED at {now} after {elapsed:.1f}s: "
+            f"{type(error).__name__}: {error} =====",
+            flush=True,
+        )
+        raise
+    elapsed = time.perf_counter() - started
+    now = datetime.now().astimezone().isoformat(timespec="seconds")
+    print(f"===== STAGE {number}/{TOTAL_STAGES} DONE at {now} in {elapsed:.1f}s: {name} =====", flush=True)
 
 
 def fresh_run_directory() -> Path:
@@ -71,20 +96,24 @@ def model_config(shared: dict, name: str) -> dict:
     return config
 
 
-def run_model_pipeline(config: dict, model_name: str) -> dict:
+def run_model_pipeline(config: dict, model_name: str, first_stage: int, base: dict | None = None) -> dict:
     config["predictions_dir"].mkdir(parents=True, exist_ok=True)
     config["results_dir"].mkdir(parents=True, exist_ok=True)
     if model_name == "flan_t5":
-        print("\n===== MODEL RUN: FLAN-T5-BASE =====")
-        train.main(config)
+        with stage(first_stage, "FLAN-T5 training and inference"):
+            if base is not None:
+                copy_current_flan_checkpoint(config, base)
+            train.main(config)
     else:
-        print("\n===== MODEL RUN: QWEN3-0.6B =====")
-        train_qwen.main(config)
+        with stage(first_stage, "Qwen3-0.6B training and inference"):
+            train_qwen.main(config)
 
-    print(f"\n===== EVALUATION: {model_name} =====")
-    evaluate.main(config)
-    run_analysis.main(config)
-    generate_figures.main(config)
+    with stage(first_stage + 1, f"{model_name} WER evaluation"):
+        evaluate.main(config)
+    with stage(first_stage + 2, f"{model_name} child-level analysis"):
+        run_analysis.main(config)
+    with stage(first_stage + 3, f"{model_name} publication figures"):
+        generate_figures.main(config)
     shutil.copy(config["config_path"], config["results_dir"] / "config_used.yaml")
     (config["results_dir"] / "run_config.json").write_text(
         json.dumps({
@@ -159,19 +188,19 @@ def main() -> None:
     print(f"Fresh comparison run: {run_root}")
     print(f"Audio and references: {shared['media_dir']}")
 
-    print("\n===== SHARED STAGE 1: IMPORT FINALIZED PAIRS =====")
-    build_reference_map.main(shared)
-    print("\n===== SHARED STAGE 2: REGENERATE WHISPER HYPOTHESES =====")
-    generate_nbest.main(shared)
-    print("\n===== SHARED STAGE 3: BUILD CORRECTION DATASET =====")
-    build_gensec_dataset.main(shared)
+    with stage(1, "import finalized audio/reference pairs"):
+        build_reference_map.main(shared)
+    with stage(2, "generate Whisper greedy transcript and ten raw samples"):
+        generate_nbest.main(shared)
+    with stage(3, "build shared correction dataset"):
+        build_gensec_dataset.main(shared)
 
     flan_config = model_config(shared, "flan_t5")
-    copy_current_flan_checkpoint(flan_config, base)
-    flan_metrics = run_model_pipeline(flan_config, "flan_t5")
+    flan_metrics = run_model_pipeline(flan_config, "flan_t5", 4, base)
     qwen_config = model_config(shared, "qwen3_0.6b")
-    qwen_metrics = run_model_pipeline(qwen_config, "qwen3_0.6b")
-    write_comparison(run_root, flan_metrics, qwen_metrics, flan_config, qwen_config)
+    qwen_metrics = run_model_pipeline(qwen_config, "qwen3_0.6b", 8)
+    with stage(12, "compare FLAN-T5 and Qwen3-0.6B on the same test set"):
+        write_comparison(run_root, flan_metrics, qwen_metrics, flan_config, qwen_config)
     shutil.copy(base["config_path"], run_root / "config_used.yaml")
     print(f"\n===== COMPARISON COMPLETE: {run_root} =====")
 
