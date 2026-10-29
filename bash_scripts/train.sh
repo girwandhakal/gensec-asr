@@ -48,7 +48,6 @@ fi
 module load miniconda3/base
 set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
-set -u
 
 ENV_NAME="gensec_qwen_env"
 echo "===== PREPARING ENVIRONMENT: $ENV_NAME ====="
@@ -59,6 +58,7 @@ if ! conda run -n "$ENV_NAME" python -c "import torch, transformers; from packag
   conda run -n "$ENV_NAME" python -m pip install -r "$PROJECT_ROOT/envs/qwen-requirements.txt"
 fi
 conda activate "$ENV_NAME"
+set -u
 echo "Environment ready: $ENV_NAME"
 
 export OMP_NUM_THREADS=8
