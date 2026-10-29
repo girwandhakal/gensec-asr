@@ -20,8 +20,16 @@ One command. There are no manual steps.
 sbatch bash_scripts/train.sh
 ```
 
-The job activates `gensec_env`, installs the pinned requirements if anything is
-missing, and runs all six stages. Create the environment once first:
+The job creates and activates `gensec_qwen_env` when needed, then runs the
+Whisper, FLAN-T5, and Qwen3 comparison. A fresh run is written under
+`runs/comparison_<timestamp>/`. The raw ten Whisper samples are saved in
+`shared_data/utterance_id_to_whisper_samples.json`; both correctors receive
+the same processed hypothesis lists and reference targets. The current
+configuration keeps at most five distinct hypotheses per input.
+
+To resume a partial run, pass its directory as `GENSEC_RUN_DIR` when
+resubmitting. The separate legacy pipeline can still be run directly with
+`python scripts/run_pipeline.py`. Its original environment can be created with:
 
 ```bash
 conda env create -f envs/gensec_env.yml
@@ -43,7 +51,7 @@ and regenerates predictions even when the number of rows is unchanged.
 configs/baseline.yaml     every path and hyperparameter
 envs/                     conda environment and pinned requirements
 bash_scripts/train.sh     the single entry point
-scripts/                  the six pipeline stages
+scripts/                  the seven pipeline stages
 data/                     generated artifacts (gitignored)
 evaluation_results/       WER and child-level analysis reports
 ```
@@ -59,7 +67,8 @@ flowchart TD
     D --> E[4. train.py<br/>fine-tune FLAN-T5, then infer]
     E --> F[5. evaluate.py<br/>WER: 1-best vs corrected]
     F --> G[6. run_analysis.py<br/>per-child WER and mixed model]
-    G --> H[evaluation_results/]
+    G --> H[7. generate_figures.py<br/>publication figures]
+    H --> I[figure/*.png]
 ```
 
 | Stage | Script | Produces |
@@ -70,6 +79,7 @@ flowchart TD
 | 4 | `train.py` | `data/splits/*.csv`, `data/predictions/test_predictions_<mode>.csv` |
 | 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
 | 6 | `run_analysis.py` | `evaluation_results/analysis/per_child_wer.csv`, `anova_report.txt`, `anova_metrics.json` |
+| 7 | `generate_figures.py` | `figure/wer_by_reference_length.png`, `figure/word_errors_by_type.png`, `figure/wer_change_by_corpus.png` |
 
 ## Why there is no postprocessing stage
 
@@ -178,6 +188,9 @@ asr_limit: 200
 | `evaluation_results/wer_report.txt` | WER table for 1-best vs corrected, plus the worst utterances |
 | `evaluation_results/metrics.json` | The same numbers, machine-readable |
 | `evaluation_results/analysis/` | Per-child WER and group-by-model mixed-model results |
+| `figure/wer_by_reference_length.png` | Grayscale reference-length WER figure, exported as a 600-dpi PNG |
+| `figure/word_errors_by_type.png` | Stacked substitution, deletion, and insertion counts, exported as a 600-dpi PNG |
+| `figure/wer_change_by_corpus.png` | Pooled WER reductions by corpus with test child and utterance counts, as a 600-dpi PNG |
 | `evaluation_results/config_used.yaml` | The settings that produced them |
 | `evaluation_history/<timestamp>/` | The previous run, archived automatically |
 | `data/dropped_gensec.json` | Every dropped utterance and why |
@@ -192,6 +205,7 @@ python scripts/build_reference_map.py
 python scripts/build_gensec_dataset.py
 python scripts/evaluate.py
 python scripts/run_analysis.py
+python scripts/generate_figures.py
 ```
 
 ## How the test set is held out
@@ -243,3 +257,27 @@ The methodology version and processed-data fingerprint invalidate stale training
 and prediction caches. Existing published counts/results describe the earlier
 pipeline; regenerate downstream datasets and results before reporting new ones.
 Audio files and existing decoding of eligible clips can be reused.
+
+## Publication figures
+
+The final stage reads `evaluation_results/metrics.json` and saves three PNGs in
+`figure/`: `wer_by_reference_length.png`, `word_errors_by_type.png`, and
+`wer_change_by_corpus.png`.
+The reference-length figure uses `by_reference_length`. Evaluation computes these
+pooled WERs once for both the text report and the figure, so the plotted values
+and sample sizes stay aligned. Rerun evaluation first when using older metrics
+that lack this breakdown.
+
+All PNGs use serif type and grayscale styling. The stacked error chart labels
+substitutions, deletions, and insertions within each bar and prints the total
+word errors at its end. Counts and reference denominators are validated before
+plotting. Figure numbers, titles, and notes
+belong in the Word manuscript and are omitted from the image. The horizontal
+axis expands when WER exceeds 100%. The `figure/` folder is included in Git.
+
+The corpus chart reads `by_corpus` from the metrics file, pools word errors
+and reference words within each corpus, and includes all evaluated children
+without the five-utterance floor used by the child-level statistical analysis.
+Positive bars indicate lower WER after correction; negative bars indicate higher
+WER. Labels show unique test children and test utterances. These are descriptive
+corpus comparisons, not tests of differences between corpora.

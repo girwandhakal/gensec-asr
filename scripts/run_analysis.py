@@ -19,17 +19,17 @@ import per_child_wer
 import run_anova
 
 
-def main() -> None:
+def main(config: dict | None = None) -> None:
     print("=" * 72)
     print("A1. Per-child WER")
     print("=" * 72)
-    per_child_wer.main()
+    per_child_wer.main(config)
 
     print()
     print("=" * 72)
     print("A2. Group x model statistics")
     print("=" * 72)
-    run_anova.main()
+    run_anova.main(config)
 
 
 if __name__ == "__main__":

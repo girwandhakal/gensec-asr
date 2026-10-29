@@ -165,8 +165,8 @@ def reconcile(children: pd.DataFrame) -> None:
             print(f"  {group:<3} {name:<8} {weighted:.2%}")
 
 
-def main() -> None:
-    config = load_config()
+def main(config: dict | None = None) -> None:
+    config = config or load_config()
     children = per_child_wer(config)
     reconcile(children)
 

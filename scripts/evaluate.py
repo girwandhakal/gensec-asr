@@ -1,6 +1,6 @@
 """
 What this file is for:
-Stage 6. Scores word error rate for every system on the same test utterances.
+Stage 5. Scores word error rate for every system on the same test utterances.
 
 High-level role in the pipeline:
 This is the result. Raw Whisper 1-best is the baseline to beat; the whole
@@ -373,6 +373,45 @@ def breakdown(systems: dict, keep, label: str) -> list[str]:
     return lines
 
 
+def reference_length_metrics(systems: dict) -> list[dict]:
+    """Keep the report and figure on the same pooled word-error counts."""
+    buckets = []
+
+    for label, low, high in LENGTH_BUCKETS:
+        scores = {}
+        for name, triples in systems.items():
+            subset = [t for t in triples if low <= len(t[1].split()) <= high]
+            result = score(subset)
+            scores[name] = {key: value for key, value in result.items() if key != "worst"}
+
+        buckets.append({"label": label, "systems": scores})
+
+    return buckets
+
+
+def corpus_metrics(systems: dict, metadata: dict) -> list[dict]:
+    """Pool word errors within corpus and count all contributing test children."""
+    grouped = {}
+    for name, triples in systems.items():
+        for triple in triples:
+            utterance_id = triple[0]
+            meta = metadata.get(utterance_id, {})
+            if not meta.get("corpus") or not meta.get("child_id"):
+                raise ValueError(f"Missing corpus or child identity for {utterance_id}")
+            grouped.setdefault(meta["corpus"], {}).setdefault(name, []).append(triple)
+
+    rows = []
+    for corpus, subsets in sorted(grouped.items()):
+        children = {metadata[uid]["child_id"] for uid, _, _ in subsets["whisper_1best"]}
+        scores = {}
+        for name, triples in subsets.items():
+            result = score(triples)
+            scores[name] = {key: value for key, value in result.items() if key != "worst"}
+        rows.append({"corpus": corpus, "children": len(children), "systems": scores})
+
+    return rows
+
+
 def main(config: dict | None = None) -> None:
     config = config or load_config()
 
@@ -442,12 +481,17 @@ def main(config: dict | None = None) -> None:
     lines.append("\n\nBy reference length")
     lines.append("-" * 72)
     lines.append(f"{'':<28}{'utts':>8}{'WER':>10}{'exact':>10}")
-    for label, low, high in LENGTH_BUCKETS:
-        lines += breakdown(
-            systems,
-            lambda t, lo=low, hi=high: lo <= len(t[1].split()) <= hi,
-            label,
-        )
+    length_metrics = reference_length_metrics(systems)
+    for bucket in length_metrics:
+        if not bucket["systems"]["whisper_1best"]["utterances"]:
+            continue
+
+        lines.append(bucket["label"])
+        for name, result in bucket["systems"].items():
+            lines.append(
+                f"  {name:<26}{result['utterances']:>8}"
+                f"{result['wer']:>10.2%}{result['exact_match_rate']:>10.2%}"
+            )
 
     # Clip duration, read out of the utterance id - no audio is opened. This is
     # where the short-clip failure is visible: correction is a large win on
@@ -496,6 +540,9 @@ def main(config: dict | None = None) -> None:
     }
     if significance_summary:
         metrics["significance"] = significance_summary
+    metrics["by_reference_length"] = length_metrics
+    if metadata:
+        metrics["by_corpus"] = corpus_metrics(systems, metadata)
     (config["results_dir"] / "metrics.json").write_text(
         json.dumps(metrics, indent=2), encoding="utf-8"
     )

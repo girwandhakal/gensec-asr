@@ -308,8 +308,8 @@ def render(children: pd.DataFrame, results: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def main() -> None:
-    config = load_config()
+def main(config: dict | None = None) -> None:
+    config = config or load_config()
     children = load_children(config)
     rng = np.random.default_rng(SEED)
 

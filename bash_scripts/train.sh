@@ -1,13 +1,10 @@
 #!/bin/bash
 # What this file is for:
-# The single entry point for the GenSEC pipeline. Submit with:
+# The single entry point for the Whisper, FLAN-T5, and Qwen3 comparison. Submit with:
 #
 #   sbatch bash_scripts/train.sh
 #
-# It activates the environment, checks dependencies, and runs the one Python
-# pipeline that builds the reference map, generates Whisper n-best output,
-# builds the correction dataset, fine-tunes FLAN-T5, runs inference,
-# scores WER, and runs the per-child mixed-model analysis.
+# Each run records shared Whisper data and separate results for both correctors.
 
 #SBATCH --job-name=gensec
 #SBATCH --partition=gpu
@@ -50,8 +47,16 @@ fi
 module load miniconda3/base
 set +u
 source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate gensec_env
 set -u
+
+ENV_NAME="gensec_qwen_env"
+if ! conda env list | awk '{print $1}' | grep -qx "$ENV_NAME"; then
+  conda create -y -n "$ENV_NAME" python=3.11 pip
+fi
+if ! conda run -n "$ENV_NAME" python -c "import torch, transformers; from packaging.version import Version; assert Version(torch.__version__.split('+')[0]) >= Version('2.6.0'); assert Version(transformers.__version__) >= Version('4.51.0')" >/dev/null 2>&1; then
+  conda run -n "$ENV_NAME" python -m pip install -r "$PROJECT_ROOT/envs/qwen-requirements.txt"
+fi
+conda activate "$ENV_NAME"
 
 export OMP_NUM_THREADS=8
 # Beam search allocates and frees large, unevenly sized blocks every step, which
@@ -62,17 +67,9 @@ export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 cd "$PROJECT_ROOT"
 
 echo "===== DEPENDENCY CHECK ====="
-if python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml, scipy, statsmodels" >/dev/null 2>&1; then
-  echo "Dependencies are already installed."
-else
-  echo "Dependencies missing or broken; installing the pinned requirements..."
-  python -m pip install -r "$PROJECT_ROOT/envs/requirements.txt"
-  python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml, scipy, statsmodels"
-  echo "Dependencies installed successfully."
-fi
-python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+python -c "import torch, transformers, datasets, librosa, pandas, sklearn, yaml, scipy, statsmodels, matplotlib; assert torch.cuda.is_available(), 'CUDA GPU required'; print('GPU:', torch.cuda.get_device_name(0)); print('Transformers:', transformers.__version__)"
 
 echo "===== PYTHON PIPELINE ====="
-python -u "$PROJECT_ROOT/scripts/run_pipeline.py"
+python -u "$PROJECT_ROOT/scripts/run_comparison.py"
 
 echo "Finished: $(date)"

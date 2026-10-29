@@ -22,6 +22,8 @@ def load_config(path: Path | None = None) -> dict:
     for key in ("data_dir", "work_dir", "results_dir"):
         config[key] = PROJECT_ROOT / config[key]
 
+    config["figure_dir"] = PROJECT_ROOT / config.get("figure_dir", "figure")
+
     # Use the local dataset when it is there, otherwise the HPC copy.
     local_media = (PROJECT_ROOT / config["local_media_dir"]).resolve()
     config["media_dir"] = local_media if local_media.is_dir() else Path(config["hpc_media_dir"])
