@@ -25,15 +25,21 @@ All job output, including errors and stage progress, is written to
 finishes, or fails.
 
 The job creates and activates `gensec_qwen_env` when needed, then runs the
-Whisper, FLAN-T5, and Qwen3 comparison. A fresh run is written under
-`runs/comparison_<timestamp>/`. The raw ten Whisper samples are saved in
+Whisper, FLAN-T5, and Qwen3 comparison. Runs are stored under
+`runs/comparison_<timestamp>/`; a new run is created when there is no incomplete
+run to resume. The raw ten Whisper samples are saved in
 `shared_data/utterance_id_to_whisper_samples.json`; both correctors receive
 the same processed hypothesis lists and reference targets. The current
 configuration keeps at most five distinct hypotheses per input.
 Each model's figures are saved under `runs/comparison_<timestamp>/figures/<model>/`.
 
-To resume a partial run, pass its directory as `GENSEC_RUN_DIR` when
-resubmitting. The separate legacy pipeline can still be run directly with
+Resubmitting the job automatically resumes the most recent incomplete run,
+reusing saved Whisper transcriptions and model checkpoints. A new comparison
+also reuses prior Whisper outputs when the decode settings match; clips missing
+from that cache are transcribed. To resume a specific run when several
+incomplete runs exist, pass its directory as `GENSEC_RUN_DIR`. To start a
+separate run while an incomplete run exists, set `GENSEC_RUN_DIR` to a new
+directory. The separate legacy pipeline can still be run directly with
 `python scripts/run_pipeline.py`. Its original environment can be created with:
 
 ```bash

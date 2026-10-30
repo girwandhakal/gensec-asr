@@ -1,4 +1,4 @@
-"""Run a fresh shared Whisper dataset through FLAN-T5 and Qwen3."""
+"""Run or resume a shared Whisper dataset comparison with FLAN-T5 and Qwen3."""
 
 from __future__ import annotations
 
@@ -53,8 +53,19 @@ def fresh_run_directory() -> Path:
         destination = Path(requested).resolve()
         destination.mkdir(parents=True, exist_ok=True)
         return destination
+
     root = PROJECT_ROOT / "runs"
     root.mkdir(parents=True, exist_ok=True)
+
+    incomplete_runs = [
+        path for path in root.glob("comparison_*")
+        if path.is_dir() and not (path / "model_comparison.json").is_file()
+    ]
+    if incomplete_runs:
+        destination = max(incomplete_runs, key=lambda path: (path.stat().st_mtime, path.name))
+        print(f"Resuming most recent incomplete comparison run: {destination}", flush=True)
+        return destination
+
     stamp = datetime.now().strftime("comparison_%Y%m%d_%H%M%S")
     destination = root / stamp
     suffix = 1
@@ -85,6 +96,50 @@ def configure_run(base: dict, run_root: Path) -> dict:
         "run_root": run_root,
     })
     return config
+
+
+def reuse_whisper_artifacts(config: dict) -> None:
+    """Seed a new run with prior transcripts made using the same ASR settings."""
+    destinations = [config["nbest_path"], config["whisper_samples_path"]]
+    if any(path.exists() for path in destinations):
+        return
+
+    current_signature = generate_nbest.decode_signature(config)
+    artifact_names = (
+        "utterance_id_to_nbest_greedy_sample10.json",
+        "utterance_id_to_whisper_samples.json",
+    )
+    runs_root = config["run_root"].parent
+    candidates = sorted(
+        (
+            path for path in runs_root.glob("comparison_*")
+            if path.is_dir() and path.resolve() != config["run_root"].resolve()
+        ),
+        key=lambda path: (path.stat().st_mtime, path.name),
+        reverse=True,
+    )
+
+    for previous_run in candidates:
+        previous_data = previous_run / "shared_data"
+        sources = [previous_data / name for name in artifact_names]
+        signatures = [path.with_suffix(".signature.json") for path in sources]
+        if not all(path.is_file() for path in (*sources, *signatures)):
+            continue
+        if any(path.read_text(encoding="utf-8") != current_signature for path in signatures):
+            continue
+
+        config["data_dir"].mkdir(parents=True, exist_ok=True)
+        for source, destination in zip(sources, destinations):
+            shutil.copy2(source, destination)
+            shutil.copy2(source.with_suffix(".signature.json"), destination.with_suffix(".signature.json"))
+        print(
+            f"Reusing Whisper outputs from {previous_run} "
+            f"(decode settings match: {current_signature})",
+            flush=True,
+        )
+        return
+
+    print("No prior Whisper outputs with matching decode settings; transcribing audio.", flush=True)
 
 
 def model_config(shared: dict, name: str) -> dict:
@@ -185,8 +240,9 @@ def main() -> None:
     base = load_config()
     run_root = fresh_run_directory()
     shared = configure_run(base, run_root)
-    print(f"Fresh comparison run: {run_root}")
+    print(f"Comparison run: {run_root}")
     print(f"Audio and references: {shared['media_dir']}")
+    reuse_whisper_artifacts(shared)
 
     with stage(1, "import finalized audio/reference pairs"):
         build_reference_map.main(shared)
