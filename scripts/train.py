@@ -38,11 +38,12 @@ from config import clip_seconds, load_config, predictions_path, transcript_id
 from text import collapse_whitespace
 
 INSTRUCTION = """You are correcting ASR output.
-Below are multiple recognition hypotheses for the same utterance.
+Below are one or more recognition hypotheses for the same utterance.
 Choose the single most likely correct transcript.
 Do not paraphrase.
 Do not add information.
 Preserve the original wording as much as possible.
+Keep brief utterances brief; do not turn a short response into a longer sentence.
 Output only the corrected transcript."""
 
 
@@ -467,7 +468,7 @@ def training_signature(config: dict) -> str:
     )
     payload = {key: config[key] for key in keys if key in config}
     # Reject checkpoints trained with an earlier prompt format.
-    payload["prompt_format"] = "instruction_hypotheses_v1"
+    payload["prompt_format"] = "instruction_hypotheses_v2"
     payload["validation_scheme"] = "group_corpus_child_count_v1"
     payload["scheduler"] = "cosine_warmup_0.1_best_eval_loss_early_stop_2"
     payload["processed_sha256"] = config["_processed_sha256"]
