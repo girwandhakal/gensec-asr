@@ -1,0 +1,194 @@
+[
+  {
+    "group": "LT",
+    "corpus": "ENNI",
+    "reason": "clip_too_short",
+    "count": 130
+  },
+  {
+    "group": "LT",
+    "corpus": "ENNI",
+    "reason": "impossible_speech_rate",
+    "count": 356
+  },
+  {
+    "group": "LT",
+    "corpus": "ENNI",
+    "reason": "point_bullet_timestamp",
+    "count": 10
+  },
+  {
+    "group": "LT",
+    "corpus": "EllisWeismer",
+    "reason": "clip_too_short",
+    "count": 537
+  },
+  {
+    "group": "LT",
+    "corpus": "EllisWeismer",
+    "reason": "impossible_speech_rate",
+    "count": 222
+  },
+  {
+    "group": "LT",
+    "corpus": "EllisWeismer",
+    "reason": "point_bullet_timestamp",
+    "count": 51
+  },
+  {
+    "group": "LT",
+    "corpus": "Rescorla",
+    "reason": "impossible_speech_rate",
+    "count": 587
+  },
+  {
+    "group": "TD",
+    "corpus": "Braunwald",
+    "reason": "clip_too_short",
+    "count": 34
+  },
+  {
+    "group": "TD",
+    "corpus": "Braunwald",
+    "reason": "impossible_speech_rate",
+    "count": 34
+  },
+  {
+    "group": "TD",
+    "corpus": "Braunwald",
+    "reason": "long_clip_short_reference",
+    "count": 1
+  },
+  {
+    "group": "TD",
+    "corpus": "Braunwald",
+    "reason": "point_bullet_timestamp",
+    "count": 9
+  },
+  {
+    "group": "TD",
+    "corpus": "EHS",
+    "reason": "impossible_speech_rate",
+    "count": 871
+  },
+  {
+    "group": "TD",
+    "corpus": "EHS",
+    "reason": "long_clip_short_reference",
+    "count": 1
+  },
+  {
+    "group": "TD",
+    "corpus": "ENNI",
+    "reason": "clip_too_short",
+    "count": 164
+  },
+  {
+    "group": "TD",
+    "corpus": "ENNI",
+    "reason": "impossible_speech_rate",
+    "count": 1202
+  },
+  {
+    "group": "TD",
+    "corpus": "ENNI",
+    "reason": "point_bullet_timestamp",
+    "count": 13
+  },
+  {
+    "group": "TD",
+    "corpus": "EllisWeismer",
+    "reason": "clip_too_short",
+    "count": 448
+  },
+  {
+    "group": "TD",
+    "corpus": "EllisWeismer",
+    "reason": "impossible_speech_rate",
+    "count": 318
+  },
+  {
+    "group": "TD",
+    "corpus": "EllisWeismer",
+    "reason": "point_bullet_timestamp",
+    "count": 44
+  },
+  {
+    "group": "TD",
+    "corpus": "Forrester",
+    "reason": "clip_too_short",
+    "count": 1
+  },
+  {
+    "group": "TD",
+    "corpus": "Forrester",
+    "reason": "impossible_speech_rate",
+    "count": 3
+  },
+  {
+    "group": "TD",
+    "corpus": "Gelman",
+    "reason": "impossible_speech_rate",
+    "count": 280
+  },
+  {
+    "group": "TD",
+    "corpus": "HSLLD",
+    "reason": "clip_too_short",
+    "count": 28
+  },
+  {
+    "group": "TD",
+    "corpus": "HSLLD",
+    "reason": "impossible_speech_rate",
+    "count": 1019
+  },
+  {
+    "group": "TD",
+    "corpus": "HSLLD",
+    "reason": "point_bullet_timestamp",
+    "count": 3
+  },
+  {
+    "group": "TD",
+    "corpus": "Nippold",
+    "reason": "impossible_speech_rate",
+    "count": 41
+  },
+  {
+    "group": "TD",
+    "corpus": "OCSC",
+    "reason": "clip_too_short",
+    "count": 6847
+  },
+  {
+    "group": "TD",
+    "corpus": "OCSC",
+    "reason": "impossible_speech_rate",
+    "count": 7467
+  },
+  {
+    "group": "TD",
+    "corpus": "OCSC",
+    "reason": "long_clip_short_reference",
+    "count": 71
+  },
+  {
+    "group": "TD",
+    "corpus": "OCSC",
+    "reason": "point_bullet_timestamp",
+    "count": 2775
+  },
+  {
+    "group": "TD",
+    "corpus": "POLER",
+    "reason": "impossible_speech_rate",
+    "count": 15
+  },
+  {
+    "group": "TD",
+    "corpus": "Rescorla",
+    "reason": "impossible_speech_rate",
+    "count": 440
+  }
+]

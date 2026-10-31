@@ -1,0 +1,209 @@
+GenSEC evaluation
+========================================================================
+Test utterances: 21,964
+
+system                             WER     exact        S        D        I
+------------------------------------------------------------------------
+whisper_1best                  45.65%    16.22%   28,376   15,032    7,431
+gensec_zero_shot               41.95%    27.04%   26,605   11,165    8,949
+oracle_nbest                   38.45%    20.93%   24,213   13,775    4,832
+oracle_compositional           32.66%     0.00%        0   36,373        0
+
+gensec_zero_shot vs whisper_1best: +8.10% relative WER reduction (better)
+
+oracle_nbest vs whisper_1best: +15.77% relative WER reduction (better)
+
+oracle_compositional vs whisper_1best: +28.45% relative WER reduction (better)
+
+
+Significance (1,000 bootstrap resamples of the utterance set)
+------------------------------------------------------------------------
+gensec_zero_shot vs whisper_1best
+  overall        21964     8.10%   95% CI [+7.30%, +8.95%]
+  LT              2232    10.22%   95% CI [+7.94%, +12.70%]
+  TD             19732     7.74%   95% CI [+6.90%, +8.59%]
+
+  TD - LT                 -2.48%   95% CI [-4.95%, +0.22%]
+  p = 0.064 - NOT significant at p<0.05
+
+
+By group (LT = late talker, TD = typically developing)
+------------------------------------------------------------------------
+                                utts       WER     exact
+LT
+  whisper_1best                 2232    54.16%    10.13%
+  gensec_zero_shot              2232    48.63%    16.35%
+  oracle_nbest                  2232    46.24%    13.44%
+TD
+  whisper_1best                19732    44.43%    16.91%
+  gensec_zero_shot             19732    40.99%    28.25%
+  oracle_nbest                 19732    37.33%    21.78%
+
+
+By reference length
+------------------------------------------------------------------------
+                                utts       WER     exact
+1 word
+  whisper_1best                 4149    92.00%    26.99%
+  gensec_zero_shot              4149   120.80%    33.29%
+  oracle_nbest                  4149    74.52%    33.33%
+2 words
+  whisper_1best                 2810    79.59%    15.84%
+  gensec_zero_shot              2810    76.48%    29.07%
+  oracle_nbest                  2810    68.27%    20.39%
+3-5 words
+  whisper_1best                 6583    58.73%    12.70%
+  gensec_zero_shot              6583    53.65%    25.63%
+  oracle_nbest                  6583    49.68%    17.15%
+6-10 words
+  whisper_1best                 6462    38.97%    15.01%
+  gensec_zero_shot              6462    33.02%    26.83%
+  oracle_nbest                  6462    32.66%    19.31%
+11+ words
+  whisper_1best                 1960    30.65%     9.80%
+  gensec_zero_shot              1960    27.20%    16.38%
+  oracle_nbest                  1960    26.10%    13.47%
+
+
+By reference audio duration
+------------------------------------------------------------------------
+                                utts       WER     exact
+under 0.5s
+  whisper_1best                 1632    92.32%    14.71%
+  gensec_zero_shot              1632    98.86%    20.71%
+  oracle_nbest                  1632    83.69%    18.75%
+0.5-1s
+  whisper_1best                 6037    73.86%    22.06%
+  gensec_zero_shot              6037    76.81%    31.12%
+  oracle_nbest                  6037    63.65%    27.23%
+1-2s
+  whisper_1best                 5726    49.95%    15.28%
+  gensec_zero_shot              5726    46.05%    27.75%
+  oracle_nbest                  5726    41.85%    20.36%
+2-3s
+  whisper_1best                 3387    41.35%    14.88%
+  gensec_zero_shot              3387    35.78%    27.52%
+  oracle_nbest                  3387    34.15%    19.72%
+3-5s
+  whisper_1best                 3228    35.94%    13.75%
+  gensec_zero_shot              3228    31.04%    26.58%
+  oracle_nbest                  3228    29.78%    18.06%
+5-10s
+  whisper_1best                 1732    33.97%     9.12%
+  gensec_zero_shot              1732    29.12%    19.05%
+  oracle_nbest                  1732    28.41%    12.59%
+10s+
+  whisper_1best                  222    42.78%     4.50%
+  gensec_zero_shot               222    36.50%     6.31%
+  oracle_nbest                   222    37.26%     5.41%
+
+
+References of 3+ words only (comparable to published child GenSEC work)
+------------------------------------------------------------------------
+                                utts       WER     exact
+3+ words
+  whisper_1best                15005    41.88%    13.32%
+  gensec_zero_shot             15005    36.82%    24.94%
+  oracle_nbest                 15005    35.32%    17.60%
+
+
+Worst utterances - whisper_1best
+------------------------------------------------------------------------
+1d3638e0_2202055_2206937_470  sentence_wer=18.00
+  ref: mm
+  hyp: for telling us everything you were thinking you really helped us out by giving having such a great
+e6c8b6d4_366726_367226_118  sentence_wer=15.00
+  ref: duck
+  hyp: today we have two different kinds of food and i think that would be one
+1d3638e0_2162996_2167118_469  sentence_wer=15.00
+  ref: now
+  hyp: do you want to see make a pizza or have a dance party with him
+884b4c25_309985_321577_39  sentence_wer=13.33
+  ref: and that's it
+  hyp: also very interested in how kids tell me stories after i give them some special instructions so you know what i would like you to do now that youve told me the story im going to ask you a question
+884b4c25_471008_473893_55  sentence_wer=13.00
+  ref: worried
+  hyp: you kind of told me youd be saying oh you know wheres my
+99122406_81868_86414_12  sentence_wer=9.80
+  ref: can i have my pickle
+  hyp: im a hot girl im in nirlandia im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a
+1c197acf_1775978_1776439_459  sentence_wer=9.00
+  ref: and
+  hyp: and whether or not the magnet is working or not
+017eb8da_206105_219001_28  sentence_wer=7.17
+  ref: and little boy took one home
+  hyp: and thats it right thats really good did you remember that from last week no wow you did a really good job you know what were gonna do now even though you did a good job that time um i want to try to
+3b54fc4b_5940_6359_1  sentence_wer=7.00
+  ref: okay
+  hyp: for more information visit www cdc gov
+caa18248_1660138_1660638_378  sentence_wer=7.00
+  ref: yeah
+  hyp: yeah i think that would be pretty cool
+
+
+Worst utterances - gensec_zero_shot
+------------------------------------------------------------------------
+1d3638e0_2202055_2206937_470  sentence_wer=20.00
+  ref: mm
+  hyp: and for giving us everything you were thinking you really helped us out by giving having such a great time
+1d3638e0_2162996_2167118_469  sentence_wer=15.00
+  ref: now
+  hyp: do you wanna see jibo make a pizza or have a dance party with him
+884b4c25_471008_473893_55  sentence_wer=13.00
+  ref: worried
+  hyp: you kind of told me you'd be saying oh you know where's my
+56384d1a_356354_359615_70  sentence_wer=10.00
+  ref: hey
+  hyp: he's my albuquerque turkey and i'm awful proud of that
+56384d1a_258752_260877_58  sentence_wer=8.00
+  ref: okay
+  hyp: and the boy's saying frog where are you
+ffb7c8c5_1126263_1128505_230  sentence_wer=8.00
+  ref: head
+  hyp: the giraffe has a airplane in his hand
+56384d1a_852001_856494_172  sentence_wer=7.50
+  ref: i didn't
+  hyp: and the dog is mad because the bee hive fell down and broke the glass
+017eb8da_206105_219001_28  sentence_wer=7.17
+  ref: and little boy took one home
+  hyp: you know that that's really good did you remember that from last week no wow you did a really good job you know what you're gonna do now even though you didn't do a good job that time um i wanna try to
+d8cdc09b_153740_156804_36  sentence_wer=7.00
+  ref: elephant
+  hyp: b l e p h a n
+36903169_1627654_1630858_320  sentence_wer=7.00
+  ref: mm
+  hyp: what are snails doing on a farm
+
+
+Worst utterances - oracle_nbest
+------------------------------------------------------------------------
+1d3638e0_2202055_2206937_470  sentence_wer=17.00
+  ref: mm
+  hyp: telling us everything you were thinking you really helped us out by giving having such a great
+1d3638e0_2162996_2167118_469  sentence_wer=15.00
+  ref: now
+  hyp: do you want to see make a pizza or have a dance party with him
+884b4c25_309985_321577_39  sentence_wer=13.33
+  ref: and that's it
+  hyp: also very interested in how kids tell me stories after i give them some special instructions so you know what i would like you to do now that youve told me the story im going to ask you a question
+884b4c25_471008_473893_55  sentence_wer=12.00
+  ref: worried
+  hyp: you kinda told me youd be saying oh you know wheres my
+d8cdc09b_153740_156804_36  sentence_wer=7.00
+  ref: elephant
+  hyp: b l e p h a n
+36903169_1627654_1630858_320  sentence_wer=7.00
+  ref: mm
+  hyp: what are snails doing on a farm
+017eb8da_206105_219001_28  sentence_wer=7.00
+  ref: and little boy took one home
+  hyp: and thats it right thats really good did you remember that from last week no wow you did a really good job you know what were gonna do now even though you did a good job that time um i wanna try to
+adca87ec_556757_557947_28  sentence_wer=6.00
+  ref: yeah
+  hyp: could need the tuna could he
+d8cdc09b_178038_180401_45  sentence_wer=6.00
+  ref: guitar
+  hyp: b u i t a r
+9bbf5c66_1276865_1283167_355  sentence_wer=6.00
+  ref: oo
+  hyp: whats on her eye um like

@@ -929,21 +929,6 @@
       "it is"
     ]
   },
-  "57c594cf_539274_539954_35": {
-    "greedy_text": "i think i got it",
-    "sampled_texts": [
-      " i think i forgot to add salt",
-      " i",
-      " i think it was",
-      " are two of",
-      "oh ",
-      " i",
-      " i think i'm gonna ",
-      " i think i left",
-      " i think i lost track of time",
-      " i think i want to"
-    ]
-  },
   "e6785eb2_207106_207786_26": {
     "greedy_text": "so fast",
     "sampled_texts": [
@@ -1004,66 +989,6 @@
       " yeah"
     ]
   },
-  "9faefae5_63639_64320_3": {
-    "greedy_text": "yeah",
-    "sampled_texts": [
-      " yeah",
-      " you",
-      " yeah",
-      " okay",
-      " yeah",
-      " um",
-      " yeah",
-      " oh",
-      " you",
-      " yeah"
-    ]
-  },
-  "57c594cf_354286_354986_23": {
-    "greedy_text": "okay",
-    "sampled_texts": [
-      " um",
-      " bye",
-      " yeah",
-      " yeah",
-      " okay",
-      " yeah",
-      " so",
-      " so",
-      " oh",
-      " so"
-    ]
-  },
-  "5bdd3c70_572664_573364_30": {
-    "greedy_text": "yeah",
-    "sampled_texts": [
-      " okay",
-      " yeah",
-      " okay",
-      " bye",
-      " hey",
-      " uh uh",
-      " yeah",
-      " bye",
-      " you",
-      " yeah"
-    ]
-  },
-  "5bdd3c70_667810_668510_40": {
-    "greedy_text": "you can",
-    "sampled_texts": [
-      " You can ",
-      " you can ",
-      " You can turn it off now.",
-      " You can turn it off now",
-      " You can time it up now.",
-      " You can turn it off now.",
-      " you can ",
-      " You can ",
-      " you can turn it off",
-      " You can "
-    ]
-  },
   "77f5f3cc_190593_191333_11": {
     "greedy_text": "i am",
     "sampled_texts": [
@@ -1109,21 +1034,6 @@
       "up"
     ]
   },
-  "5bdd3c70_760787_761527_44": {
-    "greedy_text": "appreciate it",
-    "sampled_texts": [
-      " appreciate it",
-      " Yes",
-      " i appreciate it",
-      " appreciate it",
-      " Yeah",
-      " appreciate it",
-      " appreciate it",
-      " appreciate it",
-      " appreciate it",
-      " appreciate it"
-    ]
-  },
   "e6785eb2_845_1605_1": {
     "greedy_text": "here it goes",
     "sampled_texts": [
@@ -1154,21 +1064,6 @@
       "to care"
     ]
   },
-  "77f5f3cc_376405_377185_20": {
-    "greedy_text": "the mommy",
-    "sampled_texts": [
-      "the mommy",
-      "the mommy",
-      "the mami",
-      "the mommys",
-      "mi mami",
-      "the mami",
-      "the mommy",
-      "the mommy",
-      "the mommys",
-      "the mommie"
-    ]
-  },
   "5bdd3c70_1415030_1415832_64": {
     "greedy_text": "i can not",
     "sampled_texts": [
@@ -1182,111 +1077,6 @@
       " i cant",
       " i can not",
       "and like it"
-    ]
-  },
-  "e6785eb2_57373_58193_8": {
-    "greedy_text": "you",
-    "sampled_texts": [
-      " you",
-      " you",
-      " you",
-      " you",
-      " you",
-      " you",
-      " you",
-      " you",
-      " you",
-      " you"
-    ]
-  },
-  "5bdd3c70_937450_938270_53": {
-    "greedy_text": "oh yes it was",
-    "sampled_texts": [
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was",
-      "oh yes it was"
-    ]
-  },
-  "57c594cf_312729_313569_21": {
-    "greedy_text": "first",
-    "sampled_texts": [
-      " first i need to",
-      " first of all",
-      "â ",
-      " first",
-      " first",
-      " put it first ",
-      " what first",
-      " first",
-      " okay",
-      " first"
-    ]
-  },
-  "57c594cf_62955_63816_6": {
-    "greedy_text": "bye",
-    "sampled_texts": [
-      " bye",
-      " bye",
-      "bye",
-      "bye",
-      "okay bye",
-      "goodbye",
-      " bye",
-      "okay bye",
-      " bye",
-      " goodbye"
-    ]
-  },
-  "5bdd3c70_1377193_1378054_60": {
-    "greedy_text": "you're awesome",
-    "sampled_texts": [
-      " You're awesome",
-      " youre awesome",
-      " You're awesome",
-      " you're awesome",
-      " You're awesome",
-      " you're awesome",
-      " you're awesome",
-      " you're awesome",
-      " you know something",
-      " you're awesome"
-    ]
-  },
-  "e6785eb2_16388_17268_3": {
-    "greedy_text": "we have",
-    "sampled_texts": [
-      " we have",
-      " you have to",
-      " we have",
-      " we have ",
-      " we have",
-      " we have",
-      "we have",
-      " We have",
-      " we have",
-      "we have"
-    ]
-  },
-  "5bdd3c70_623885_624806_37": {
-    "greedy_text": "thing i got",
-    "sampled_texts": [
-      "thing i got",
-      "thing i lighted",
-      "thing i said",
-      "thing i lighted",
-      "thing i got it",
-      "ing",
-      "thing i let it",
-      "whats happening",
-      "thing i got",
-      "yep"
     ]
   },
   "77f5f3cc_198155_199095_12": {
@@ -1319,66 +1109,6 @@
       "what is going on with that"
     ]
   },
-  "9faefae5_148226_149167_6": {
-    "greedy_text": "yeah",
-    "sampled_texts": [
-      "yeah",
-      "yeah",
-      "yeah",
-      "yeah",
-      "yeah",
-      "yeah",
-      "yeah",
-      "yeah",
-      "it was ",
-      "yeah"
-    ]
-  },
-  "57c594cf_666065_667021_46": {
-    "greedy_text": "i made it",
-    "sampled_texts": [
-      " i did it",
-      " i made it",
-      " i made it",
-      " i made it",
-      " i made it",
-      " i did it",
-      " i made it",
-      " i did it",
-      " i made it",
-      " i did it"
-    ]
-  },
-  "57c594cf_600181_601141_41": {
-    "greedy_text": "i need",
-    "sampled_texts": [
-      " no meat",
-      " i got it",
-      " i don't need",
-      " i need",
-      " i hate strawberries",
-      " i need",
-      " yeah",
-      " i need",
-      " i need",
-      " i got it"
-    ]
-  },
-  "77f5f3cc_173980_174941_10": {
-    "greedy_text": "not even",
-    "sampled_texts": [
-      "not even",
-      "not in a",
-      "not in a",
-      "not even",
-      " not in the",
-      " not anymore",
-      "not anymore",
-      "not even a move",
-      "not anymore",
-      " not in a"
-    ]
-  },
   "77f5f3cc_364397_365377_19": {
     "greedy_text": "what about that",
     "sampled_texts": [
@@ -1392,21 +1122,6 @@
       " what about that",
       "what about that",
       "what about that"
-    ]
-  },
-  "9faefae5_144124_145124_5": {
-    "greedy_text": "here",
-    "sampled_texts": [
-      " here",
-      " here look",
-      " here",
-      " yes",
-      " here",
-      " here",
-      " here",
-      " here",
-      " here",
-      " here"
     ]
   },
   "57c594cf_56186_57207_5": {
@@ -1559,21 +1274,6 @@
       " i am set"
     ]
   },
-  "e6785eb2_167800_168942_20": {
-    "greedy_text": "lets look at it",
-    "sampled_texts": [
-      "lets look at it",
-      "its ",
-      "let the chicken in",
-      "let the",
-      "its ",
-      "lets work on it",
-      "its ",
-      "just look at it",
-      " lets look at it",
-      "lets "
-    ]
-  },
   "e6785eb2_184771_185932_25": {
     "greedy_text": "okay",
     "sampled_texts": [
@@ -1604,36 +1304,6 @@
       " can push it"
     ]
   },
-  "5bdd3c70_568361_569561_29": {
-    "greedy_text": "then its late",
-    "sampled_texts": [
-      "then its ready",
-      " then its free",
-      " Let me sleep",
-      " Then its late",
-      "that makes sense",
-      "then its complete",
-      "let me sleep",
-      " lets see if we can get any sleep",
-      "then its plate",
-      "ten minutes later"
-    ]
-  },
-  "57c594cf_582469_583690_39": {
-    "greedy_text": "perfect",
-    "sampled_texts": [
-      " perfect",
-      " perfect",
-      " perfect",
-      " okay",
-      " good boy",
-      " theyre red",
-      " perfect",
-      " youre red",
-      " good night",
-      " youre red"
-    ]
-  },
   "5bdd3c70_495373_496594_18": {
     "greedy_text": "it could be next turn",
     "sampled_texts": [
@@ -1647,36 +1317,6 @@
       "it could be next turn",
       "it will be next turn",
       "it would be next turn"
-    ]
-  },
-  "5bdd3c70_1255403_1256627_57": {
-    "greedy_text": "yup you did just the other side",
-    "sampled_texts": [
-      " yup you did just have a second",
-      " yup you did just the other side",
-      " yup you did just that",
-      "yeah",
-      " yup you did just that",
-      "yeah you did just",
-      "yeah",
-      " yep",
-      " yup you did just add salt",
-      " yup"
-    ]
-  },
-  "5bdd3c70_391285_392525_9": {
-    "greedy_text": "like shingles",
-    "sampled_texts": [
-      "like shining on your head",
-      "like shingles",
-      "like shingonai jump",
-      "like shaming it",
-      "i cant really see",
-      "like some kind of",
-      "like shingling it",
-      "like shingarap",
-      "like shingring it",
-      "like shaming it"
     ]
   },
   "9faefae5_314547_315808_14": {
@@ -1694,21 +1334,6 @@
       "and then do a"
     ]
   },
-  "5bdd3c70_366729_367990_8": {
-    "greedy_text": "theyre not fitting the length",
-    "sampled_texts": [
-      " i need help",
-      "theyre not picking the little ones up",
-      "no no not ",
-      " we are not sitting ",
-      "theyre not picking the meat up",
-      "we need to ",
-      " we are not sitting ",
-      "oh my",
-      "oh my",
-      "theyre not fitting the width"
-    ]
-  },
   "57c594cf_44449_45730_2": {
     "greedy_text": "come and get her",
     "sampled_texts": [
@@ -1722,21 +1347,6 @@
       " come and get him",
       " come and get em",
       " come and get her"
-    ]
-  },
-  "5bdd3c70_531096_532377_25": {
-    "greedy_text": "thank you",
-    "sampled_texts": [
-      "thank you",
-      "thank you",
-      "thank you",
-      "thank you",
-      "thank you",
-      "thank you",
-      "thank you",
-      "thank you",
-      "thank you",
-      "thank you"
     ]
   },
   "5bdd3c70_596377_597678_31": {
@@ -1767,36 +1377,6 @@
       "get out of my way",
       " get out of my way",
       " get out of home"
-    ]
-  },
-  "57c594cf_460038_461400_33": {
-    "greedy_text": "i do talk",
-    "sampled_texts": [
-      " i do talk",
-      " i do talk",
-      "let me do the top",
-      " i do talk",
-      " i do talk",
-      " i do talk",
-      " i do talk",
-      " i do talk",
-      " i do talk",
-      " i do talk"
-    ]
-  },
-  "9faefae5_305364_306764_13": {
-    "greedy_text": "you a big gen",
-    "sampled_texts": [
-      " you a big jillionaire",
-      "you a big gen",
-      "you a big jam",
-      "you a big jim",
-      "you a big ding",
-      "you a biggen",
-      " you a big ding",
-      " you a big gen",
-      "you a big jam",
-      " you a big jim"
     ]
   },
   "5bdd3c70_1433078_1434479_66": {
@@ -1844,21 +1424,6 @@
       " i told him "
     ]
   },
-  "57c594cf_77217_78738_8": {
-    "greedy_text": "please",
-    "sampled_texts": [
-      "please",
-      "please",
-      "please",
-      "please where you should go",
-      "please please",
-      "please where you should go",
-      "please where you should go",
-      "please ready to go",
-      "please where you should go",
-      "please where you should go"
-    ]
-  },
   "57c594cf_184623_186164_17": {
     "greedy_text": "a bear a bear",
     "sampled_texts": [
@@ -1872,21 +1437,6 @@
       " a bear a bear",
       " a bear a bear",
       " a bear a bear"
-    ]
-  },
-  "57c594cf_242452_244074_19": {
-    "greedy_text": "put that right there",
-    "sampled_texts": [
-      " put that right there",
-      " put that right there",
-      " what is that right there",
-      " Put that right there",
-      " put that right there",
-      " put that right there",
-      " put that right there",
-      " put that right there",
-      " put that right there",
-      " put that right there"
     ]
   },
   "e6785eb2_180866_182507_21": {
@@ -2024,21 +1574,6 @@
       "i can see you in my kitchen"
     ]
   },
-  "5bdd3c70_705822_707584_43": {
-    "greedy_text": "theyd like to hear your story",
-    "sampled_texts": [
-      "did like to hear your story",
-      " did like to hear a story about",
-      "theyd like to hear your story",
-      " did like to hear your story",
-      "theyd like to hear your story",
-      "theyd like to hear your story",
-      "theyd like to hear a story about it",
-      " did like to hear your story",
-      " did like to hear your story",
-      "theyd like to hear your story"
-    ]
-  },
   "57c594cf_417239_419180_28": {
     "greedy_text": "i am the perfect kid",
     "sampled_texts": [
@@ -2129,21 +1664,6 @@
       "that that was really bad"
     ]
   },
-  "77f5f3cc_129747_131870_8": {
-    "greedy_text": "i think we need",
-    "sampled_texts": [
-      " i think",
-      " i think we got better",
-      " i think we should",
-      " i think we got that one",
-      " i think",
-      " i think we need ",
-      " i think",
-      " i think we need to turn it on again",
-      " i think we should let the others go",
-      " i think we need "
-    ]
-  },
   "57c594cf_428127_430268_31": {
     "greedy_text": "this is the big one",
     "sampled_texts": [
@@ -2174,21 +1694,6 @@
       " please leave"
     ]
   },
-  "5bdd3c70_566019_568360_28": {
-    "greedy_text": "and then put the lace on top of the paper",
-    "sampled_texts": [
-      "and then put the lace on top of the paper",
-      "and then put the lace on top of the paper",
-      "and then put the lace on top of the paper",
-      "and then put the leaf on top of the paper",
-      "and then put the lace on top of the paper",
-      "and then put the lace on top of the paper",
-      "and then put the lace on top of the paper",
-      "and then put the leaves on top of the paper",
-      "and then put the lace on top of the paper",
-      "and then put the waste on top of the paper"
-    ]
-  },
   "5bdd3c70_529055_531416_24": {
     "greedy_text": "the boy thats trailing far i can see a boy in",
     "sampled_texts": [
@@ -2202,21 +1707,6 @@
       "the boy thats tretty far i can see a boy in",
       "whats going on i can see a plane",
       "the boy thats trail far i can see a boy in"
-    ]
-  },
-  "5bdd3c70_916446_918809_50": {
-    "greedy_text": "yeah see what you can make",
-    "sampled_texts": [
-      "see what you can make",
-      "see what you can make",
-      "yeah see what you can make",
-      "yeah see what you can make",
-      "yeah see what you can make",
-      "yeah see what you can make",
-      "see what you can make",
-      "see what you can make",
-      "yeah see what you can make",
-      "see what you can make"
     ]
   },
   "77f5f3cc_84135_86598_3": {
