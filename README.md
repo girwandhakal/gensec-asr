@@ -291,14 +291,17 @@ corpus-matched sensitivity analysis limited to ENNI, EllisWeismer, and Rescorla.
 
 ## Publication figures
 
-The final stage reads `evaluation_results/metrics.json` and saves four PNGs in
-`figure/`: `wer_by_reference_length.png`, `word_errors_by_type.png`,
-`wer_change_by_corpus.png`, and `unique_hypotheses_histogram.png`.
+The final stage reads `evaluation_results/metrics.json` and saves three PNGs in
+`figure/`: `wer_by_reference_length.png`, `word_errors_by_type.png`, and
+`wer_change_by_corpus.png`. It also saves `unique_hypotheses_histogram.png`
+when every decoded clip has a complete raw Whisper sample pool.
 The histogram counts distinct normalized transcripts among the ten raw sampled
 Whisper outputs for every decoded utterance. It excludes the separate greedy
 transcript and requires complete raw pools so old partial caches cannot produce
 a misleading figure. Exact bar counts are saved beside it as
-`unique_hypotheses_counts.json`.
+`unique_hypotheses_counts.json`. When raw samples are incomplete, stage 7 skips
+this histogram, removes any stale copy, and records coverage in
+`unique_hypotheses_status.json`; WER figures and the pipeline still complete.
 The reference-length figure uses `by_reference_length`. Evaluation computes these
 pooled WERs once for both the text report and the figure, so the plotted values
 and sample sizes stay aligned. Rerun evaluation first when using older metrics

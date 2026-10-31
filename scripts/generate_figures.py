@@ -298,26 +298,51 @@ def save_corpus_figure(rows: list[dict], output_path: Path) -> None:
             plt.close(figure)
 
 
-def unique_sample_counts(config: dict) -> Counter:
-    """Count distinct transcripts among the ten sampled Whisper outputs per clip."""
-    samples = json.loads(config["whisper_samples_path"].read_text(encoding="utf-8"))
-    nbest = json.loads(config["nbest_path"].read_text(encoding="utf-8"))
-    missing = nbest.keys() - samples.keys()
-    if missing:
-        raise ValueError(
-            f"Raw Whisper samples are missing for {len(missing):,} decoded clips. "
-            "Regenerate the n-best and raw-samples caches together."
-        )
+def inspect_sample_pools(config: dict) -> tuple[Counter, dict]:
+    """Return histogram counts only when every decoded clip has a full pool."""
+    nbest_path = config.get("nbest_path")
+    samples_path = config.get("whisper_samples_path")
+    if not nbest_path or not samples_path or not nbest_path.is_file() or not samples_path.is_file():
+        return Counter(), {"available": False, "reason": "raw_sample_cache_unavailable"}
 
+    nbest = json.loads(nbest_path.read_text(encoding="utf-8"))
+    samples = json.loads(samples_path.read_text(encoding="utf-8"))
     expected = config["asr_sample_pool_size"]
+    missing = nbest.keys() - samples.keys()
+    incomplete = sum(
+        not isinstance(samples[uid].get("sampled_texts"), list)
+        or len(samples[uid]["sampled_texts"]) != expected
+        for uid in nbest.keys() & samples.keys()
+    )
+    status = {
+        "available": not missing and not incomplete,
+        "decoded_clips": len(nbest),
+        "complete_raw_sample_pools": len(nbest) - len(missing) - incomplete,
+        "missing_raw_sample_pools": len(missing),
+        "incomplete_raw_sample_pools": incomplete,
+        "sample_pool_size": expected,
+    }
+    if not status["available"]:
+        status["reason"] = "raw_sample_coverage_incomplete"
+        return Counter(), status
+
     counts = Counter()
     for utterance_id in nbest:
-        pool = samples[utterance_id].get("sampled_texts")
-        if not isinstance(pool, list) or len(pool) != expected:
-            raise ValueError(f"{utterance_id} has no complete {expected}-sample Whisper pool")
+        pool = samples[utterance_id]["sampled_texts"]
         # Use the same transcript equivalence rule as n-best selection.
         distinct = {normalize_prediction_for_scoring(text) for text in pool}
         counts[len(distinct - {""})] += 1
+    return counts, status
+
+
+def unique_sample_counts(config: dict) -> Counter:
+    """Strict accessor for analyses that require complete raw sampling."""
+    counts, status = inspect_sample_pools(config)
+    if not status["available"]:
+        raise ValueError(
+            f"Raw Whisper samples are missing for {status.get('missing_raw_sample_pools', 0):,} "
+            f"decoded clips; {status.get('incomplete_raw_sample_pools', 0):,} pools are incomplete."
+        )
     return counts
 
 
@@ -350,7 +375,6 @@ def save_unique_sample_histogram(counts: Counter, pool_size: int, output_path: P
 
 def main(config: dict | None = None) -> None:
     config = config or load_config()
-    unique_counts = unique_sample_counts(config)
     metrics_path = config["results_dir"] / "metrics.json"
     metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
     mode = config["inference_modes"][0]
@@ -370,17 +394,28 @@ def main(config: dict | None = None) -> None:
     save_corpus_figure(corpus_data, output_path)
     print(f"Wrote {output_path}")
 
+    unique_counts, sample_status = inspect_sample_pools(config)
     output_path = config["figure_dir"] / "unique_hypotheses_histogram.png"
-    save_unique_sample_histogram(unique_counts, config["asr_sample_pool_size"], output_path)
-    print(f"Wrote {output_path}")
     counts_path = config["figure_dir"] / "unique_hypotheses_counts.json"
-    counts_path.write_text(json.dumps({
-        "utterances": sum(unique_counts.values()),
-        "sample_pool_size": config["asr_sample_pool_size"],
-        "counts": {str(number): unique_counts.get(number, 0)
-                   for number in range(config["asr_sample_pool_size"] + 1)},
-    }, indent=2), encoding="utf-8")
-    print(f"Wrote {counts_path}")
+    if sample_status["available"]:
+        save_unique_sample_histogram(unique_counts, config["asr_sample_pool_size"], output_path)
+        print(f"Wrote {output_path}")
+        counts_path.write_text(json.dumps({
+            "utterances": sum(unique_counts.values()),
+            "sample_pool_size": config["asr_sample_pool_size"],
+            "counts": {str(number): unique_counts.get(number, 0)
+                       for number in range(config["asr_sample_pool_size"] + 1)},
+        }, indent=2), encoding="utf-8")
+        print(f"Wrote {counts_path}")
+    else:
+        output_path.unlink(missing_ok=True)
+        counts_path.unlink(missing_ok=True)
+        print("Skipping raw-sample histogram: "
+              f"{sample_status.get('missing_raw_sample_pools', 'unknown')} missing and "
+              f"{sample_status.get('incomplete_raw_sample_pools', 'unknown')} incomplete pools")
+    status_path = config["figure_dir"] / "unique_hypotheses_status.json"
+    status_path.write_text(json.dumps(sample_status, indent=2), encoding="utf-8")
+    print(f"Wrote {status_path}")
 
 
 if __name__ == "__main__":

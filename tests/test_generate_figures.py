@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -34,6 +35,40 @@ class FigureTests(unittest.TestCase):
             samples_path.write_text(json.dumps({"repeated": {"sampled_texts": ["hello"] * 10}}))
             with self.assertRaisesRegex(ValueError, "missing for 1 decoded clips"):
                 generate_figures.unique_sample_counts(config)
+
+    def test_partial_sample_cache_skips_only_histogram(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            figure_dir = root / "figure"
+            figure_dir.mkdir()
+            (root / "metrics.json").write_text(json.dumps(self.metrics()), encoding="utf-8")
+            (root / "nbest.json").write_text(json.dumps({"one": {}, "two": {}}), encoding="utf-8")
+            (root / "samples.json").write_text(json.dumps({
+                "one": {"sampled_texts": ["hello"] * 10}
+            }), encoding="utf-8")
+            stale_histogram = figure_dir / "unique_hypotheses_histogram.png"
+            stale_counts = figure_dir / "unique_hypotheses_counts.json"
+            stale_histogram.write_bytes(b"old")
+            stale_counts.write_text("{}", encoding="utf-8")
+            config = dict(results_dir=root, figure_dir=figure_dir,
+                          inference_modes=["zero_shot"], nbest_path=root / "nbest.json",
+                          whisper_samples_path=root / "samples.json", asr_sample_pool_size=10)
+            with (
+                patch.object(generate_figures, "save_reference_length_figure") as reference,
+                patch.object(generate_figures, "save_error_type_figure") as errors,
+                patch.object(generate_figures, "save_corpus_figure") as corpus,
+                patch.object(generate_figures, "save_unique_sample_histogram") as histogram,
+            ):
+                generate_figures.main(config)
+            reference.assert_called_once()
+            errors.assert_called_once()
+            corpus.assert_called_once()
+            histogram.assert_not_called()
+            self.assertFalse(stale_histogram.exists())
+            self.assertFalse(stale_counts.exists())
+            status = json.loads((figure_dir / "unique_hypotheses_status.json").read_text(encoding="utf-8"))
+            self.assertFalse(status["available"])
+            self.assertEqual(status["missing_raw_sample_pools"], 1)
 
     def metrics(self):
         # The 3–5-word bucket has one error in eight words: 12.5%, not the
@@ -120,7 +155,8 @@ class FigureTests(unittest.TestCase):
                 "word_errors_by_type.png": (4320, 2040),
                 "wer_change_by_corpus.png": (4320, 2040),
             }
-            self.assertEqual({p.name for p in config["figure_dir"].iterdir()}, set(outputs))
+            self.assertEqual({p.name for p in config["figure_dir"].iterdir()},
+                             set(outputs) | {"unique_hypotheses_status.json"})
             for name, dimensions in outputs.items():
                 with Image.open(config["figure_dir"] / name) as image:
                     self.assertEqual(image.size, dimensions)
