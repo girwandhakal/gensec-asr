@@ -25,25 +25,35 @@ All job output, including errors and stage progress, is written to
 finishes, or fails.
 
 The job creates and activates `gensec_qwen_env` when needed, then runs the
-Whisper, FLAN-T5, and Qwen3 comparison. Runs are stored under
-`runs/comparison_<timestamp>/`; a new run is created when there is no incomplete
-run to resume. The raw ten Whisper samples are saved in
+Whisper, FLAN-T5, and Qwen3 comparison. Intermediate inputs, predictions, and
+checkpoints use one workspace: `work_directory/comparison/` for shared data and
+predictions, and `work_directory/flan_t5/` and `work_directory/qwen3_0.6b/`
+for the two models. After a comparison completes, the next submission replaces
+its model folders and predictions. Whisper transcripts are retained for reuse
+when decoding settings match. Evaluation reports and
+figures are written under `evaluation_results/flan_t5/` and
+`evaluation_results/qwen3_0.6b/`, with the shared model comparison at the root
+of `evaluation_results/`. Before replacing comparison reports, the pipeline
+copies the previous model-specific reports and comparison summary into
+`evaluation_history/comparison_<timestamp>/`. Existing files are left in place.
+The raw ten Whisper samples are saved in
 `shared_data/utterance_id_to_whisper_samples.json`; both correctors receive
 the same processed hypothesis lists and reference targets. The current
 configuration keeps at most five distinct hypotheses per input.
-Each model's figures are saved under `runs/comparison_<timestamp>/figures/<model>/`.
+Each model's figures are saved with its reports under
+`evaluation_results/<model>/figures/`.
 
-Resubmitting the job automatically resumes the most recent incomplete run,
-reusing saved Whisper transcriptions and model checkpoints. A new comparison
-also reuses prior Whisper outputs when the decode settings match; clips missing
-from that cache are transcribed. If Qwen's saved training signature differs,
-incompatible checkpoints and predictions are removed or archived before Qwen
-restarts; only the active signature's work directory is retained. After a
+Resubmitting an incomplete job reuses the same workspace. Whisper transcription
+and Qwen inference resume from saved progress, and Qwen training can resume
+from a saved epoch checkpoint. FLAN training does not save intermediate
+checkpoints and restarts if interrupted before its final model is saved.
+The first run can copy compatible Whisper outputs from an older `runs/` folder;
+those older folders are not removed. Clips missing from the cache are
+transcribed. If Qwen's training signature differs, incompatible checkpoints
+and predictions are removed before Qwen restarts. After a
 successful fine-tune, its resumable optimizer checkpoint is deleted because
-the signed final model is sufficient for inference. To resume a specific run
-when several incomplete runs exist, pass its directory as `GENSEC_RUN_DIR`.
-To start a separate run while an incomplete run exists, set `GENSEC_RUN_DIR`
-to a new directory. The separate legacy pipeline can still be run directly with
+the signed final model is sufficient for inference. An explicit `GENSEC_RUN_DIR`
+selects an alternate workspace. The separate legacy pipeline can still be run directly with
 `python scripts/run_pipeline.py`. Its original environment can be created with:
 
 ```bash
@@ -68,7 +78,10 @@ envs/                     conda environment and pinned requirements
 bash_scripts/train.sh     the single entry point
 scripts/                  the seven pipeline stages
 data/                     generated artifacts (gitignored)
-evaluation_results/       WER and child-level analysis reports
+work_directory/           current comparison workspace and model checkpoints (gitignored)
+runs/                     older comparison folders, if any (gitignored)
+evaluation_results/       current WER, child-level analysis, and comparison reports
+evaluation_history/       archived evaluation outputs
 ```
 
 ## Workflow
@@ -95,6 +108,14 @@ flowchart TD
 | 5 | `evaluate.py` | `evaluation_results/wer_report.txt`, `metrics.json` |
 | 6 | `run_analysis.py` | `evaluation_results/analysis/per_child_wer.csv`, `anova_report.txt`, `anova_metrics.json` |
 | 7 | `generate_figures.py` | WER, error-type, corpus, and unique-Whisper-hypothesis figures in `figure/` |
+
+The FLAN-T5/Qwen3 comparison writes each model's WER report, metrics, child
+analysis, config, and figures into `evaluation_results/flan_t5/` and
+`evaluation_results/qwen3_0.6b/`. The shared comparison summary is
+`evaluation_results/model_comparison.txt` and `.json`. On a later comparison,
+these comparison-specific outputs are copied into `evaluation_history/` before
+the current copies are refreshed; the legacy top-level evaluation files remain
+untouched.
 
 ## Why there is no postprocessing stage
 

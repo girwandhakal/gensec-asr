@@ -47,38 +47,31 @@ def stage(number: int, name: str):
     print(f"===== STAGE {number}/{TOTAL_STAGES} DONE at {now} in {elapsed:.1f}s: {name} =====", flush=True)
 
 
-def fresh_run_directory() -> Path:
+def fresh_run_directory(work_root: Path) -> Path:
     requested = os.environ.get("GENSEC_RUN_DIR")
-    if requested:
-        destination = Path(requested).resolve()
-        destination.mkdir(parents=True, exist_ok=True)
-        return destination
-
-    root = PROJECT_ROOT / "runs"
-    root.mkdir(parents=True, exist_ok=True)
-
-    incomplete_runs = [
-        path for path in root.glob("comparison_*")
-        if path.is_dir() and not (path / "model_comparison.json").is_file()
-    ]
-    if incomplete_runs:
-        destination = max(incomplete_runs, key=lambda path: (path.stat().st_mtime, path.name))
-        print(f"Resuming most recent incomplete comparison run: {destination}", flush=True)
-        return destination
-
-    stamp = datetime.now().strftime("comparison_%Y%m%d_%H%M%S")
-    destination = root / stamp
-    suffix = 1
-    while destination.exists():
-        destination = root / f"{stamp}_{suffix}"
-        suffix += 1
-    destination.mkdir()
+    destination = Path(requested).resolve() if requested else work_root / "comparison"
+    destination.mkdir(parents=True, exist_ok=True)
+    marker = destination / "comparison_complete.json"
+    if marker.is_file():
+        # A completed run is replaceable; a partial run must retain its
+        # checkpoints and predictions so it can resume after a walltime.
+        default_run = work_root / "comparison"
+        model_root = work_root if destination.resolve() == default_run.resolve() else destination / "models"
+        for stale in (destination / "predictions", model_root / "flan_t5", model_root / "qwen3_0.6b"):
+            if stale.is_dir():
+                shutil.rmtree(stale)
+        marker.unlink()
+        print(f"Reusing comparison workspace for a new run: {destination}", flush=True)
+    else:
+        print(f"Using comparison workspace: {destination}", flush=True)
     return destination
 
 
 def configure_run(base: dict, run_root: Path) -> dict:
     config = dict(base)
     data_dir = run_root / "shared_data"
+    default_run = base["work_dir"] / "comparison"
+    model_root = base["work_dir"] if run_root.resolve() == default_run.resolve() else run_root / "models"
     config.update({
         "data_dir": data_dir,
         "reference_map_path": data_dir / "utterance_id_to_reference.json",
@@ -89,10 +82,8 @@ def configure_run(base: dict, run_root: Path) -> dict:
         "dropped_path": data_dir / "dropped_gensec.json",
         "splits_dir": data_dir / "splits",
         "predictions_dir": run_root / "predictions",
-        "work_dir": run_root / "models" / "flan_t5",
-        "qwen_work_dir": run_root / "models" / "qwen3_0.6b",
-        "results_dir": run_root / "results" / "flan_t5",
-        "figure_dir": run_root / "figures" / "flan_t5",
+        "work_dir": model_root / "flan_t5",
+        "qwen_work_dir": model_root / "qwen3_0.6b",
         "run_root": run_root,
     })
     return config
@@ -109,7 +100,9 @@ def reuse_whisper_artifacts(config: dict) -> None:
         "utterance_id_to_nbest_greedy_sample10.json",
         "utterance_id_to_whisper_samples.json",
     )
-    runs_root = config["run_root"].parent
+    # Old comparison folders can supply a matching cache on the first run;
+    # they are read only and remain where they are.
+    runs_root = PROJECT_ROOT / "runs"
     candidates = sorted(
         (
             path for path in runs_root.glob("comparison_*")
@@ -145,10 +138,40 @@ def reuse_whisper_artifacts(config: dict) -> None:
 def model_config(shared: dict, name: str) -> dict:
     config = dict(shared)
     config["predictions_dir"] = shared["run_root"] / "predictions" / name
-    config["results_dir"] = shared["run_root"] / "results" / name
-    config["figure_dir"] = shared["run_root"] / "figures" / name
+    config["results_dir"] = shared["results_root"] / name
+    config["figure_dir"] = config["results_dir"] / "figures"
     config["model_display_name"] = "Whisper + FLAN-T5" if name == "flan_t5" else "Whisper + Qwen3-0.6B"
     return config
+
+
+def archive_previous_comparison_outputs(results_root: Path, history_root: Path) -> Path | None:
+    """Copy prior comparison reports aside before refreshing the active results.
+
+    The existing results remain in place until this run writes replacements.
+    Model checkpoints and run inputs are not part of this archive.
+    """
+    named_outputs = ("flan_t5", "qwen3_0.6b", "model_comparison.json", "model_comparison.txt")
+    existing = [results_root / name for name in named_outputs if (results_root / name).exists()]
+    if not existing:
+        return None
+
+    latest_write = max(path.stat().st_mtime for path in existing)
+    stamp = datetime.fromtimestamp(latest_write).strftime("comparison_%Y%m%d_%H%M%S")
+    destination = history_root / stamp
+    suffix = 1
+    while destination.exists():
+        suffix += 1
+        destination = history_root / f"{stamp}_{suffix}"
+
+    destination.mkdir(parents=True, exist_ok=False)
+    for source in existing:
+        target = destination / source.name
+        if source.is_dir():
+            shutil.copytree(source, target)
+        else:
+            shutil.copy2(source, target)
+    print(f"Copied previous comparison results to {destination}")
+    return destination
 
 
 def run_model_pipeline(config: dict, model_name: str, first_stage: int, base: dict | None = None) -> dict:
@@ -201,7 +224,7 @@ def copy_current_flan_checkpoint(config: dict, base: dict) -> None:
     print(f"Copied matching FLAN checkpoint into this run: {destination}")
 
 
-def write_comparison(root: Path, flan: dict, qwen: dict, flan_config: dict, qwen_config: dict) -> None:
+def write_comparison(output_root: Path, flan: dict, qwen: dict, flan_config: dict, qwen_config: dict) -> None:
     mode = flan_config["inference_modes"][0]
     flan_rows = read_prediction_rows(predictions_path(flan_config, mode))
     qwen_rows = read_prediction_rows(predictions_path(qwen_config, mode))
@@ -223,7 +246,8 @@ def write_comparison(root: Path, flan: dict, qwen: dict, flan_config: dict, qwen
     report["wer_difference_qwen_minus_flan"] = (
         report["systems"]["qwen3_0.6b"]["wer"] - report["systems"]["flan_t5"]["wer"]
     )
-    (root / "model_comparison.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    output_root.mkdir(parents=True, exist_ok=True)
+    (output_root / "model_comparison.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     lines = [
         "Shared test set model comparison",
         f"Test utterances: {report['test_utterances']:,}",
@@ -232,14 +256,18 @@ def write_comparison(root: Path, flan: dict, qwen: dict, flan_config: dict, qwen
         f"Whisper + Qwen3-0.6B WER: {report['systems']['qwen3_0.6b']['wer']:.2%}",
         f"Qwen minus FLAN WER: {report['wer_difference_qwen_minus_flan']:+.2%}",
     ]
-    (root / "model_comparison.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (output_root / "model_comparison.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
 
 
 def main() -> None:
     base = load_config()
-    run_root = fresh_run_directory()
+    base["results_root"] = base["results_dir"]
+    run_root = fresh_run_directory(base["work_dir"])
     shared = configure_run(base, run_root)
+    archive_previous_comparison_outputs(
+        base["results_root"], PROJECT_ROOT / "evaluation_history"
+    )
     print(f"Comparison run: {run_root}")
     print(f"Audio and references: {shared['media_dir']}")
     reuse_whisper_artifacts(shared)
@@ -256,8 +284,11 @@ def main() -> None:
     qwen_config = model_config(shared, "qwen3_0.6b")
     qwen_metrics = run_model_pipeline(qwen_config, "qwen3_0.6b", 8)
     with stage(12, "compare FLAN-T5 and Qwen3-0.6B on the same test set"):
-        write_comparison(run_root, flan_metrics, qwen_metrics, flan_config, qwen_config)
+        write_comparison(base["results_root"], flan_metrics, qwen_metrics, flan_config, qwen_config)
     shutil.copy(base["config_path"], run_root / "config_used.yaml")
+    (run_root / "comparison_complete.json").write_text(
+        json.dumps({"results_dir": str(base["results_root"])}, indent=2), encoding="utf-8"
+    )
     print(f"\n===== COMPARISON COMPLETE: {run_root} =====")
 
 
