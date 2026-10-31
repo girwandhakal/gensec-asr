@@ -37,9 +37,11 @@ Resubmitting the job automatically resumes the most recent incomplete run,
 reusing saved Whisper transcriptions and model checkpoints. A new comparison
 also reuses prior Whisper outputs when the decode settings match; clips missing
 from that cache are transcribed. If Qwen's saved training signature differs,
-the old checkpoint is preserved and Qwen starts in a signature-specific
-directory, while the run's other outputs remain reusable. To resume a specific
-run when several incomplete runs exist, pass its directory as `GENSEC_RUN_DIR`.
+incompatible checkpoints and predictions are removed or archived before Qwen
+restarts; only the active signature's work directory is retained. After a
+successful fine-tune, its resumable optimizer checkpoint is deleted because
+the signed final model is sufficient for inference. To resume a specific run
+when several incomplete runs exist, pass its directory as `GENSEC_RUN_DIR`.
 To start a separate run while an incomplete run exists, set `GENSEC_RUN_DIR`
 to a new directory. The separate legacy pipeline can still be run directly with
 `python scripts/run_pipeline.py`. Its original environment can be created with:

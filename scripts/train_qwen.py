@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -135,6 +136,12 @@ def train_model(fit: pd.DataFrame, validation: pd.DataFrame, tokenizer, config: 
     tokenizer.save_pretrained(str(checkpoint))
     (checkpoint / "training_signature.txt").write_text(qwen_training_signature(config), encoding="utf-8")
     (checkpoint / "train_rows.txt").write_text(str(len(fit)), encoding="utf-8")
+    # Once the final model is saved and signed, optimizer/RNG state is no longer
+    # needed. Keep resumable Trainer checkpoints only while training is partial.
+    for stale in work_dir.glob("checkpoint-*"):
+        if stale.is_dir():
+            shutil.rmtree(stale)
+            print(f"Removed completed Trainer checkpoint: {stale}", flush=True)
     model.config.use_cache = True
     return model
 
@@ -240,42 +247,63 @@ def main(config: dict | None = None) -> None:
     current_signature = qwen_training_signature(qwen_config)
     original_work_dir = qwen_config["qwen_work_dir"]
     active_signature = original_work_dir / "active_training_signature.txt"
-    if (
-        active_signature.is_file()
-        and active_signature.read_text(encoding="utf-8") != current_signature
-    ):
-        signature_id = hashlib.sha256(current_signature.encode("utf-8")).hexdigest()[:12]
-        restart_work_dir = original_work_dir.with_name(
-            f"{original_work_dir.name}_restart_{signature_id}"
-        )
-        restart_signature = restart_work_dir / "active_training_signature.txt"
-        restart_matches = (
-            restart_signature.is_file()
-            and restart_signature.read_text(encoding="utf-8") == current_signature
-        )
-        qwen_config["qwen_work_dir"] = restart_work_dir
+    current_work_dir = original_work_dir
+    signature_id = hashlib.sha256(current_signature.encode("utf-8")).hexdigest()[:12]
+    restart_work_dir = original_work_dir.with_name(
+        f"{original_work_dir.name}_restart_{signature_id}"
+    )
+    restart_signature = restart_work_dir / "active_training_signature.txt"
+    restart_matches = (
+        restart_signature.is_file()
+        and restart_signature.read_text(encoding="utf-8") == current_signature
+    )
+    saved_signature = (
+        active_signature.read_text(encoding="utf-8")
+        if active_signature.is_file()
+        else None
+    )
+
+    if saved_signature == current_signature:
+        current_work_dir = original_work_dir
+    elif saved_signature is not None:
+        current_work_dir = restart_work_dir
+        shutil.rmtree(original_work_dir, ignore_errors=True)
         if restart_matches:
-            print(f"Resuming Qwen run with the current signature: {restart_work_dir}", flush=True)
+            print(f"Resuming Qwen from the matching checkpoint at {current_work_dir}", flush=True)
         else:
             print(
-                "Qwen training signature changed. Preserving the old partial checkpoint at "
-                f"{original_work_dir} and starting a clean run at {restart_work_dir}",
+                f"Qwen signature changed. Discarding incompatible checkpoints and starting at "
+                f"{current_work_dir}",
                 flush=True,
             )
+            if current_work_dir.exists():
+                shutil.rmtree(current_work_dir)
 
-        # Predictions from the old fine-tune must not be reused for the new one.
-        prediction_path = predictions_path(config, config["inference_modes"][0])
-        if prediction_path.is_file() and not restart_matches:
-            stale_path = prediction_path.with_name(
-                f"{prediction_path.stem}.stale_{signature_id}{prediction_path.suffix}"
-            )
-            if stale_path.exists():
+            # Predictions from the incompatible fine-tune must not be reused.
+            prediction_path = predictions_path(config, config["inference_modes"][0])
+            if prediction_path.is_file():
                 stale_path = prediction_path.with_name(
-                    f"{prediction_path.stem}.stale_{signature_id}_{int(time.time())}"
-                    f"{prediction_path.suffix}"
+                    f"{prediction_path.stem}.stale_{signature_id}{prediction_path.suffix}"
                 )
-            prediction_path.replace(stale_path)
-            print(f"Archived predictions from the previous Qwen signature: {stale_path}", flush=True)
+                if stale_path.exists():
+                    stale_path = prediction_path.with_name(
+                        f"{prediction_path.stem}.stale_{signature_id}_{int(time.time())}"
+                        f"{prediction_path.suffix}"
+                    )
+                prediction_path.replace(stale_path)
+                print(f"Archived incompatible Qwen predictions: {stale_path}", flush=True)
+    elif restart_matches:
+        current_work_dir = restart_work_dir
+        print(f"Resuming Qwen from {current_work_dir}", flush=True)
+
+    # Old signature-specific workdirs are redundant once this signature is
+    # selected. Retain only the active workdir to keep the run's disk footprint bounded.
+    for stale in original_work_dir.parent.glob(f"{original_work_dir.name}_restart_*"):
+        if stale != current_work_dir and stale.is_dir():
+            shutil.rmtree(stale)
+            print(f"Removed obsolete Qwen work directory: {stale}", flush=True)
+
+    qwen_config["qwen_work_dir"] = current_work_dir
 
     checkpoint = qwen_config["qwen_work_dir"] / "final_checkpoint"
     signature_path = checkpoint / "training_signature.txt"
