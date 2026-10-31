@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -235,10 +237,49 @@ def main(config: dict | None = None) -> None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.truncation_side = "left"
 
-    checkpoint = config["qwen_work_dir"] / "final_checkpoint"
+    current_signature = qwen_training_signature(qwen_config)
+    original_work_dir = qwen_config["qwen_work_dir"]
+    active_signature = original_work_dir / "active_training_signature.txt"
+    if (
+        active_signature.is_file()
+        and active_signature.read_text(encoding="utf-8") != current_signature
+    ):
+        signature_id = hashlib.sha256(current_signature.encode("utf-8")).hexdigest()[:12]
+        restart_work_dir = original_work_dir.with_name(
+            f"{original_work_dir.name}_restart_{signature_id}"
+        )
+        restart_signature = restart_work_dir / "active_training_signature.txt"
+        restart_matches = (
+            restart_signature.is_file()
+            and restart_signature.read_text(encoding="utf-8") == current_signature
+        )
+        qwen_config["qwen_work_dir"] = restart_work_dir
+        if restart_matches:
+            print(f"Resuming Qwen run with the current signature: {restart_work_dir}", flush=True)
+        else:
+            print(
+                "Qwen training signature changed. Preserving the old partial checkpoint at "
+                f"{original_work_dir} and starting a clean run at {restart_work_dir}",
+                flush=True,
+            )
+
+        # Predictions from the old fine-tune must not be reused for the new one.
+        prediction_path = predictions_path(config, config["inference_modes"][0])
+        if prediction_path.is_file() and not restart_matches:
+            stale_path = prediction_path.with_name(
+                f"{prediction_path.stem}.stale_{signature_id}{prediction_path.suffix}"
+            )
+            if stale_path.exists():
+                stale_path = prediction_path.with_name(
+                    f"{prediction_path.stem}.stale_{signature_id}_{int(time.time())}"
+                    f"{prediction_path.suffix}"
+                )
+            prediction_path.replace(stale_path)
+            print(f"Archived predictions from the previous Qwen signature: {stale_path}", flush=True)
+
+    checkpoint = qwen_config["qwen_work_dir"] / "final_checkpoint"
     signature_path = checkpoint / "training_signature.txt"
     rows_path = checkpoint / "train_rows.txt"
-    current_signature = qwen_training_signature(qwen_config)
     if (
         checkpoint.is_dir() and signature_path.is_file() and rows_path.is_file()
         and signature_path.read_text(encoding="utf-8") == current_signature
@@ -251,7 +292,7 @@ def main(config: dict | None = None) -> None:
             tokenizer.pad_token = tokenizer.eos_token
         tokenizer.truncation_side = "left"
     else:
-        config["qwen_work_dir"].mkdir(parents=True, exist_ok=True)
+        qwen_config["qwen_work_dir"].mkdir(parents=True, exist_ok=True)
         model = train_model(fit, validation, tokenizer, qwen_config)
 
     generate_predictions(model, tokenizer, test_frame, config)
