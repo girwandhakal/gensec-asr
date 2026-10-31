@@ -37,7 +37,7 @@ min_hypotheses: 1  # Retain single-hypothesis utterances
 # Correction model
 gensec_model_id: google/flan-t5-base
 qwen_model_id: Qwen/Qwen3-0.6B
-qwen_num_train_epochs: 40  # Match FLAN's epoch count for a fairer model comparison.
+qwen_num_train_epochs: 5  # Temporary shorter Qwen run.
 qwen_learning_rate: 2.0e-5
 qwen_train_batch_size: 8
 qwen_eval_batch_size: 8
