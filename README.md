@@ -263,16 +263,12 @@ preserves CHAT source text, and `audio_path` links a clip relative to the media
 folder. Only rows with nonempty cleaned utterances and audio paths are imported.
 The alignment filter excludes clips under 0.5 seconds, references above four
 words per second, and clips over five seconds with at most one reference word
-before Whisper runs. CHAT extraction also rejects adjacent speaker turns whose
-timestamps actually overlap. The upstream manifest, stage 1 import, and stage 3
+before Whisper runs. The upstream manifest, stage 1 import, and stage 3
 dataset builder all check alignment. Reasons and group/corpus counts are saved
 in `data/reference_alignment_exclusions.json`,
 `data/reference_alignment_drops.json`, and
 `data/alignment_exclusions.json`. These are screening rules, not proof of
-annotation error for every excluded row. The existing finalized media report
-lacks adult-turn timestamps;
-the speaker-overlap exclusion takes effect when upstream CHAT preprocessing is
-rerun and its media report is rebuilt. Ground truth is copied
+annotation error for every excluded row. Ground truth is copied
 unchanged through dataset construction, training, and WER evaluation; only model
 outputs are normalized locally. Old raw-only reports fail with an explicit
 instruction to run the upstream ground-truth finalizer. Whisper processes only
