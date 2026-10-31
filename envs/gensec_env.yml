@@ -8,4 +8,4 @@ dependencies:
   # librosa decodes the media pipeline's mp3 clips through ffmpeg.
   - ffmpeg
   - pip:
-      - -r requirements.txt
+      - -r envs/requirements.txt

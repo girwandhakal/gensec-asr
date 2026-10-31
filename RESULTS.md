@@ -1,4 +1,9 @@
-# Results — child-level comparison
+# Historical results — superseded analysis
+
+The numbers below come from the previous Flan-T5 run, before alignment filtering,
+raw-output scoring, and corpus-stratified validation. They are retained for
+provenance and must not be used as results of the revised pipeline. A completed
+new run will replace this document from its own evaluation outputs.
 
 The held-out predictions contain 27,412 utterances from 167 children. The
 analysis retains 163 children (29 in the combined LT/SLI group, labeled LT;

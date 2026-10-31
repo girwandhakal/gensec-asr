@@ -62,6 +62,21 @@ class ChildSplitTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Missing child ID"):
             make_splits(self.examples, self.config, self.metadata, save=False)
 
+    def test_validation_samples_children_within_group_and_corpus(self):
+        for meta in self.metadata.values():
+            child_number = int(meta["child_id"].split(meta["group"])[-1])
+            meta["corpus"] = "CorpusA" if child_number < 6 else "CorpusB"
+        config = {**self.config, "test_size": 0.10}
+        train, validation = make_splits(self.examples, config, self.metadata,
+                                        save=False, stratify_corpus=True)
+        self.assertFalse(self.children(train) & self.children(validation))
+        strata = {(self.metadata[uid]["group"], self.metadata[uid]["corpus"],
+                   self.metadata[uid]["child_id"]) for uid in validation.id}
+        self.assertEqual({(group, corpus) for group, corpus, _ in strata},
+                         {(group, corpus) for group in ("LT", "TD")
+                          for corpus in ("CorpusA", "CorpusB")})
+        self.assertEqual(len(strata), 4)
+
 
 if __name__ == "__main__":
     unittest.main()

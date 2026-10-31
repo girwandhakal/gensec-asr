@@ -137,13 +137,15 @@ class HandoffTests(unittest.TestCase):
         tree = ast.parse((ROOT / "scripts/build_gensec_dataset.py").read_text())
         functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)
                      and node.name in {"collect_hypotheses", "build_dataset"}]
-        namespace = {"json": json}
+        namespace = {"json": json, "Path": Path}
         exec(compile(ast.Module(body=functions, type_ignores=[]), "builder", "exec"), namespace)
         with tempfile.TemporaryDirectory() as directory:
             directory = Path(directory)
             nbest, references = directory / "nbest.json", directory / "references.json"
-            nbest.write_text(json.dumps({"one": {"1best_text": "mummy", "nbest": []}}))
-            references.write_text(json.dumps({"one": "Mummy  snowman"}))
+            uid = "abcd_0_1000_1"
+            nbest.write_text(json.dumps({uid: {"1best_text": "mummy", "nbest": []}}))
+            references.write_text(json.dumps({uid: "Mummy  snowman"}))
+            namespace["alignment_reason"] = lambda uid, reference, config: ""
             kept, dropped = namespace["build_dataset"]({"nbest_path": nbest,
                 "reference_map_path": references, "max_hypotheses": 5, "min_hypotheses": 1})
             self.assertEqual(kept[0]["output"], "Mummy  snowman")

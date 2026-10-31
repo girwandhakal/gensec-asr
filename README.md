@@ -24,37 +24,19 @@ All job output, including errors and stage progress, is written to
 `training.txt` in the repository root. Each numbered stage logs when it starts,
 finishes, or fails.
 
-The job creates and activates `gensec_qwen_env` when needed, then runs the
-Whisper, FLAN-T5, and Qwen3 comparison. Intermediate inputs, predictions, and
-checkpoints use one workspace: `work_directory/comparison/` for shared data and
-predictions, and `work_directory/flan_t5/` and `work_directory/qwen3_0.6b/`
-for the two models. After a comparison completes, the next submission replaces
-its model folders and predictions. Whisper transcripts are retained for reuse
-when decoding settings match. Evaluation reports and
-figures are written under `evaluation_results/flan_t5/` and
-`evaluation_results/qwen3_0.6b/`, with the shared model comparison at the root
-of `evaluation_results/`. Before replacing comparison reports, the pipeline
-copies the previous model-specific reports and comparison summary into
-`evaluation_history/comparison_<timestamp>/`. Existing files are left in place.
-The raw ten Whisper samples are saved in
-`shared_data/utterance_id_to_whisper_samples.json`; both correctors receive
-the same processed hypothesis lists and reference targets. The current
-configuration keeps at most five distinct hypotheses per input.
-Each model's figures are saved with its reports under
-`evaluation_results/<model>/figures/`.
+The job creates and activates `gensec_env` when needed, then invokes
+`scripts/run_pipeline.py` for Whisper candidate generation, FLAN-T5 training,
+inference, evaluation, and analysis. Intermediate data is under `data/`, the
+FLAN checkpoint is under `work_directory/`, and current reports are under
+`evaluation_results/`. The previous report is archived in `evaluation_history/`
+when a new evaluation is ready. The correction input keeps at most five distinct
+Whisper hypotheses, including a single hypothesis when sampling collapses.
 
-Resubmitting an incomplete job reuses the same workspace. Whisper transcription
-and Qwen inference resume from saved progress, and Qwen training can resume
-from a saved epoch checkpoint. FLAN training does not save intermediate
-checkpoints and restarts if interrupted before its final model is saved.
-The first run can copy compatible Whisper outputs from an older `runs/` folder;
-those older folders are not removed. Clips missing from the cache are
-transcribed. If Qwen's training signature differs, incompatible checkpoints
-and predictions are removed before Qwen restarts. After a
-successful fine-tune, its resumable optimizer checkpoint is deleted because
-the signed final model is sufficient for inference. An explicit `GENSEC_RUN_DIR`
-selects an alternate workspace. The separate legacy pipeline can still be run directly with
-`python scripts/run_pipeline.py`. Its original environment can be created with:
+Resubmitting an incomplete job reuses signed Whisper outputs and resumes
+compatible FLAN epoch checkpoints. A changed dataset or training configuration
+invalidates the checkpoint and predictions. After a successful fine-tune, the
+signed final model is kept and temporary epoch checkpoints are removed. The
+environment can also be created with:
 
 ```bash
 conda env create -f envs/gensec_env.yml
@@ -78,9 +60,8 @@ envs/                     conda environment and pinned requirements
 bash_scripts/train.sh     the single entry point
 scripts/                  the seven pipeline stages
 data/                     generated artifacts (gitignored)
-work_directory/           current comparison workspace and model checkpoints (gitignored)
-runs/                     older comparison folders, if any (gitignored)
-evaluation_results/       current WER, child-level analysis, and comparison reports
+work_directory/           FLAN-T5 checkpoint (gitignored)
+evaluation_results/       current WER and child-level analysis
 evaluation_history/       archived evaluation outputs
 ```
 
@@ -109,22 +90,17 @@ flowchart TD
 | 6 | `run_analysis.py` | `evaluation_results/analysis/per_child_wer.csv`, `anova_report.txt`, `anova_metrics.json` |
 | 7 | `generate_figures.py` | WER, error-type, corpus, and unique-Whisper-hypothesis figures in `figure/` |
 
-The FLAN-T5/Qwen3 comparison writes each model's WER report, metrics, child
-analysis, config, and figures into `evaluation_results/flan_t5/` and
-`evaluation_results/qwen3_0.6b/`. The shared comparison summary is
-`evaluation_results/model_comparison.txt` and `.json`. On a later comparison,
-these comparison-specific outputs are copied into `evaluation_history/` before
-the current copies are refreshed; the legacy top-level evaluation files remain
-untouched.
+The seven stages write the current WER report, metrics, child-level analysis,
+configuration, and figures to the paths shown above.
 
-## Why there is no postprocessing stage
+## Prediction handling
 
 There was one until 2026-09-08: it collapsed repeated phrases out of the
 predictions, because the first working run looped a phrase until the length
 limit and emitted 110,711 insertions. `no_repeat_ngram_size` and
 `repetition_penalty` now block that at generation time, and they work - no
-prediction in the current run repeats a word more than three times, and none
-runs past 60 words.
+prediction in that historical run repeated a word more than three times, and
+none ran past 60 words.
 
 With the artifact gone, the only thing left for the stage to match was real
 child speech. It rewrote 93 of 27,412 predictions (0.34%): 15 improved, 61 got
@@ -134,6 +110,11 @@ disfluent repetition that the corrector had already transcribed correctly.
 Run over the ground-truth references themselves, the cleaner corrupted 271 of
 them (1%). A stage that damages 1% of correct human transcripts cannot pay for
 itself at a 0.34% intervention rate, so it was deleted rather than tuned.
+
+Current evaluation scores the raw FLAN text after whitespace cleanup. The
+decoder still uses token-length limits and the configured repetition controls;
+it does not truncate generated words after decoding. Whisper 1-best is scored
+with the same text normalization and without a duration word cap.
 
 ## The data
 
@@ -248,13 +229,14 @@ python scripts/generate_figures.py
 
 ## How the test set is held out
 
-All recordings of one child stay together, stratified by LT/TD. Training,
-validation, and testing use different children, based on the canonical child IDs
-from asr-dataset-pipelines. The splitter checks that no child crosses a boundary.
+All recordings of one child stay together. The held-out test split is stratified
+by LT/TD; the 10% validation split is sampled by child within group and corpus.
+Training, validation, and testing use different canonical child IDs. The
+splitter checks that no child or source transcript crosses a boundary.
 
-`methodology_version: child_split_v4` prevents reuse of checkpoints and predictions
-from the earlier transcript-based splits. Earlier evaluation results should be
-kept as historical results and rerun with the child-based split.
+`methodology_version: child_split_v5_alignment_raw` prevents reuse of checkpoints
+and predictions from the earlier protocol. Earlier evaluation results are
+historical and must be rerun with the revised dataset and model selection.
 
 ## What this does not do
 
@@ -278,7 +260,19 @@ Left out to keep the first result interpretable:
 `asr-dataset-pipelines/data/media/media_download_report.csv` is the authoritative
 handoff. Its `utterance` column is final cleaned ground truth, `raw_utterance`
 preserves CHAT source text, and `audio_path` links a clip relative to the media
-folder. Only rows with nonempty cleaned utterances and audio paths are imported. Ground truth is copied
+folder. Only rows with nonempty cleaned utterances and audio paths are imported.
+The alignment filter excludes clips under 0.5 seconds, references above four
+words per second, and clips over five seconds with at most one reference word
+before Whisper runs. CHAT extraction also rejects adjacent speaker turns whose
+timestamps actually overlap. The upstream manifest, stage 1 import, and stage 3
+dataset builder all check alignment. Reasons and group/corpus counts are saved
+in `data/reference_alignment_exclusions.json`,
+`data/reference_alignment_drops.json`, and
+`data/alignment_exclusions.json`. These are screening rules, not proof of
+annotation error for every excluded row. The existing finalized media report
+lacks adult-turn timestamps;
+the speaker-overlap exclusion takes effect when upstream CHAT preprocessing is
+rerun and its media report is rebuilt. Ground truth is copied
 unchanged through dataset construction, training, and WER evaluation; only model
 outputs are normalized locally. Old raw-only reports fail with an explicit
 instruction to run the upstream ground-truth finalizer. Whisper processes only
@@ -295,6 +289,9 @@ The methodology version and processed-data fingerprint invalidate stale training
 and prediction caches. Existing published counts/results describe the earlier
 pipeline; regenerate downstream datasets and results before reporting new ones.
 Audio files and existing decoding of eligible clips can be reused.
+`RESULTS.md` identifies the previous run as historical until a complete new
+pipeline run produces current metrics and replaces it. Stage 6 also reports a
+corpus-matched sensitivity analysis limited to ENNI, EllisWeismer, and Rescorla.
 
 ## Publication figures
 

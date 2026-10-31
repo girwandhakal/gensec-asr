@@ -35,6 +35,23 @@ def generation_functions():
 
 
 class WhisperSamplesTests(unittest.TestCase):
+    def test_eligibility_only_signature_change_reuses_decoding(self):
+        ns = generation_functions()
+        with tempfile.TemporaryDirectory() as directory:
+            config = self.config(directory)
+            output = config["nbest_path"]
+            old = json.loads(ns["decode_signature"](config))
+            old["min_clip_seconds"] = 0.1
+            old["max_clip_seconds"] = 30
+            output.with_suffix(".signature.json").write_text(
+                json.dumps(old, sort_keys=True), encoding="utf-8")
+            ns["check_decode_signature"](config, output, 2)
+            self.assertEqual(output.with_suffix(".signature.json").read_text(encoding="utf-8"),
+                             ns["decode_signature"](config))
+            config["asr_model_id"] = "different-model"
+            with self.assertRaises(SystemExit):
+                ns["check_decode_signature"](config, output, 2)
+
     def test_batch_preserves_order_duplicates_empty_and_uncleaned_text(self):
         ns = generation_functions()
         pools = [[" Hello! ", " Hello! ", "", "MUMMY"] + ["hello"] * 6,

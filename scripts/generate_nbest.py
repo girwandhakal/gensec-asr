@@ -179,8 +179,6 @@ DECODE_SIGNATURE_KEYS = (
     "asr_tokens_per_second",
     "asr_token_margin",
     "sample_rate",
-    "min_clip_seconds",
-    "max_clip_seconds",
 )
 
 
@@ -213,6 +211,21 @@ def check_decode_signature(config: dict, output_path: Path, cached: int) -> None
 
     previous = stamp_path.read_text(encoding="utf-8")
     if previous != current:
+        # Duration bounds select eligible clips but do not change the decoded
+        # text of an eligible clip. Older caches included those bounds in the
+        # signature; retain their expensive ASR work and prune IDs below.
+        try:
+            old_payload = json.loads(previous)
+            new_payload = json.loads(current)
+        except json.JSONDecodeError:
+            old_payload, new_payload = None, None
+        if isinstance(old_payload, dict):
+            for key in ("min_clip_seconds", "max_clip_seconds"):
+                old_payload.pop(key, None)
+        if old_payload == new_payload:
+            stamp_path.write_text(current, encoding="utf-8")
+            print(f"Updated eligibility-only decode signature: {output_path.name}")
+            return
         raise SystemExit(
             f"Decode settings changed since {output_path.name} was generated.\n"
             f"  cached ({cached:,} clips): {previous}\n"

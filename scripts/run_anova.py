@@ -34,6 +34,7 @@ PERMUTATIONS = 10_000
 STUDENTIZED_PERMUTATIONS = 20_000
 SEED = 20260908
 ALPHA = 0.05
+SHARED_CORPORA = ("ENNI", "EllisWeismer", "Rescorla")
 
 
 def load_children(config: dict) -> pd.DataFrame:
@@ -76,7 +77,7 @@ def cell_means(children: pd.DataFrame) -> list[dict]:
     return rows
 
 
-def mixed_model(long: pd.DataFrame) -> dict:
+def mixed_model(long: pd.DataFrame, *, adjust_corpus: bool = False) -> dict:
     """Random intercept per child; fixed effects for group, model, interaction.
 
     This is a joint model for the unbalanced mixed design. Its coefficient
@@ -94,7 +95,8 @@ def mixed_model(long: pd.DataFrame) -> dict:
     frame["model"] = pd.Categorical(frame["model"], categories=["whisper", "gensec"])
 
     fitted = smf.mixedlm(
-        "wer ~ group * model", frame, groups=frame["child_id"]
+        "wer ~ group * model + C(corpus)" if adjust_corpus else "wer ~ group * model",
+        frame, groups=frame["child_id"]
     ).fit(reml=False)
 
     terms = {}
@@ -107,6 +109,46 @@ def mixed_model(long: pd.DataFrame) -> dict:
         }
 
     return {"terms": terms, "summary": str(fitted.summary())}
+
+
+def corpus_matched_analysis(children: pd.DataFrame) -> dict:
+    matched = children[children["corpus"].isin(SHARED_CORPORA)].copy()
+    table = matched.groupby(["corpus", "group"]).size().unstack(fill_value=0)
+    if (matched.empty or not set(SHARED_CORPORA).issubset(table.index)
+            or not {"LT", "TD"}.issubset(table.columns)
+            or (table[["LT", "TD"]] == 0).any().any()):
+        return {"status": "insufficient_children_in_shared_corpora", "corpora": list(SHARED_CORPORA)}
+    result = {
+        "status": "ok",
+        "corpora": list(SHARED_CORPORA),
+        "children": int(len(matched)),
+        "composition": {corpus: {group: int(count) for group, count in counts.items()}
+                        for corpus, counts in table.to_dict("index").items()},
+        "cell_means": cell_means(matched),
+        "mixed_model": mixed_model(to_long(matched), adjust_corpus=True),
+    }
+    # Permute group labels only within corpus. This preserves the observed
+    # recording/task composition under the null.
+    rng = np.random.default_rng(SEED)
+    strata = []
+    for _, frame in matched.groupby("corpus"):
+        values = frame["improvement"].to_numpy()
+        labels = frame["group"].to_numpy()
+        strata.append((values, labels, (labels == "LT").sum()))
+    def contrast(parts):
+        differences = [float(values[labels == "TD"].mean() - values[labels == "LT"].mean())
+                       for values, labels in parts]
+        return float(np.mean(differences))
+    observed = contrast([(values, labels) for values, labels, _ in strata])
+    extreme = 0
+    for _ in range(PERMUTATIONS):
+        shuffled = [(values, np.where(rng.permutation(len(values)) < n_lt, "LT", "TD"))
+                    for values, _, n_lt in strata]
+        extreme += abs(contrast(shuffled)) >= abs(observed)
+    result["within_corpus_permutation"] = {
+        "difference": observed, "p": (extreme + 1) / (PERMUTATIONS + 1),
+    }
+    return result
 
 
 def permutation_interaction(children: pd.DataFrame, rng: np.random.Generator) -> dict:
@@ -305,7 +347,70 @@ def render(children: pd.DataFrame, results: dict) -> str:
 
     lines.append("  These paired tests do not test whether the group gains differ.")
 
+    overall = results["overall_improvement"]
+    lines += ["", "Overall paired child-level improvement", "-" * 72,
+              f"  mean improvement: {overall['mean'] * 100:+.2f}pp; "
+              f"paired t p = {overall['p']:.4g} (n={overall['n']})"]
+
+    matched = results["corpus_matched"]
+    lines += ["", "Corpus-matched sensitivity analysis", "-" * 72,
+              "  Shared corpora: " + ", ".join(SHARED_CORPORA)]
+    if matched["status"] != "ok":
+        lines.append("  Insufficient LT and TD children in every shared corpus.")
+    else:
+        lines.append(f"  Children: {matched['children']}")
+        for corpus, groups in matched["composition"].items():
+            lines.append(f"  {corpus}: LT {groups['LT']}, TD {groups['TD']}")
+        for name, term in matched["mixed_model"]["terms"].items():
+            if "model" in name:
+                lines.append(f"  {name}: b={term['coefficient']:+.4f}, p={term['p']:.4f}")
+        perm = matched["within_corpus_permutation"]
+        lines.append(f"  Equal-corpus mean TD-LT improvement difference: "
+                     f"{perm['difference'] * 100:+.2f}pp, within-corpus permutation p={perm['p']:.4f}")
+        lines.append("  The model includes corpus fixed effects and a child random intercept.")
+
     return "\n".join(lines) + "\n"
+
+
+def results_markdown(children: pd.DataFrame, results: dict, config: dict) -> str:
+    """Create a current-results document only from this run's scored outputs."""
+    metrics = json.loads((config["results_dir"] / "metrics.json").read_text(encoding="utf-8"))
+    baseline = metrics["whisper_1best"]
+    corrected = metrics["gensec_zero_shot"]
+    interaction = results["mixed_model"]["terms"]["group[T.TD]:model[T.gensec]"]
+    lines = [
+        "# Results — Flan-T5 child speech correction", "",
+        "Generated from the current pipeline outputs. Counts and significance refer to this run only.", "",
+        f"Test utterances: {baseline['utterances']:,}. Retained children for child-level analysis: {len(children)}.",
+        f"Whisper 1-best WER: {baseline['wer']:.2%}. Whisper + Flan-T5 WER: {corrected['wer']:.2%}.",
+        "", "## Child-level results", "",
+        "| Group | Children | Whisper WER | Flan WER | Mean improvement |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for row in results["cell_means"]:
+        lines.append(f"| {row['group']} | {row['n']} | {row['whisper']:.2%} | "
+                     f"{row['gensec']:.2%} | {row['improvement'] * 100:+.2f} pp |")
+    overall = results["overall_improvement"]
+    lines += ["", f"Across retained children, mean paired improvement was "
+              f"{overall['mean'] * 100:+.2f} percentage points (paired t p={overall['p']:.4g}).",
+              f"The group-by-model interaction was {interaction['coefficient'] * 100:+.2f} "
+              f"percentage points (mixed-model Wald p={interaction['p']:.4f}). "
+              "Within-group improvements do not establish differential benefit.", "",
+              "## Corpus-matched sensitivity analysis", ""]
+    matched = results["corpus_matched"]
+    if matched["status"] == "ok":
+        term = matched["mixed_model"]["terms"]["group[T.TD]:model[T.gensec]"]
+        perm = matched["within_corpus_permutation"]
+        lines.append(f"Within ENNI, EllisWeismer, and Rescorla ({matched['children']} children), "
+                     f"the corpus-adjusted interaction was {term['coefficient'] * 100:+.2f} "
+                     f"percentage points (Wald p={term['p']:.4f}); the within-corpus "
+                     f"permutation p was {perm['p']:.4f}.")
+    else:
+        lines.append("The shared corpora did not contain both groups in every corpus.")
+    lines += ["", "These observational corpus comparisons cannot isolate developmental group "
+              "from recording and task differences. See `evaluation_results/analysis/anova_report.txt` "
+              "for model terms, diagnostics, and corpus composition.", ""]
+    return "\n".join(lines)
 
 
 def main(config: dict | None = None) -> None:
@@ -320,6 +425,12 @@ def main(config: dict | None = None) -> None:
         "studentized_permutation": studentized_permutation_interaction(children),
         "disagreement": disagreement_check(children),
         "simple_effects": simple_effects(children),
+        "overall_improvement": {
+            "n": int(len(children)),
+            "mean": float(children["improvement"].mean()),
+            "p": float(stats.ttest_1samp(children["improvement"], 0).pvalue),
+        },
+        "corpus_matched": corpus_matched_analysis(children),
     }
 
     report = render(children, results)
@@ -333,9 +444,16 @@ def main(config: dict | None = None) -> None:
     # The full statsmodels summary is useful in the report but noise in JSON.
     metrics = dict(results)
     metrics["mixed_model"] = {"terms": results["mixed_model"]["terms"]}
+    if metrics["corpus_matched"]["status"] == "ok":
+        metrics["corpus_matched"] = dict(metrics["corpus_matched"])
+        metrics["corpus_matched"]["mixed_model"] = {
+            "terms": metrics["corpus_matched"]["mixed_model"]["terms"]}
     (output_dir / "anova_metrics.json").write_text(
         json.dumps(metrics, indent=2), encoding="utf-8"
     )
+    if config.get("update_results_document"):
+        document = results_markdown(children, results, config)
+        (config["config_path"].parent.parent / "RESULTS.md").write_text(document, encoding="utf-8")
 
     print(f"Wrote {output_dir / 'anova_report.txt'}")
     print(f"Wrote {output_dir / 'anova_metrics.json'}")

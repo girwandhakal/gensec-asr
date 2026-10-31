@@ -69,6 +69,7 @@ def stage(number: int, name: str):
 
 def main() -> None:
     config = load_config()
+    config["update_results_document"] = True
 
     if not config["media_dir"].is_dir():
         raise SystemExit(f"Media directory not found: {config['media_dir']}")
@@ -105,7 +106,7 @@ def main() -> None:
         evaluate.main(config)
 
     with stage(6, "CHILD-LEVEL MIXED-MODEL ANALYSIS"):
-        run_analysis.main()
+        run_analysis.main(config)
 
     with stage(7, "GENERATE PUBLICATION FIGURES"):
         generate_figures.main(config)

@@ -18,7 +18,21 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import load_config
+from config import clip_seconds, load_config
+
+
+def alignment_reason(utterance_id: str, reference: str, config: dict) -> str:
+    seconds = clip_seconds(utterance_id)
+    if seconds is None:
+        return "unparseable_clip_interval"
+    if seconds < config.get("min_clip_seconds", 0.5):
+        return "point_bullet_timestamp" if seconds <= 0.1 + 1e-9 else "clip_too_short"
+    words = len(reference.split())
+    if words / seconds > config.get("max_reference_words_per_second", 4.0):
+        return "impossible_speech_rate"
+    if seconds > config.get("long_single_word_seconds", 5.0) and words <= 1:
+        return "long_clip_short_reference"
+    return ""
 
 
 def collect_hypotheses(entry: dict, limit: int) -> list[str]:
@@ -40,6 +54,9 @@ def collect_hypotheses(entry: dict, limit: int) -> list[str]:
 def build_dataset(config: dict) -> tuple[list[dict], list[dict]]:
     nbest = json.loads(config["nbest_path"].read_text(encoding="utf-8"))
     references = json.loads(config["reference_map_path"].read_text(encoding="utf-8"))
+    upstream_drops_path = config["reference_map_path"].parent / "reference_alignment_drops.json"
+    upstream_drops = (json.loads(upstream_drops_path.read_text(encoding="utf-8"))
+                      if upstream_drops_path.is_file() else {})
 
     kept: list[dict] = []
     dropped: list[dict] = []
@@ -49,9 +66,11 @@ def build_dataset(config: dict) -> tuple[list[dict], list[dict]]:
         reference = references.get(utterance_id) or ""
 
         if utterance_id not in references:
-            reason = "no_reference_transcript"
+            reason = upstream_drops.get(utterance_id, {}).get("reason", "no_reference_transcript")
         elif not reference:
             reason = "empty_reference"
+        elif (alignment_issue := alignment_reason(utterance_id, reference, config)):
+            reason = alignment_issue
         elif len(hypotheses) < config["min_hypotheses"]:
             reason = "fewer_than_min_unique_hypotheses"
         else:
@@ -61,6 +80,8 @@ def build_dataset(config: dict) -> tuple[list[dict], list[dict]]:
         dropped.append({
             "id": utterance_id,
             "reason": reason,
+            "group": upstream_drops.get(utterance_id, {}).get("group", ""),
+            "corpus": upstream_drops.get(utterance_id, {}).get("corpus", ""),
             "unique_hypotheses": len(hypotheses),
             "reference": reference,
         })
@@ -91,6 +112,19 @@ def main(config: dict | None = None) -> None:
     print(f"Dropped:         {len(dropped):,}")
     for reason, count in Counter(d["reason"] for d in dropped).most_common():
         print(f"  {reason}: {count:,}")
+
+    metadata = json.loads(config["metadata_path"].read_text(encoding="utf-8"))
+    audit = Counter()
+    for item in dropped:
+        meta = metadata.get(item["id"], {})
+        audit[(item.get("group") or meta.get("group", "unknown"),
+               item.get("corpus") or meta.get("corpus", "unknown"), item["reason"])] += 1
+    audit_path = config["data_dir"] / "alignment_exclusions.json"
+    audit_path.write_text(json.dumps([
+        {"group": group, "corpus": corpus, "reason": reason, "count": count}
+        for (group, corpus, reason), count in sorted(audit.items())
+    ], indent=2), encoding="utf-8")
+    print(f"Wrote {audit_path}")
 
     # How much disagreement the corrector actually gets to work with.
     sizes = Counter(len(example["input"]) for example in kept)

@@ -27,6 +27,7 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
+    EarlyStoppingCallback,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     TrainerCallback,
@@ -119,7 +120,8 @@ def load_examples(config: dict) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def make_splits(examples: pd.DataFrame, config: dict, metadata: dict, *, save=True):
+def make_splits(examples: pd.DataFrame, config: dict, metadata: dict, *, save=True,
+                stratify_corpus=False):
     """Keep all recordings of each child together, stratified by LT/TD."""
     positions: dict[str, dict[str, list[int]]] = {}
     for position, utterance_id in enumerate(examples["id"]):
@@ -127,23 +129,34 @@ def make_splits(examples: pd.DataFrame, config: dict, metadata: dict, *, save=Tr
         if not child:
             raise ValueError(f"Missing child ID for {utterance_id}")
         group = metadata[utterance_id]["group"]
+        if stratify_corpus:
+            group = (group, metadata[utterance_id].get("corpus", "unknown"))
         positions.setdefault(group, {}).setdefault(child, []).append(position)
 
     test_positions: list[int] = []
     for group in sorted(positions):
         children = positions[group]
-        total = sum(len(rows) for rows in children.values())
-        target = config["test_size"] * total
         order = sorted(children)
         random.Random(f"{config['seed']}:{group}").shuffle(order)
-
-        # Keep whole children and stop on the closer side of the requested utterance count.
         taken = 0
         held_out = 0
-        for child in order:
+        total = sum(len(rows) for rows in children.values())
+        if stratify_corpus:
+            # Validation is sampled by child, within each group/corpus stratum.
+            count = min(len(order) - 1, max(1, round(len(order) * config["test_size"])))
+            selected = order[:count] if len(order) > 1 else []
+        else:
+            target = config["test_size"] * total
+            selected = []
+            for child in order:
+                size = len(children[child])
+                if taken and abs(taken + size - target) > abs(taken - target):
+                    break
+                selected.append(child)
+                taken += size
+            taken = 0
+        for child in selected:
             size = len(children[child])
-            if taken and abs(taken + size - target) > abs(taken - target):
-                break
             test_positions.extend(children[child])
             taken += size
             held_out += 1
@@ -215,19 +228,30 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config, metadata):
         return model_inputs
 
     training, validation = make_splits(
-        train_frame, {**config, "test_size": config["eval_size"]}, metadata, save=False
+        train_frame, {**config, "test_size": config["eval_size"]}, metadata,
+        save=False, stratify_corpus=True
     )
+    if validation.empty:
+        raise ValueError("No validation children available after group/corpus stratification")
     split = {}
     for name, frame in [("train", training), ("test", validation)]:
         dataset = Dataset.from_pandas(frame[["input", "output"]], preserve_index=False)
         split[name] = dataset.map(tokenize, batched=True, remove_columns=dataset.column_names)
     print(f"Fine-tune on {len(split['train']):,} | validate on {len(split['test']):,}")
 
-    # Leftovers from earlier runs that saved per-epoch checkpoints.
-    for stale in Path(config["work_dir"]).glob("checkpoint-*"):
-        if stale.is_dir():
-            print(f"Removing stale Trainer checkpoint: {stale}")
-            shutil.rmtree(stale, ignore_errors=True)
+    work_dir = Path(config["work_dir"])
+    work_dir.mkdir(parents=True, exist_ok=True)
+    marker = work_dir / "trainer_signature.txt"
+    current_signature = training_signature(config)
+    checkpoints = sorted(work_dir.glob("checkpoint-*"),
+                         key=lambda path: int(path.name.split("-")[-1]))
+    signature_mismatch = (marker.read_text(encoding="utf-8") != current_signature
+                          if marker.exists() else bool(checkpoints))
+    if signature_mismatch:
+        for stale in checkpoints:
+            shutil.rmtree(stale)
+        checkpoints = []
+    marker.write_text(current_signature, encoding="utf-8")
 
     model = AutoModelForSeq2SeqLM.from_pretrained(config["gensec_model_id"])
     arguments = Seq2SeqTrainingArguments(
@@ -236,13 +260,14 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config, metadata):
         per_device_eval_batch_size=config["eval_batch_size"],
         learning_rate=config["learning_rate"],
         num_train_epochs=config["num_train_epochs"],
-        # No per-epoch Trainer checkpoints. trainer.train() below never resumes,
-        # so they were dead weight: each one is weights + AdamW state (~3 GB for
-        # flan-t5-base), and HF writes the new one before deleting the old, so
-        # even save_total_limit=1 held two at once and filled work_directory to
-        # 7.5 GB. The only artifact that matters is final_checkpoint.
-        save_strategy="no",
+        save_strategy="epoch",
         eval_strategy="epoch",
+        save_total_limit=2,
+        load_best_model_at_end=True,
+        metric_for_best_model="eval_loss",
+        greater_is_better=False,
+        warmup_ratio=0.1,
+        lr_scheduler_type="cosine",
         logging_steps=100,
         # NOT fp16. T5 was pretrained in bfloat16 and overflows fp16's range:
         # the gradient scaler then skips every optimizer step, so the loss logs
@@ -259,9 +284,9 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config, metadata):
         train_dataset=split["train"],
         eval_dataset=split["test"],
         data_collator=DataCollatorForSeq2Seq(tokenizer, model=model),
-        callbacks=[AbortOnDeadTraining()],
+        callbacks=[AbortOnDeadTraining(), EarlyStoppingCallback(early_stopping_patience=2)],
     )
-    trainer.train()
+    trainer.train(resume_from_checkpoint=str(checkpoints[-1]) if checkpoints else None)
 
     final_checkpoint = config["work_dir"] / "final_checkpoint"
     trainer.save_model(str(final_checkpoint))
@@ -271,6 +296,9 @@ def fine_tune(train_frame: pd.DataFrame, tokenizer, config, metadata):
         training_signature(config), encoding="utf-8"
     )
     print(f"Saved model to {final_checkpoint}")
+
+    for checkpoint in work_dir.glob("checkpoint-*"):
+        shutil.rmtree(checkpoint)
 
     return model
 
@@ -379,16 +407,6 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
             batch, built, predictions
         ):
             cleaned_pred = collapse_whitespace(prediction)
-            words = cleaned_pred.split()
-
-            # Per-utterance physical speech limit guard: a clip cannot contain more words
-            # than physically possible at maximum child speech rate (~4 words/sec).
-            sec = clip_seconds(example["id"])
-            if sec is not None and sec > 0:
-                max_words = max(2, math.ceil(sec * 4.0) + 1)
-                if len(words) > max_words:
-                    words = words[:max_words]
-                    cleaned_pred = " ".join(words)
 
             one_best = example["input"][0] if example["input"] else ""
             rows.append({
@@ -445,11 +463,13 @@ def training_signature(config: dict) -> str:
         "methodology_version", "gensec_model_id", "seed", "test_size",
         "eval_size", "num_train_epochs", "learning_rate", "train_batch_size",
         "max_source_length", "max_target_length", "min_hypotheses",
-        "max_hypotheses",
+        "max_hypotheses", "eval_batch_size",
     )
     payload = {key: config[key] for key in keys if key in config}
     # Reject checkpoints trained with an earlier prompt format.
     payload["prompt_format"] = "instruction_hypotheses_v1"
+    payload["validation_scheme"] = "group_corpus_child_count_v1"
+    payload["scheduler"] = "cosine_warmup_0.1_best_eval_loss_early_stop_2"
     payload["processed_sha256"] = config["_processed_sha256"]
     return json.dumps(payload, sort_keys=True, default=str)
 
@@ -459,6 +479,7 @@ def inference_signature(config: dict, mode: str, train_rows: int, test_rows: int
     payload = {key: config[key] for key in INFERENCE_SIGNATURE_KEYS if key in config}
     payload["mode"] = mode
     payload["training_signature"] = training_signature(config)
+    payload["prediction_format"] = "raw_model_output_v2"
     payload["train_rows"] = train_rows
     payload["test_rows"] = test_rows
     return json.dumps(payload, sort_keys=True, default=str)
