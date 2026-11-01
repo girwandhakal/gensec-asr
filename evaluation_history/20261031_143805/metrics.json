@@ -1,0 +1,609 @@
+{
+  "whisper_1best": {
+    "substitutions": 23665,
+    "deletions": 10219,
+    "insertions": 6704,
+    "reference_words": 91988,
+    "utterances": 17959,
+    "total_errors": 40588,
+    "wer": 0.4412314649736922,
+    "exact_match_rate": 0.17200289548415837
+  },
+  "gensec_zero_shot": {
+    "substitutions": 20996,
+    "deletions": 8126,
+    "insertions": 6900,
+    "reference_words": 91988,
+    "utterances": 17959,
+    "total_errors": 36022,
+    "wer": 0.3915945558116276,
+    "exact_match_rate": 0.2886018152458377
+  },
+  "oracle_nbest": {
+    "substitutions": 20175,
+    "deletions": 9155,
+    "insertions": 4456,
+    "reference_words": 91988,
+    "utterances": 17959,
+    "total_errors": 33786,
+    "wer": 0.36728703743966606,
+    "exact_match_rate": 0.22278523303079237
+  },
+  "oracle_compositional": {
+    "substitutions": 0,
+    "deletions": 27921,
+    "insertions": 0,
+    "reference_words": 91988,
+    "utterances": 17959,
+    "total_errors": 27921,
+    "wer": 0.3035287211375397,
+    "exact_match_rate": 0.0
+  },
+  "significance": {
+    "overall": {
+      "utterances": 17959,
+      "reduction": 0.1124963043264019,
+      "ci_low": 0.1043452773503334,
+      "ci_high": 0.12097577992624339
+    },
+    "LT": {
+      "utterances": 1838,
+      "reduction": 0.11848725856192177,
+      "ci_low": 0.09635203664321937,
+      "ci_high": 0.14121699196326062
+    },
+    "TD": {
+      "utterances": 16121,
+      "reduction": 0.11142417288755918,
+      "ci_low": 0.10201639966150165,
+      "ci_high": 0.12047075192764797
+    },
+    "TD_minus_LT": {
+      "difference": -0.00706308567436259,
+      "ci_low": -0.030525878598670356,
+      "ci_high": 0.017734577921400582,
+      "p_value": 0.586,
+      "p_below": null,
+      "significant": false
+    }
+  },
+  "by_reference_length": [
+    {
+      "label": "1 word",
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 2114,
+          "deletions": 4,
+          "insertions": 705,
+          "reference_words": 3154,
+          "utterances": 3154,
+          "total_errors": 2823,
+          "wer": 0.8950538998097654,
+          "exact_match_rate": 0.2856689917564997
+        },
+        "gensec_zero_shot": {
+          "substitutions": 2004,
+          "deletions": 0,
+          "insertions": 2349,
+          "reference_words": 3154,
+          "utterances": 3154,
+          "total_errors": 4353,
+          "wer": 1.380152187698161,
+          "exact_match_rate": 0.32561826252377934
+        },
+        "oracle_nbest": {
+          "substitutions": 1883,
+          "deletions": 4,
+          "insertions": 372,
+          "reference_words": 3154,
+          "utterances": 3154,
+          "total_errors": 2259,
+          "wer": 0.7162333544705136,
+          "exact_match_rate": 0.36176284083703236
+        }
+      }
+    },
+    {
+      "label": "2 words",
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 2382,
+          "deletions": 896,
+          "insertions": 564,
+          "reference_words": 4918,
+          "utterances": 2459,
+          "total_errors": 3842,
+          "wer": 0.7812118747458316,
+          "exact_match_rate": 0.1691744611630744
+        },
+        "gensec_zero_shot": {
+          "substitutions": 2349,
+          "deletions": 382,
+          "insertions": 887,
+          "reference_words": 4918,
+          "utterances": 2459,
+          "total_errors": 3618,
+          "wer": 0.7356649044326962,
+          "exact_match_rate": 0.3033753558357056
+        },
+        "oracle_nbest": {
+          "substitutions": 2072,
+          "deletions": 865,
+          "insertions": 305,
+          "reference_words": 4918,
+          "utterances": 2459,
+          "total_errors": 3242,
+          "wer": 0.6592110614070761,
+          "exact_match_rate": 0.2277348515656771
+        }
+      }
+    },
+    {
+      "label": "3-5 words",
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 7287,
+          "deletions": 3233,
+          "insertions": 1937,
+          "reference_words": 22037,
+          "utterances": 5514,
+          "total_errors": 12457,
+          "wer": 0.5652765802967736,
+          "exact_match_rate": 0.14435981138919116
+        },
+        "gensec_zero_shot": {
+          "substitutions": 6758,
+          "deletions": 2093,
+          "insertions": 1583,
+          "reference_words": 22037,
+          "utterances": 5514,
+          "total_errors": 10434,
+          "wer": 0.47347642601080003,
+          "exact_match_rate": 0.2916213275299238
+        },
+        "oracle_nbest": {
+          "substitutions": 6120,
+          "deletions": 3101,
+          "insertions": 1168,
+          "reference_words": 22037,
+          "utterances": 5514,
+          "total_errors": 10389,
+          "wer": 0.47143440577211054,
+          "exact_match_rate": 0.19205658324265507
+        }
+      }
+    },
+    {
+      "label": "6-10 words",
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 8241,
+          "deletions": 4049,
+          "insertions": 2351,
+          "reference_words": 38718,
+          "utterances": 5154,
+          "total_errors": 14641,
+          "wer": 0.37814453225889766,
+          "exact_match_rate": 0.1544431509507179
+        },
+        "gensec_zero_shot": {
+          "substitutions": 6895,
+          "deletions": 3388,
+          "insertions": 1457,
+          "reference_words": 38718,
+          "utterances": 5154,
+          "total_errors": 11740,
+          "wer": 0.30321814143292525,
+          "exact_match_rate": 0.28909584788513776
+        },
+        "oracle_nbest": {
+          "substitutions": 6945,
+          "deletions": 3467,
+          "insertions": 1693,
+          "reference_words": 38718,
+          "utterances": 5154,
+          "total_errors": 12105,
+          "wer": 0.3126452812645281,
+          "exact_match_rate": 0.196546371750097
+        }
+      }
+    },
+    {
+      "label": "11+ words",
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 3641,
+          "deletions": 2037,
+          "insertions": 1147,
+          "reference_words": 23161,
+          "utterances": 1678,
+          "total_errors": 6825,
+          "wer": 0.2946763956651267,
+          "exact_match_rate": 0.10727056019070322
+        },
+        "gensec_zero_shot": {
+          "substitutions": 2990,
+          "deletions": 2263,
+          "insertions": 624,
+          "reference_words": 23161,
+          "utterances": 1678,
+          "total_errors": 5877,
+          "wer": 0.2537455204870256,
+          "exact_match_rate": 0.18593563766388557
+        },
+        "oracle_nbest": {
+          "substitutions": 3155,
+          "deletions": 1718,
+          "insertions": 918,
+          "reference_words": 23161,
+          "utterances": 1678,
+          "total_errors": 5791,
+          "wer": 0.2500323820215017,
+          "exact_match_rate": 0.13587604290822408
+        }
+      }
+    }
+  ],
+  "by_corpus": [
+    {
+      "corpus": "Braunwald",
+      "children": 1,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 1296,
+          "deletions": 502,
+          "insertions": 445,
+          "reference_words": 2741,
+          "utterances": 722,
+          "total_errors": 2243,
+          "wer": 0.8183144837650492,
+          "exact_match_rate": 0.10249307479224377
+        },
+        "gensec_zero_shot": {
+          "substitutions": 1388,
+          "deletions": 352,
+          "insertions": 627,
+          "reference_words": 2741,
+          "utterances": 722,
+          "total_errors": 2367,
+          "wer": 0.8635534476468442,
+          "exact_match_rate": 0.11634349030470914
+        },
+        "oracle_nbest": {
+          "substitutions": 1135,
+          "deletions": 455,
+          "insertions": 249,
+          "reference_words": 2741,
+          "utterances": 722,
+          "total_errors": 1839,
+          "wer": 0.6709230207953302,
+          "exact_match_rate": 0.14958448753462603
+        }
+      }
+    },
+    {
+      "corpus": "EHS",
+      "children": 8,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 1742,
+          "deletions": 953,
+          "insertions": 426,
+          "reference_words": 4142,
+          "utterances": 1106,
+          "total_errors": 3121,
+          "wer": 0.7535007242877837,
+          "exact_match_rate": 0.1057866184448463
+        },
+        "gensec_zero_shot": {
+          "substitutions": 1908,
+          "deletions": 665,
+          "insertions": 632,
+          "reference_words": 4142,
+          "utterances": 1106,
+          "total_errors": 3205,
+          "wer": 0.7737807822308064,
+          "exact_match_rate": 0.12025316455696203
+        },
+        "oracle_nbest": {
+          "substitutions": 1514,
+          "deletions": 933,
+          "insertions": 222,
+          "reference_words": 4142,
+          "utterances": 1106,
+          "total_errors": 2669,
+          "wer": 0.6443746982134234,
+          "exact_match_rate": 0.13471971066907776
+        }
+      }
+    },
+    {
+      "corpus": "ENNI",
+      "children": 57,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 5553,
+          "deletions": 2392,
+          "insertions": 1673,
+          "reference_words": 31562,
+          "utterances": 4299,
+          "total_errors": 9618,
+          "wer": 0.30473354033331224,
+          "exact_match_rate": 0.1779483600837404
+        },
+        "gensec_zero_shot": {
+          "substitutions": 3988,
+          "deletions": 2104,
+          "insertions": 943,
+          "reference_words": 31562,
+          "utterances": 4299,
+          "total_errors": 7035,
+          "wer": 0.22289462011279387,
+          "exact_match_rate": 0.3312398232147011
+        },
+        "oracle_nbest": {
+          "substitutions": 4460,
+          "deletions": 2068,
+          "insertions": 1230,
+          "reference_words": 31562,
+          "utterances": 4299,
+          "total_errors": 7758,
+          "wer": 0.2458019136936823,
+          "exact_match_rate": 0.23075133752035357
+        }
+      }
+    },
+    {
+      "corpus": "EllisWeismer",
+      "children": 18,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 1545,
+          "deletions": 508,
+          "insertions": 524,
+          "reference_words": 5125,
+          "utterances": 729,
+          "total_errors": 2577,
+          "wer": 0.5028292682926829,
+          "exact_match_rate": 0.11385459533607682
+        },
+        "gensec_zero_shot": {
+          "substitutions": 1454,
+          "deletions": 584,
+          "insertions": 425,
+          "reference_words": 5125,
+          "utterances": 729,
+          "total_errors": 2463,
+          "wer": 0.4805853658536585,
+          "exact_match_rate": 0.1467764060356653
+        },
+        "oracle_nbest": {
+          "substitutions": 1326,
+          "deletions": 483,
+          "insertions": 371,
+          "reference_words": 5125,
+          "utterances": 729,
+          "total_errors": 2180,
+          "wer": 0.4253658536585366,
+          "exact_match_rate": 0.13854595336076816
+        }
+      }
+    },
+    {
+      "corpus": "Gelman",
+      "children": 2,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 335,
+          "deletions": 276,
+          "insertions": 40,
+          "reference_words": 732,
+          "utterances": 163,
+          "total_errors": 651,
+          "wer": 0.889344262295082,
+          "exact_match_rate": 0.012269938650306749
+        },
+        "gensec_zero_shot": {
+          "substitutions": 387,
+          "deletions": 207,
+          "insertions": 88,
+          "reference_words": 732,
+          "utterances": 163,
+          "total_errors": 682,
+          "wer": 0.9316939890710383,
+          "exact_match_rate": 0.006134969325153374
+        },
+        "oracle_nbest": {
+          "substitutions": 288,
+          "deletions": 294,
+          "insertions": 10,
+          "reference_words": 732,
+          "utterances": 163,
+          "total_errors": 592,
+          "wer": 0.8087431693989071,
+          "exact_match_rate": 0.03067484662576687
+        }
+      }
+    },
+    {
+      "corpus": "HSLLD",
+      "children": 11,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 2254,
+          "deletions": 1229,
+          "insertions": 550,
+          "reference_words": 5330,
+          "utterances": 1280,
+          "total_errors": 4033,
+          "wer": 0.7566604127579737,
+          "exact_match_rate": 0.06484375
+        },
+        "gensec_zero_shot": {
+          "substitutions": 2431,
+          "deletions": 883,
+          "insertions": 783,
+          "reference_words": 5330,
+          "utterances": 1280,
+          "total_errors": 4097,
+          "wer": 0.7686679174484052,
+          "exact_match_rate": 0.08125
+        },
+        "oracle_nbest": {
+          "substitutions": 2041,
+          "deletions": 1103,
+          "insertions": 301,
+          "reference_words": 5330,
+          "utterances": 1280,
+          "total_errors": 3445,
+          "wer": 0.6463414634146342,
+          "exact_match_rate": 0.10234375
+        }
+      }
+    },
+    {
+      "corpus": "Nippold",
+      "children": 2,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 369,
+          "deletions": 339,
+          "insertions": 46,
+          "reference_words": 884,
+          "utterances": 128,
+          "total_errors": 754,
+          "wer": 0.8529411764705882,
+          "exact_match_rate": 0.03125
+        },
+        "gensec_zero_shot": {
+          "substitutions": 403,
+          "deletions": 292,
+          "insertions": 81,
+          "reference_words": 884,
+          "utterances": 128,
+          "total_errors": 776,
+          "wer": 0.8778280542986425,
+          "exact_match_rate": 0.046875
+        },
+        "oracle_nbest": {
+          "substitutions": 367,
+          "deletions": 289,
+          "insertions": 33,
+          "reference_words": 884,
+          "utterances": 128,
+          "total_errors": 689,
+          "wer": 0.7794117647058824,
+          "exact_match_rate": 0.046875
+        }
+      }
+    },
+    {
+      "corpus": "OCSC",
+      "children": 23,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 9147,
+          "deletions": 3325,
+          "insertions": 2507,
+          "reference_words": 38027,
+          "utterances": 8848,
+          "total_errors": 14979,
+          "wer": 0.3939043311331422,
+          "exact_match_rate": 0.21552893309222423
+        },
+        "gensec_zero_shot": {
+          "substitutions": 7590,
+          "deletions": 2516,
+          "insertions": 2838,
+          "reference_words": 38027,
+          "utterances": 8848,
+          "total_errors": 12944,
+          "wer": 0.34038972309148763,
+          "exact_match_rate": 0.3664104882459313
+        },
+        "oracle_nbest": {
+          "substitutions": 7765,
+          "deletions": 2885,
+          "insertions": 1702,
+          "reference_words": 38027,
+          "utterances": 8848,
+          "total_errors": 12352,
+          "wer": 0.32482183711573354,
+          "exact_match_rate": 0.2741862567811935
+        }
+      }
+    },
+    {
+      "corpus": "POLER",
+      "children": 2,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 34,
+          "deletions": 15,
+          "insertions": 66,
+          "reference_words": 305,
+          "utterances": 37,
+          "total_errors": 115,
+          "wer": 0.3770491803278688,
+          "exact_match_rate": 0.21621621621621623
+        },
+        "gensec_zero_shot": {
+          "substitutions": 28,
+          "deletions": 14,
+          "insertions": 55,
+          "reference_words": 305,
+          "utterances": 37,
+          "total_errors": 97,
+          "wer": 0.3180327868852459,
+          "exact_match_rate": 0.40540540540540543
+        },
+        "oracle_nbest": {
+          "substitutions": 25,
+          "deletions": 15,
+          "insertions": 60,
+          "reference_words": 305,
+          "utterances": 37,
+          "total_errors": 100,
+          "wer": 0.32786885245901637,
+          "exact_match_rate": 0.2702702702702703
+        }
+      }
+    },
+    {
+      "corpus": "Rescorla",
+      "children": 5,
+      "systems": {
+        "whisper_1best": {
+          "substitutions": 1390,
+          "deletions": 680,
+          "insertions": 427,
+          "reference_words": 3140,
+          "utterances": 647,
+          "total_errors": 2497,
+          "wer": 0.7952229299363057,
+          "exact_match_rate": 0.07109737248840804
+        },
+        "gensec_zero_shot": {
+          "substitutions": 1419,
+          "deletions": 509,
+          "insertions": 428,
+          "reference_words": 3140,
+          "utterances": 647,
+          "total_errors": 2356,
+          "wer": 0.7503184713375797,
+          "exact_match_rate": 0.1035548686244204
+        },
+        "oracle_nbest": {
+          "substitutions": 1254,
+          "deletions": 630,
+          "insertions": 278,
+          "reference_words": 3140,
+          "utterances": 647,
+          "total_errors": 2162,
+          "wer": 0.6885350318471337,
+          "exact_match_rate": 0.11282843894899536
+        }
+      }
+    }
+  ]
+}
