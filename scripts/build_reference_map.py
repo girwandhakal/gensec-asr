@@ -3,27 +3,13 @@ from __future__ import annotations
 import csv
 import json
 import os
+import sys
 from collections import Counter
 from pathlib import Path
 
-
-def alignment_reason(utterance_id: str, reference: str, config: dict) -> str:
-    """Apply the same interval checks before scheduling expensive ASR."""
-    parts = utterance_id.split("_")
-    try:
-        seconds = (int(parts[-2]) - int(parts[-3])) / 1000
-    except (IndexError, ValueError):
-        return "unparseable_clip_interval"
-    if seconds <= 0:
-        return "unparseable_clip_interval"
-    if seconds < config.get("min_clip_seconds", 0.5):
-        return "point_bullet_timestamp" if seconds <= 0.1 + 1e-9 else "clip_too_short"
-    words = len(reference.split())
-    if words / seconds > config.get("max_reference_words_per_second", 4.0):
-        return "impossible_speech_rate"
-    if seconds > config.get("long_single_word_seconds", 5.0) and words <= 1:
-        return "long_clip_short_reference"
-    return ""
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from audio_filter import audio_filter
+from config import load_config
 
 REQUIRED_COLUMNS = {"utterance_id", "utterance", "audio_path", "raw_utterance",
                     "corpus", "group", "child_id"}
@@ -70,7 +56,7 @@ def build_reference_map(config: dict) -> tuple[dict[str, str], dict[str, dict]]:
                 directories[relative.parent] = files
             if relative.stem != uid or not directories[relative.parent].get(relative.name, 0):
                 raise ValueError(f"Missing audio or ID/path mismatch on report row {line}: {relative}")
-            issue = alignment_reason(uid, reference, config)
+            issue = audio_filter(uid, reference, config)
             if issue:
                 exclusions[issue] += 1
                 alignment_audit[(row["group"], row["corpus"], issue)] += 1
@@ -98,7 +84,6 @@ def build_reference_map(config: dict) -> tuple[dict[str, str], dict[str, dict]]:
 
 def main(config: dict | None = None) -> None:
     if config is None:
-        from config import load_config
         config = load_config()
     references, metadata = build_reference_map(config)
     config["reference_map_path"].parent.mkdir(parents=True, exist_ok=True)

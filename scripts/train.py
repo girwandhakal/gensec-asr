@@ -91,14 +91,17 @@ def build_icl_prompt(hypotheses, demonstrations, tokenizer, config):
         return len(tokenizer(text, add_special_tokens=True)["input_ids"])
 
     prompt = render()
-    while token_count(prompt) > config["max_source_length"] and demos:
+    tokens = token_count(prompt)
+    while tokens > config["max_source_length"] and demos:
         demos.pop()
         prompt = render()
-    while token_count(prompt) > config["max_source_length"] and len(hyps) > config["min_hypotheses"]:
+        tokens = token_count(prompt)
+    while tokens > config["max_source_length"] and len(hyps) > config["min_hypotheses"]:
         hyps.pop()
         prompt = render()
+        tokens = token_count(prompt)
 
-    return prompt, len(demos), len(hyps), token_count(prompt)
+    return prompt, len(demos), len(hyps), tokens
 
 
 def load_examples(config: dict) -> pd.DataFrame:
@@ -447,6 +450,7 @@ INFERENCE_SIGNATURE_KEYS = (
     "generation_length_slack",
     "generation_tokens_per_second",
     "generation_min_tokens",
+    "generation_batch_size",
     "few_shot_examples",
     "icl_demo_hypotheses",
 )

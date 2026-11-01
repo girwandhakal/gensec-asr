@@ -1,4 +1,4 @@
-"""The import and dataset boundaries use the same interval rules."""
+"""The shared audio filter returns the expected exclusions."""
 
 import ast
 from pathlib import Path
@@ -16,14 +16,13 @@ def load_function(path, name, namespace):
 
 
 class AlignmentTests(unittest.TestCase):
-    def test_import_and_dataset_agree_on_reasons(self):
-        from_import = load_function(ROOT / "scripts/build_reference_map.py",
-                                    "alignment_reason", {})
+    def test_audio_filter_reasons(self):
         def seconds(uid):
             parts = uid.split("_")
             return (int(parts[-2]) - int(parts[-3])) / 1000
-        from_dataset = load_function(ROOT / "scripts/build_gensec_dataset.py",
-                                     "alignment_reason", {"clip_seconds": seconds})
+
+        audio_filter = load_function(ROOT / "scripts/audio_filter.py", "audio_filter",
+                                     {"clip_seconds": seconds})
         config = dict(min_clip_seconds=0.5, max_reference_words_per_second=4,
                       long_single_word_seconds=5)
         for uid, reference, expected in [
@@ -34,8 +33,7 @@ class AlignmentTests(unittest.TestCase):
             ("abcd_0_1000_1", "hello there", ""),
         ]:
             with self.subTest(uid=uid, reference=reference):
-                self.assertEqual(from_import(uid, reference, config), expected)
-                self.assertEqual(from_dataset(uid, reference, config), expected)
+                self.assertEqual(audio_filter(uid, reference, config), expected)
 
 
 if __name__ == "__main__":

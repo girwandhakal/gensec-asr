@@ -145,7 +145,7 @@ class HandoffTests(unittest.TestCase):
             uid = "abcd_0_1000_1"
             nbest.write_text(json.dumps({uid: {"1best_text": "mummy", "nbest": []}}))
             references.write_text(json.dumps({uid: "Mummy  snowman"}))
-            namespace["alignment_reason"] = lambda uid, reference, config: ""
+            namespace["audio_filter"] = lambda uid, reference, config: ""
             kept, dropped = namespace["build_dataset"]({"nbest_path": nbest,
                 "reference_map_path": references, "max_hypotheses": 5, "min_hypotheses": 1})
             self.assertEqual(kept[0]["output"], "Mummy  snowman")

@@ -178,6 +178,7 @@ DECODE_SIGNATURE_KEYS = (
     "num_return_sequences",
     "asr_tokens_per_second",
     "asr_token_margin",
+    "asr_batch_size",
     "sample_rate",
 )
 

@@ -18,21 +18,8 @@ from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import clip_seconds, load_config
-
-
-def alignment_reason(utterance_id: str, reference: str, config: dict) -> str:
-    seconds = clip_seconds(utterance_id)
-    if seconds is None:
-        return "unparseable_clip_interval"
-    if seconds < config.get("min_clip_seconds", 0.5):
-        return "point_bullet_timestamp" if seconds <= 0.1 + 1e-9 else "clip_too_short"
-    words = len(reference.split())
-    if words / seconds > config.get("max_reference_words_per_second", 4.0):
-        return "impossible_speech_rate"
-    if seconds > config.get("long_single_word_seconds", 5.0) and words <= 1:
-        return "long_clip_short_reference"
-    return ""
+from audio_filter import audio_filter
+from config import load_config
 
 
 def collect_hypotheses(entry: dict, limit: int) -> list[str]:
@@ -69,7 +56,7 @@ def build_dataset(config: dict) -> tuple[list[dict], list[dict]]:
             reason = upstream_drops.get(utterance_id, {}).get("reason", "no_reference_transcript")
         elif not reference:
             reason = "empty_reference"
-        elif (alignment_issue := alignment_reason(utterance_id, reference, config)):
+        elif (alignment_issue := audio_filter(utterance_id, reference, config)):
             reason = alignment_issue
         elif len(hypotheses) < config["min_hypotheses"]:
             reason = "fewer_than_min_unique_hypotheses"
