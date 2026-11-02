@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **2026-11-01** — **Standardize FLAN-T5 generation to pure Seq2Seq defaults.**
+  - **Removed audio-duration output token clamping (`generation_cap`):** Eliminated duration-based token limiting (`clip_seconds * 8`) and hypothesis slack multipliers (`generation_length_slack: 1.5`, `generation_min_tokens: 6`) during inference. FLAN-T5 now generates up to standard `max_target_length: 128` using natural end-of-sequence (`</s>`) termination.
+  - **Disabled decoding repetition penalties:** Set `no_repeat_ngram_size: 0` and `repetition_penalty: 1.0` by default. This eliminates artificial suppression of genuine child speech disfluencies (e.g., emphatic and developmental repetitions like "no no no" or "and and and").
+  - **Why:** Eliminates inadmissible audio-duration modality leakage into the text-only corrector, prevents an unfair evaluation double standard against Whisper, and aligns inference with standard, reproducible Hugging Face Seq2Seq generation practices.
+  - **Updated methodology version:** Advanced to `child_split_v6_standard_seq2seq` to invalidate previous predictions generated under the ad-hoc token cap.
+
 - **2026-11-01** — Exclude target-child utterances with at least 100 ms of
   timestamp overlap with a non-target CHAT speaker labeled as an adult before
   MLU, dataset capping, balancing, and GenSec train/validation/test splitting.

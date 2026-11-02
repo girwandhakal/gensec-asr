@@ -1,6 +1,6 @@
 seed: 42
 # Cache version
-methodology_version: child_split_v5_alignment_raw
+methodology_version: child_split_v6_standard_seq2seq
 
 # Upstream media and references
 hpc_media_dir: /bighome/gdhakal/child_asr/data/media
@@ -47,14 +47,10 @@ eval_batch_size: 16
 generation_batch_size: 4  # Beam-search batch size
 num_beams: 8
 
-# Repetition control
-no_repeat_ngram_size: 3  # Disabled at 0
-repetition_penalty: 1.2  # Disabled at 1.0
-generation_length_slack: 1.5  # Longest-hypothesis length multiplier
+# Generation controls (standard Hugging Face Seq2Seq defaults)
+no_repeat_ngram_size: 0  # 0 = disabled (standard HF default)
+repetition_penalty: 1.0  # 1.0 = disabled (standard HF default)
 
-# Audio-duration output cap
-generation_tokens_per_second: 8
-generation_min_tokens: 6  # Minimum output tokens
 # Child splits stratified by LT/TD
 test_size: 0.2
 eval_size: 0.10  # Validation fraction of children, stratified by group and corpus

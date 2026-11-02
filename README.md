@@ -112,9 +112,9 @@ them (1%). A stage that damages 1% of correct human transcripts cannot pay for
 itself at a 0.34% intervention rate, so it was deleted rather than tuned.
 
 Current evaluation scores the raw FLAN text after whitespace cleanup. The
-decoder still uses token-length limits and the configured repetition controls;
-it does not truncate generated words after decoding. Whisper 1-best is scored
-with the same text normalization and without a duration word cap.
+decoder uses standard Hugging Face Seq2Seq generation up to `max_target_length`
+without duration-based audio clamping or n-gram repetition bans that would penalize
+child speech disfluencies. Whisper 1-best is scored with the same text normalization.
 
 ## The data
 

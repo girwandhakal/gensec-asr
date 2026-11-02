@@ -318,39 +318,6 @@ def pick_demonstrations(mode: str, utterance_id: str, pool: list[dict], config: 
     return rng.sample(candidates, min(count, len(candidates)))
 
 
-def generation_cap(batch: list[dict], tokenizer, config) -> int:
-    """The longest output worth allowing for this batch - the tighter of two bounds.
-
-    What the clip could physically contain, from its duration, and roughly the
-    length of the longest hypothesis. The duration bound is the one that
-    matters: Whisper hallucinates whole sentences onto near-silent clips, and
-    every catastrophic row of the 2026-08-27 run was a 100-500 ms clip scored
-    against a one-word reference. A hypothesis-derived bound cannot catch that,
-    because it scales off the hallucination itself.
-    """
-    longest = max(
-        (
-            len(tokenizer(text, add_special_tokens=False)["input_ids"])
-            for example in batch
-            for text in example["input"]
-        ),
-        default=0,
-    )
-    by_hypothesis = int(longest * config["generation_length_slack"]) + 5
-
-    # Unparseable ids fall back to the hypothesis bound alone rather than
-    # silently capping everything at the floor.
-    seconds = max((clip_seconds(example["id"]) or 0.0 for example in batch), default=0.0)
-    by_duration = (
-        int(seconds * config["generation_tokens_per_second"])
-        if seconds
-        else config["max_target_length"]
-    )
-
-    cap = min(by_hypothesis, by_duration, config["max_target_length"])
-    return max(config["generation_min_tokens"], cap)
-
-
 def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device).eval()
@@ -389,21 +356,20 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
             max_length=config["max_source_length"],
         ).to(device)
 
+        generate_kwargs = {
+            "max_new_tokens": config["max_target_length"],
+            "num_beams": config["num_beams"],
+            "do_sample": False,
+        }
+        if config.get("no_repeat_ngram_size", 0) > 0:
+            generate_kwargs["no_repeat_ngram_size"] = config["no_repeat_ngram_size"]
+        if config.get("repetition_penalty", 1.0) != 1.0:
+            generate_kwargs["repetition_penalty"] = config["repetition_penalty"]
+
         with torch.inference_mode():
             generated = model.generate(
                 **inputs,
-                max_new_tokens=generation_cap(batch, tokenizer, config),
-                num_beams=config["num_beams"],
-                # Repetition control, and the only place it happens. The first
-                # working run emitted 110,711 insertions - looping phrases until
-                # the length limit - which a postprocessing stage then stripped
-                # after the fact. These two settings removed the loops at the
-                # source (no prediction now repeats a word more than 3 times),
-                # so that stage was deleted: all it still caught was genuine
-                # child disfluency like "up up up", which is not an artifact.
-                no_repeat_ngram_size=config["no_repeat_ngram_size"],
-                repetition_penalty=config["repetition_penalty"],
-                do_sample=False,
+                **generate_kwargs,
             )
         predictions = tokenizer.batch_decode(generated, skip_special_tokens=True)
 
@@ -447,9 +413,6 @@ INFERENCE_SIGNATURE_KEYS = (
     "num_beams",
     "no_repeat_ngram_size",
     "repetition_penalty",
-    "generation_length_slack",
-    "generation_tokens_per_second",
-    "generation_min_tokens",
     "generation_batch_size",
     "few_shot_examples",
     "icl_demo_hypotheses",
