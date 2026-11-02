@@ -261,8 +261,8 @@ Left out to keep the first result interpretable:
 handoff. Its `utterance` column is final cleaned ground truth, `raw_utterance`
 preserves CHAT source text, and `audio_path` links a clip relative to the media
 folder. Only rows with nonempty cleaned utterances and audio paths are imported.
-The alignment filter excludes clips under 0.5 seconds, references above four
-words per second, and clips over five seconds with at most one reference word
+The alignment filter excludes clips under 0.5 seconds and references above four
+words per second
 before Whisper runs. The upstream manifest, stage 1 import, and stage 3
 dataset builder all check alignment. Reasons and group/corpus counts are saved
 in `data/reference_alignment_exclusions.json`,

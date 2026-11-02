@@ -17,6 +17,14 @@
 
 ## 2026-11-01
 
+- **Retain long clips with brief references.** Removed the over-five-second,
+  at-most-one-word exclusion from upstream CHAT/manifest screening and GenSEC
+  reference/dataset screening because these clips may contain valid speech
+  surrounded by silence. Removed its configuration setting and advanced the
+  methodology version to invalidate downstream training and prediction caches.
+  Existing generated datasets and results are unchanged; upstream preprocessing
+  and downstream evaluation must be rerun before reporting revised counts.
+
 - **Invalidate decoding caches when batch sizes change.** Batch size affects duration-based token limits, so changed Whisper or FLAN decoding batches now regenerate their outputs.
 - **Refreshed evaluation results and figures.** Archived the October 31 run and updated current WER and child- and corpus-level analyses.
 

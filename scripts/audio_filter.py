@@ -13,6 +13,4 @@ def audio_filter(utterance_id: str, reference: str, config: dict) -> str:
     words = len(reference.split())
     if words / seconds > config.get("max_reference_words_per_second", 4.0):
         return "impossible_speech_rate"
-    if seconds > config.get("long_single_word_seconds", 5.0) and words <= 1:
-        return "long_clip_short_reference"
     return ""

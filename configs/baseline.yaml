@@ -1,6 +1,6 @@
 seed: 42
 # Cache version
-methodology_version: child_split_v6_standard_seq2seq
+methodology_version: child_split_v7_keep_long_single_word
 
 # Upstream media and references
 hpc_media_dir: /bighome/gdhakal/child_asr/data/media
@@ -16,7 +16,6 @@ sample_rate: 16000
 max_clip_seconds: 30  # Whisper window
 min_clip_seconds: 0.5  # Exclude implausibly short aligned speech
 max_reference_words_per_second: 4.0
-long_single_word_seconds: 5.0
 nbest_filename: utterance_id_to_nbest_greedy_sample10.json
 num_return_sequences: 5  # Greedy plus sampled alternatives
 asr_sample_pool_size: 10  # Sampling pool before deduplication

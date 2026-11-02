@@ -23,13 +23,12 @@ class AlignmentTests(unittest.TestCase):
 
         audio_filter = load_function(ROOT / "scripts/audio_filter.py", "audio_filter",
                                      {"clip_seconds": seconds})
-        config = dict(min_clip_seconds=0.5, max_reference_words_per_second=4,
-                      long_single_word_seconds=5)
+        config = dict(min_clip_seconds=0.5, max_reference_words_per_second=4)
         for uid, reference, expected in [
             ("abcd_0_100_1", "hello", "point_bullet_timestamp"),
             ("abcd_0_400_1", "hello", "clip_too_short"),
             ("abcd_0_1000_1", "one two three four five", "impossible_speech_rate"),
-            ("abcd_0_6000_1", "yes", "long_clip_short_reference"),
+            ("abcd_0_6000_1", "yes", ""),
             ("abcd_0_1000_1", "hello there", ""),
         ]:
             with self.subTest(uid=uid, reference=reference):
