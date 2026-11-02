@@ -1,0 +1,90 @@
+{
+  "cell_means": [
+    {
+      "group": "LT",
+      "n": 22,
+      "whisper": 0.543590190082596,
+      "gensec": 0.4772004144545276,
+      "improvement": 0.06638977562806841
+    },
+    {
+      "group": "TD",
+      "n": 78,
+      "whisper": 0.4240043547013977,
+      "gensec": 0.3781399125229735,
+      "improvement": 0.04586444217842405
+    }
+  ],
+  "mixed_model": {
+    "terms": {
+      "group[T.TD]": {
+        "coefficient": -0.11958583538119806,
+        "p": 0.039448137515544164
+      },
+      "model[T.gensec]": {
+        "coefficient": -0.06638977562806865,
+        "p": 1.6634678904058356e-09
+      },
+      "group[T.TD]:model[T.gensec]": {
+        "coefficient": 0.020525333449644502,
+        "p": 0.09979848518182827
+      }
+    }
+  },
+  "permutation": {
+    "difference": -0.020525333449644363,
+    "p": 0.10748925107489252,
+    "groups": [
+      "LT",
+      "TD"
+    ]
+  },
+  "studentized_permutation": {
+    "statistic": -1.9782774258117042,
+    "p": 0.05674716264186791
+  },
+  "disagreement": {
+    "tests": {
+      "student_t": 0.10645961182963859,
+      "welch_t": 0.05369581896336435,
+      "mann_whitney": 0.1559816295367557,
+      "yuen_trimmed": 0.18765745072193432
+    },
+    "shapiro": {
+      "LT": 0.7403070666819608,
+      "TD": 0.000895131556346302
+    },
+    "sd": {
+      "LT": 0.03881432249716704,
+      "TD": 0.055273278773148186
+    },
+    "disagree": false
+  },
+  "simple_effects": {
+    "LT": {
+      "n": 22,
+      "p_uncorrected": 7.869325435726052e-08,
+      "dz": 1.7104453036096157,
+      "p_holm": 7.869325435726052e-08
+    },
+    "TD": {
+      "n": 78,
+      "p_uncorrected": 1.9745977590362054e-10,
+      "dz": 0.8297760363856874,
+      "p_holm": 3.949195518072411e-10
+    }
+  },
+  "overall_improvement": {
+    "n": 100,
+    "mean": 0.050380015537345814,
+    "p": 9.280825922344817e-16
+  },
+  "corpus_matched": {
+    "status": "insufficient_children_in_shared_corpora",
+    "corpora": [
+      "ENNI",
+      "EllisWeismer",
+      "Rescorla"
+    ]
+  }
+}

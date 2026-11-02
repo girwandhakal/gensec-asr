@@ -1,0 +1,65 @@
+Group x model statistics on per-child WER
+========================================================================
+
+Children: 100 LT 22, TD 78
+Retained utterances: 14,911
+
+Per-child cell means
+------------------------------------------------------------------------
+group       n     whisper      gensec   improvement
+LT         22     54.36%      47.72%         6.64pp
+TD         78     42.40%      37.81%         4.59pp
+
+Corpus composition (children)
+------------------------------------------------------------------------
+  Braunwald            TD    1
+  EHS                  TD    5
+  ENNI                 LT   14
+  ENNI                 TD   34
+  EllisWeismer         LT    5
+  EllisWeismer         TD    5
+  Gelman               TD    4
+  HSLLD                TD    5
+  OCSC                 TD   23
+  POLER                TD    1
+  Rescorla             LT    3
+  Group comparisons may reflect differences in corpus composition.
+
+Mixed-effects model (random intercept per child)
+------------------------------------------------------------------------
+  group[T.TD]                              b=-0.1196  p=0.0394  significant
+  model[T.gensec]                          b=-0.0664  p=0.0000  significant
+  group[T.TD]:model[T.gensec]              b=+0.0205  p=0.0998  not significant
+  group coefficient: TD-LT difference under Whisper only.
+  model coefficient: GenSEC-Whisper difference within LT only.
+
+Interaction: does improvement differ by group?
+------------------------------------------------------------------------
+  label permutation (10,000 resamples)  p = 0.1075
+  Welch-statistic permutation (20,000 resamples)  p = 0.0567
+  difference in mean improvement: -2.05pp (TD - LT)
+
+  Other tests, for comparison:
+    student_t        p = 0.1065
+    welch_t          p = 0.0537
+    mann_whitney     p = 0.1560
+    yuen_trimmed     p = 0.1877
+    Shapiro LT       p = 0.74
+    Shapiro TD       p = 0.000895
+    improvement SD LT       = 0.0388
+    improvement SD TD       = 0.0553
+
+Simple effects: did correction help within each group?
+------------------------------------------------------------------------
+  LT       n=22    p(Holm)=7.87e-08  dz=1.71  significant
+  TD       n=78    p(Holm)=3.95e-10  dz=0.83  significant
+  These paired tests do not test whether the group gains differ.
+
+Overall paired child-level improvement
+------------------------------------------------------------------------
+  mean improvement: +5.04pp; paired t p = 9.281e-16 (n=100)
+
+Corpus-matched sensitivity analysis
+------------------------------------------------------------------------
+  Shared corpora: ENNI, EllisWeismer, Rescorla
+  Insufficient LT and TD children in every shared corpus.

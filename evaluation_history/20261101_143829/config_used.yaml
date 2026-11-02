@@ -1,0 +1,71 @@
+seed: 42
+# Cache version
+methodology_version: child_split_v5_alignment_raw
+
+# Upstream media and references
+hpc_media_dir: /bighome/gdhakal/child_asr/data/media
+local_media_dir: ../asr-dataset-pipelines/data/media
+reference_report_filename: media_download_report.csv
+
+# Ground-truth cleaning is owned by asr-dataset-pipelines.
+
+# Whisper n-best generation
+asr_model_id: rishabhjain16/whisper_medium_to_myst55h
+audio_extension: .mp3
+sample_rate: 16000
+max_clip_seconds: 30  # Whisper window
+min_clip_seconds: 0.5  # Exclude implausibly short aligned speech
+max_reference_words_per_second: 4.0
+long_single_word_seconds: 5.0
+nbest_filename: utterance_id_to_nbest_greedy_sample10.json
+num_return_sequences: 5  # Greedy plus sampled alternatives
+asr_sample_pool_size: 10  # Sampling pool before deduplication
+temperature: 0.8
+top_p: 0.95
+top_k: 50
+
+asr_batch_size: 4  # Sampling batch size
+
+# Duration-based decoding limits
+asr_tokens_per_second: 8
+asr_token_margin: 16  # Token floor and headroom
+asr_save_every: 500  # Checkpoint interval
+asr_limit: null  # Optional smoke-test limit
+
+# Dataset construction
+max_hypotheses: 5  # Maximum distinct hypotheses
+min_hypotheses: 1  # Retain single-hypothesis utterances
+
+# Correction model
+gensec_model_id: google/flan-t5-base
+max_source_length: 512
+max_target_length: 128
+num_train_epochs: 5
+learning_rate: 3.0e-5
+train_batch_size: 8
+eval_batch_size: 16
+generation_batch_size: 4  # Beam-search batch size
+num_beams: 8
+
+# Repetition control
+no_repeat_ngram_size: 3  # Disabled at 0
+repetition_penalty: 1.2  # Disabled at 1.0
+generation_length_slack: 1.5  # Longest-hypothesis length multiplier
+
+# Audio-duration output cap
+generation_tokens_per_second: 8
+generation_min_tokens: 6  # Minimum output tokens
+# Child splits stratified by LT/TD
+test_size: 0.2
+eval_size: 0.10  # Validation fraction of children, stratified by group and corpus
+inference_modes: [zero_shot]  # Options: zero_shot, one_shot, few_shot
+few_shot_examples: 5
+icl_demo_hypotheses: 3  # Hypotheses per demonstration
+
+# LT/TD confidence-interval resamples
+bootstrap_iterations: 1000
+
+data_dir: data
+work_dir: work_directory
+results_dir: evaluation_results
+figure_dir: figure
