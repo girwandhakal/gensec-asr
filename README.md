@@ -194,6 +194,11 @@ never had a chance to produce.
 Everything tunable lives in `configs/baseline.yaml` — paths, decoding settings,
 hyperparameters. Nothing is hardcoded in the scripts.
 
+FLAN-T5 trains for up to 10 epochs, with early stopping after two validation
+evaluations without improvement. The checkpoint with the lowest validation loss
+is used for inference. Set the epoch ceiling with `num_train_epochs` in
+`configs/baseline.yaml`; changing it invalidates cached training and predictions.
+
 To turn on in-context learning, change one line:
 
 ```yaml

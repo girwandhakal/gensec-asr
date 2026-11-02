@@ -2,6 +2,11 @@
 
 ## 2026-11-02
 
+- **Increase the FLAN-T5 training budget to 10 epochs.** Allow more training
+  before the epoch ceiling; retain early stopping with patience 2 and checkpoint
+  selection by minimum validation loss. The existing training signature includes
+  the epoch budget, so incompatible checkpoints and predictions are not reused.
+
 - **Bound FLAN-T5 generation length by input hypotheses.**
   - **Empirically derived hypothesis length cap:** Implemented `hypothesis_length_cap` bounding output generation to `1.5 * longest_hyp_tokens + 4` (capped at `max_target_length: 128`).
   - **Justification for dual-parameter bound ($1.5 \times |H_{\text{max}}| + 4$):**
