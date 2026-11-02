@@ -1,24 +1,9 @@
 # Changelog
 
-## Unreleased
-
-- **2026-11-01** — **Standardize FLAN-T5 generation to pure Seq2Seq defaults.**
-  - **Removed audio-duration output token clamping (`generation_cap`):** Eliminated duration-based token limiting (`clip_seconds * 8`) and hypothesis slack multipliers (`generation_length_slack: 1.5`, `generation_min_tokens: 6`) during inference. FLAN-T5 now generates up to standard `max_target_length: 128` using natural end-of-sequence (`</s>`) termination.
-  - **Disabled decoding repetition penalties:** Set `no_repeat_ngram_size: 0` and `repetition_penalty: 1.0` by default. This eliminates artificial suppression of genuine child speech disfluencies (e.g., emphatic and developmental repetitions like "no no no" or "and and and").
-  - **Why:** Eliminates inadmissible audio-duration modality leakage into the text-only corrector, prevents an unfair evaluation double standard against Whisper, and aligns inference with standard, reproducible Hugging Face Seq2Seq generation practices.
-  - **Updated methodology version:** Advanced to `child_split_v6_standard_seq2seq` to invalidate previous predictions generated under the ad-hoc token cap.
-
-- **2026-11-01** — Exclude target-child utterances with at least 100 ms of
-  timestamp overlap with a non-target CHAT speaker labeled as an adult before
-  MLU, dataset capping, balancing, and GenSec train/validation/test splitting.
-  This prevents overlapping adult speech from contaminating child-speech
-  references and ASR training/evaluation. Record the overlap speaker and
-  duration in the upstream utterance-exclusion report.
-
 ## 2026-11-02
 
 - **Bound FLAN-T5 generation length by input hypotheses.**
-  - **Empirically derived hypothesis length cap:** Implemented `hypothesis_length_cap` bounding output generation to `1.5 * longest_hyp_tokens + 4` (capped at `max_target_length: 128`). The multiplier ($1.5\times$) and headroom ($+4$ tokens) were empirically derived strictly from the training split ($N = 59,508$) to cover 99.3% of reference expansions.
+  - **Empirically derived hypothesis length cap:** Implemented `hypothesis_length_cap` bounding output generation to `1.5 * longest_hyp_tokens + 4` (capped at `max_target_length: 128`). The multiplier (1.5x) and headroom (+4 tokens) were empirically derived strictly from the training split (N = 59,508) to cover 99.3% of reference expansions.
   - **Why:** Eliminates degenerate beam-search repetition loops on brief, noisy, or ambiguous speech (which caused a catastrophic insertion spike) while strictly adhering to text-only modality (avoiding audio duration leakage) and preserving authentic child speech repetitions without hard n-gram bans.
   - **Updated methodology version:** Advanced to `child_split_v8_hypothesis_length_cap` to invalidate predictions generated under the unconstrained ceiling.
 
@@ -29,6 +14,19 @@
   changes. Legacy runs using unrecorded batch-size overrides require regeneration.
 
 ## 2026-11-01
+
+- **Standardize FLAN-T5 generation to pure Seq2Seq defaults.**
+  - **Removed audio-duration output token clamping (`generation_cap`):** Eliminated duration-based token limiting (`clip_seconds * 8`) and hypothesis slack multipliers (`generation_length_slack: 1.5`, `generation_min_tokens: 6`) during inference. FLAN-T5 now generates up to standard `max_target_length: 128` using natural end-of-sequence (`</s>`) termination.
+  - **Disabled decoding repetition penalties:** Set `no_repeat_ngram_size: 0` and `repetition_penalty: 1.0` by default. This eliminates artificial suppression of genuine child speech disfluencies (e.g., emphatic and developmental repetitions like "no no no" or "and and and").
+  - **Why:** Eliminates inadmissible audio-duration modality leakage into the text-only corrector, prevents an unfair evaluation double standard against Whisper, and aligns inference with standard, reproducible Hugging Face Seq2Seq generation practices.
+  - **Updated methodology version:** Advanced to `child_split_v6_standard_seq2seq` to invalidate previous predictions generated under the ad-hoc token cap.
+
+- **Exclude target-child utterances with overlapping adult speech.** Exclude target-child utterances with at least 100 ms of
+  timestamp overlap with a non-target CHAT speaker labeled as an adult before
+  MLU, dataset capping, balancing, and GenSec train/validation/test splitting.
+  This prevents overlapping adult speech from contaminating child-speech
+  references and ASR training/evaluation. Record the overlap speaker and
+  duration in the upstream utterance-exclusion report.
 
 - **Retain long clips with brief references.** Removed the over-five-second,
   at-most-one-word exclusion from upstream CHAT/manifest screening and GenSEC
