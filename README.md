@@ -170,6 +170,12 @@ schema and correction inputs are unchanged. Cached clips decoded before this
 logging was added remain cached and have no raw-sample entry; stage 2 reports
 that coverage gap. Their discarded samples cannot be reconstructed from n-best.
 
+Stage 2 upgrades older signatures missing `asr_batch_size` when all other decoding
+settings match and the current batch size is 4, the historical recorded setting.
+This preserves both Whisper caches. If a legacy cache was generated with a batch
+size override, archive it before rerunning; its signature cannot identify that
+override. Recorded batch-size changes and other decoding changes remain fatal.
+
 The useful-diversity checks are the number of distinct candidates and the
 oracle n-best WER, not the kept/dropped ratio: single-candidate utterances are
 still included for training.

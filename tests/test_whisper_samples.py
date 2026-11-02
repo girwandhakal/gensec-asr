@@ -35,6 +35,45 @@ def generation_functions():
 
 
 class WhisperSamplesTests(unittest.TestCase):
+    def test_legacy_batch_signature_migration_preserves_caches(self):
+        ns = generation_functions()
+        with tempfile.TemporaryDirectory() as directory:
+            config = self.config(directory)
+            config["asr_batch_size"] = 4
+            legacy = json.loads(ns["decode_signature"](config))
+            del legacy["asr_batch_size"]
+            for output in (config["nbest_path"], config["whisper_samples_path"]):
+                output.write_text('{"cached": "unchanged"}', encoding="utf-8")
+                stamp = output.with_suffix(".signature.json")
+                stamp.write_text(json.dumps(legacy), encoding="utf-8")
+                ns["check_decode_signature"](config, output, 1)
+                self.assertEqual(stamp.read_text(encoding="utf-8"),
+                                 ns["decode_signature"](config))
+                self.assertEqual(output.read_text(encoding="utf-8"),
+                                 '{"cached": "unchanged"}')
+
+    def test_legacy_migration_rejects_real_decoding_changes(self):
+        ns = generation_functions()
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = self.config(directory)
+            baseline.update(asr_batch_size=4, temperature=0.8)
+            legacy = json.loads(ns["decode_signature"](baseline))
+            del legacy["asr_batch_size"]
+            for changes, previous in [
+                ({"asr_batch_size": 2}, legacy),
+                ({"temperature": 0.9}, legacy),
+                ({"asr_model_id": "different-model"}, legacy),
+                ({}, dict(legacy, asr_batch_size=2)),
+            ]:
+                with self.subTest(changes=changes, previous=previous):
+                    config = dict(baseline, **changes)
+                    stamp = config["nbest_path"].with_suffix(".signature.json")
+                    original = json.dumps(previous)
+                    stamp.write_text(original, encoding="utf-8")
+                    with self.assertRaises(SystemExit):
+                        ns["check_decode_signature"](config, config["nbest_path"], 1)
+                    self.assertEqual(stamp.read_text(encoding="utf-8"), original)
+
     def test_eligibility_only_signature_change_reuses_decoding(self):
         ns = generation_functions()
         with tempfile.TemporaryDirectory() as directory:

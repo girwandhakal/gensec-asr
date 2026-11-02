@@ -15,6 +15,14 @@
   references and ASR training/evaluation. Record the overlap speaker and
   duration in the upstream utterance-exclusion report.
 
+## 2026-11-02
+
+- **Resume legacy Whisper caches after batch-size signature tracking.** Upgrade
+  signatures missing `asr_batch_size` using the historical recorded size of 4
+  only when the current size is 4 and all other decoding settings match. Preserve
+  cached transcripts and raw samples while continuing to reject actual decoding
+  changes. Legacy runs using unrecorded batch-size overrides require regeneration.
+
 ## 2026-11-01
 
 - **Retain long clips with brief references.** Removed the over-five-second,

@@ -223,9 +223,12 @@ def check_decode_signature(config: dict, output_path: Path, cached: int) -> None
         if isinstance(old_payload, dict):
             for key in ("min_clip_seconds", "max_clip_seconds"):
                 old_payload.pop(key, None)
+            # shortcut: legacy caches assume the recorded batch size 4; regenerate if an override was used.
+            if new_payload.get("asr_batch_size") == 4:
+                old_payload.setdefault("asr_batch_size", 4)
         if old_payload == new_payload:
             stamp_path.write_text(current, encoding="utf-8")
-            print(f"Updated eligibility-only decode signature: {output_path.name}")
+            print(f"Updated compatible legacy decode signature: {output_path.name}")
             return
         raise SystemExit(
             f"Decode settings changed since {output_path.name} was generated.\n"
