@@ -34,7 +34,7 @@ from transformers import (
 )
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from config import clip_seconds, load_config, predictions_path, transcript_id
+from config import load_config, predictions_path, transcript_id
 from text import collapse_whitespace
 
 INSTRUCTION = """You are correcting ASR output.
@@ -345,10 +345,17 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
 
     pool = train_frame.to_dict("records")
 
-    # Batch clips of similar length together. The cap below is one number for
-    # the whole batch, so mixing a 30-second clip with a 100 ms one would lift
-    # the short clip's ceiling to the long clip's. Sorting also cuts padding.
-    tests = sorted(test_frame.to_dict("records"), key=lambda e: clip_seconds(e["id"]) or 0.0)
+
+
+
+    # Batch examples of similar hypothesis length together. The cap below is
+    # one number for the whole batch, so grouping similar-length inputs prevents
+    # longer hypotheses from inflating the generation ceiling for shorter ones.
+    # Sorting by sequence length also minimizes attention padding.
+    tests = sorted(
+        test_frame.to_dict("records"),
+        key=lambda e: max((len(h.split()) for h in e["input"]), default=0),
+    )
 
     # Beam search holds num_beams sequences in flight per row, and reordering
     # the cache between steps allocates a second copy of it - so generation

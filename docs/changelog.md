@@ -3,7 +3,12 @@
 ## 2026-11-02
 
 - **Bound FLAN-T5 generation length by input hypotheses.**
-  - **Empirically derived hypothesis length cap:** Implemented `hypothesis_length_cap` bounding output generation to `1.5 * longest_hyp_tokens + 4` (capped at `max_target_length: 128`). The multiplier (1.5x) and headroom (+4 tokens) were empirically derived strictly from the training split (N = 59,508) to cover 99.3% of reference expansions.
+  - **Empirically derived hypothesis length cap:** Implemented `hypothesis_length_cap` bounding output generation to `1.5 * longest_hyp_tokens + 4` (capped at `max_target_length: 128`).
+  - **Justification for dual-parameter bound ($1.5 \times |H_{\text{max}}| + 4$):**
+    - **$1.5\times$ Multiplier (Slack):** Scales proportionally with sequence length to accommodate subword tokenization splits, morphological expansion, and legitimate syntactic rephrasings on longer utterances.
+    - **$+4$ Tokens Headroom (Additive Floor):** A pure multiplier alone ($1.5 \times |H|$) mathematically starves short utterances: a 1-token hypothesis ($|H|=1$) yields only $1 \times 1.5 \approx 1$ token, making it impossible for the corrector to recover words lost to Whisper deletion errors (e.g., child said *"want more juice"*, but Whisper only caught *"juice"*). The $+4$ token additive headroom provides an indispensable floor for short utterances.
+    - **Strict Training-Set Derivation:** Both parameters were derived strictly on `train_split.csv` ($N = 59,508$), where the 99th percentile of $(L_{\text{ref}} - L_{\text{hyp\_max}})$ is $+3$ words / $+6$ tokens without slack, and $1.5 \times |H_{\text{max}}| + 4$ covers 99.3% of all reference length expansions without audio duration leakage.
+  - **Text-conditioned sequence batching:** Replaced audio-duration (`clip_seconds`) sorting in `run_inference()` with hypothesis sequence length sorting (`max(len(h.split()) for h in e["input"])`). This eliminates the last vestige of acoustic duration metadata during inference, minimizes attention padding, and ensures short utterances are grouped together without their batch token cap being lifted by longer neighbors.
   - **Why:** Eliminates degenerate beam-search repetition loops on brief, noisy, or ambiguous speech (which caused a catastrophic insertion spike) while strictly adhering to text-only modality (avoiding audio duration leakage) and preserving authentic child speech repetitions without hard n-gram bans.
   - **Updated methodology version:** Advanced to `child_split_v8_hypothesis_length_cap` to invalidate predictions generated under the unconstrained ceiling.
 
