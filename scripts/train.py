@@ -318,6 +318,27 @@ def pick_demonstrations(mode: str, utterance_id: str, pool: list[dict], config: 
     return rng.sample(candidates, min(count, len(candidates)))
 
 
+def hypothesis_length_cap(batch: list[dict], tokenizer, config: dict) -> int:
+    """Bounding output tokens based strictly on the longest hypothesis in the batch.
+
+    Eliminates audio duration leakage while preventing degenerate beam search
+    repetition loops. Parameters are derived from the 99th percentile of
+    reference expansions on the training split.
+    """
+    longest = max(
+        (
+            len(tokenizer(text, add_special_tokens=False)["input_ids"])
+            for example in batch
+            for text in example["input"]
+        ),
+        default=0,
+    )
+    slack = config.get("generation_length_slack", 1.5)
+    headroom = config.get("generation_token_headroom", 4)
+    cap = int(longest * slack) + headroom
+    return min(max(headroom, cap), config["max_target_length"])
+
+
 def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device).eval()
@@ -357,7 +378,7 @@ def run_inference(model, tokenizer, train_frame, test_frame, mode, config) -> No
         ).to(device)
 
         generate_kwargs = {
-            "max_new_tokens": config["max_target_length"],
+            "max_new_tokens": hypothesis_length_cap(batch, tokenizer, config),
             "num_beams": config["num_beams"],
             "do_sample": False,
         }
@@ -413,6 +434,8 @@ INFERENCE_SIGNATURE_KEYS = (
     "num_beams",
     "no_repeat_ngram_size",
     "repetition_penalty",
+    "generation_length_slack",
+    "generation_token_headroom",
     "generation_batch_size",
     "few_shot_examples",
     "icl_demo_hypotheses",

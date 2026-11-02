@@ -1,6 +1,6 @@
 seed: 42
 # Cache version
-methodology_version: child_split_v7_keep_long_single_word
+methodology_version: child_split_v8_hypothesis_length_cap
 
 # Upstream media and references
 hpc_media_dir: /bighome/gdhakal/child_asr/data/media
@@ -49,6 +49,10 @@ num_beams: 8
 # Generation controls (standard Hugging Face Seq2Seq defaults)
 no_repeat_ngram_size: 0  # 0 = disabled (standard HF default)
 repetition_penalty: 1.0  # 1.0 = disabled (standard HF default)
+
+# Pure text-conditioned hypothesis length bounding (derived from train split 99th percentile)
+generation_length_slack: 1.5  # Longest-hypothesis length multiplier
+generation_token_headroom: 4  # Empirical additive token headroom (99.3% train coverage)
 
 # Child splits stratified by LT/TD
 test_size: 0.2

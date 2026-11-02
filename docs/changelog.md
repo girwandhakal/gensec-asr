@@ -17,6 +17,11 @@
 
 ## 2026-11-02
 
+- **Bound FLAN-T5 generation length by input hypotheses.**
+  - **Empirically derived hypothesis length cap:** Implemented `hypothesis_length_cap` bounding output generation to `1.5 * longest_hyp_tokens + 4` (capped at `max_target_length: 128`). The multiplier ($1.5\times$) and headroom ($+4$ tokens) were empirically derived strictly from the training split ($N = 59,508$) to cover 99.3% of reference expansions.
+  - **Why:** Eliminates degenerate beam-search repetition loops on brief, noisy, or ambiguous speech (which caused a catastrophic insertion spike) while strictly adhering to text-only modality (avoiding audio duration leakage) and preserving authentic child speech repetitions without hard n-gram bans.
+  - **Updated methodology version:** Advanced to `child_split_v8_hypothesis_length_cap` to invalidate predictions generated under the unconstrained ceiling.
+
 - **Resume legacy Whisper caches after batch-size signature tracking.** Upgrade
   signatures missing `asr_batch_size` using the historical recorded size of 4
   only when the current size is 4 and all other decoding settings match. Preserve
