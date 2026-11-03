@@ -1,0 +1,73 @@
+Group x model statistics on per-child WER
+========================================================================
+
+Children: 100 LT 22, TD 78
+Retained utterances: 14,911
+
+Per-child cell means
+------------------------------------------------------------------------
+group       n     whisper      gensec   improvement
+LT         22     54.36%      47.14%         7.22pp
+TD         78     42.40%      38.30%         4.10pp
+
+Corpus composition (children)
+------------------------------------------------------------------------
+  Braunwald            TD    1
+  EHS                  TD    5
+  ENNI                 LT   14
+  ENNI                 TD   34
+  EllisWeismer         LT    5
+  EllisWeismer         TD    5
+  Gelman               TD    4
+  HSLLD                TD    5
+  OCSC                 TD   23
+  POLER                TD    1
+  Rescorla             LT    3
+  Group comparisons may reflect differences in corpus composition.
+
+Mixed-effects model (random intercept per child)
+------------------------------------------------------------------------
+  group[T.TD]                              b=-0.1196  p=0.0498  significant
+  model[T.gensec]                          b=-0.0722  p=0.0000  significant
+  group[T.TD]:model[T.gensec]              b=+0.0312  p=0.0881  not significant
+  group coefficient: TD-LT difference under Whisper only.
+  model coefficient: GenSEC-Whisper difference within LT only.
+
+Interaction: does improvement differ by group?
+------------------------------------------------------------------------
+  label permutation (10,000 resamples)  p = 0.0952
+  Welch-statistic permutation (20,000 resamples)  p = 0.0369
+  difference in mean improvement: -3.12pp (TD - LT)
+
+  Other tests, for comparison:
+    student_t        p = 0.0945
+    welch_t          p = 0.0303  <- under .05
+    mann_whitney     p = 0.1831
+    yuen_trimmed     p = 0.1346
+    Shapiro LT       p = 0.777
+    Shapiro TD       p = 4.05e-06
+    improvement SD LT       = 0.0493
+    improvement SD TD       = 0.0825
+
+  WARNING: these tests disagree across alpha = .05.
+  The groups have unequal variances and unequal sample sizes.
+  The label permutation assumes exchangeable improvement scores;
+  that assumption is doubtful here. Welch tests equality of means
+  under unequal variances, but is sensitive to large TD values.
+  No single p-value resolves this discrepancy. Treat the interaction
+  as sensitive to the analysis method, not confirmed or ruled out.
+
+Simple effects: did correction help within each group?
+------------------------------------------------------------------------
+  LT       n=22    p(Holm)=1.72e-06  dz=1.47  significant
+  TD       n=78    p(Holm)=3.61e-05  dz=0.50  significant
+  These paired tests do not test whether the group gains differ.
+
+Overall paired child-level improvement
+------------------------------------------------------------------------
+  mean improvement: +4.78pp; paired t p = 1.379e-08 (n=100)
+
+Corpus-matched sensitivity analysis
+------------------------------------------------------------------------
+  Shared corpora: ENNI, EllisWeismer, Rescorla
+  Insufficient LT and TD children in every shared corpus.

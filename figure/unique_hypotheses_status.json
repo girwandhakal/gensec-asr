@@ -1,9 +1,8 @@
 {
-  "available": false,
+  "available": true,
   "decoded_clips": 74426,
-  "complete_raw_sample_pools": 53,
-  "missing_raw_sample_pools": 74373,
+  "complete_raw_sample_pools": 74426,
+  "missing_raw_sample_pools": 0,
   "incomplete_raw_sample_pools": 0,
-  "sample_pool_size": 10,
-  "reason": "raw_sample_coverage_incomplete"
+  "sample_pool_size": 10
 }

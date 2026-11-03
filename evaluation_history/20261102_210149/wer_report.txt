@@ -1,0 +1,205 @@
+GenSEC evaluation
+========================================================================
+Test utterances: 14,918
+
+system                             WER     exact        S        D        I
+------------------------------------------------------------------------
+whisper_1best                  40.51%    18.55%   18,913    7,688    5,309
+gensec_zero_shot               35.19%    31.74%   15,977    5,626    6,118
+oracle_nbest                   33.52%    23.86%   16,011    6,840    3,553
+oracle_compositional           27.60%     0.00%        0   21,741        0
+
+gensec_zero_shot vs whisper_1best: +13.13% relative WER reduction (better)
+
+oracle_nbest vs whisper_1best: +17.25% relative WER reduction (better)
+
+oracle_compositional vs whisper_1best: +31.87% relative WER reduction (better)
+
+
+Significance (1,000 bootstrap resamples of the utterance set)
+------------------------------------------------------------------------
+gensec_zero_shot vs whisper_1best
+  overall        14918    13.13%   95% CI [+12.06%, +14.26%]
+  LT              1665    13.15%   95% CI [+10.49%, +15.72%]
+  TD             13253    13.12%   95% CI [+11.98%, +14.33%]
+
+  TD - LT                 -0.03%   95% CI [-2.91%, +3.04%]
+  p = 0.958 - NOT significant at p<0.05
+
+
+By group (LT = late talker, TD = typically developing)
+------------------------------------------------------------------------
+                                utts       WER     exact
+LT
+  whisper_1best                 1665    52.92%     8.95%
+  gensec_zero_shot              1665    45.96%    17.06%
+  oracle_nbest                  1665    44.32%    12.97%
+TD
+  whisper_1best                13253    38.63%    19.76%
+  gensec_zero_shot             13253    33.56%    33.58%
+  oracle_nbest                 13253    31.88%    25.23%
+
+
+By reference length
+------------------------------------------------------------------------
+                                utts       WER     exact
+1 word
+  whisper_1best                 2227    85.23%    30.40%
+  gensec_zero_shot              2227   138.57%    33.54%
+  oracle_nbest                  2227    69.69%    37.63%
+2 words
+  whisper_1best                 2131    76.07%    18.25%
+  gensec_zero_shot              2131    70.60%    34.12%
+  oracle_nbest                  2131    64.62%    23.89%
+3-5 words
+  whisper_1best                 4669    51.96%    16.68%
+  gensec_zero_shot              4669    43.93%    33.05%
+  oracle_nbest                  4669    43.23%    21.67%
+6-10 words
+  whisper_1best                 4409    34.80%    17.17%
+  gensec_zero_shot              4409    27.80%    31.84%
+  oracle_nbest                  4409    28.58%    22.14%
+11+ words
+  whisper_1best                 1482    27.19%    11.20%
+  gensec_zero_shot              1482    20.71%    21.19%
+  oracle_nbest                  1482    22.37%    15.18%
+
+
+By reference audio duration
+------------------------------------------------------------------------
+                                utts       WER     exact
+0.5-1s
+  whisper_1best                 4115    71.25%    25.35%
+  gensec_zero_shot              4115    83.91%    34.61%
+  oracle_nbest                  4115    60.70%    31.71%
+1-2s
+  whisper_1best                 3980    48.42%    17.76%
+  gensec_zero_shot              3980    41.10%    33.94%
+  oracle_nbest                  3980    39.65%    23.14%
+2-3s
+  whisper_1best                 2609    37.79%    17.55%
+  gensec_zero_shot              2609    30.88%    32.31%
+  oracle_nbest                  2609    30.82%    22.69%
+3-5s
+  whisper_1best                 2614    33.48%    14.73%
+  gensec_zero_shot              2614    26.78%    30.18%
+  oracle_nbest                  2614    27.54%    19.78%
+5-10s
+  whisper_1best                 1417    32.03%    11.64%
+  gensec_zero_shot              1417    25.25%    21.88%
+  oracle_nbest                  1417    26.83%    14.68%
+10s+
+  whisper_1best                  183    37.91%     5.46%
+  gensec_zero_shot               183    29.05%     9.84%
+  oracle_nbest                   183    31.65%     9.29%
+
+
+References of 3+ words only (comparable to published child GenSEC work)
+------------------------------------------------------------------------
+                                utts       WER     exact
+3+ words
+  whisper_1best                10560    37.04%    16.12%
+  gensec_zero_shot             10560    29.92%    30.88%
+  oracle_nbest                 10560    30.57%    20.96%
+
+
+Worst utterances - whisper_1best
+------------------------------------------------------------------------
+99122406_81868_86414_12  sentence_wer=9.80
+  ref: can i have my pickle
+  hyp: im a hot girl im in nirlandia im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a hot girl im a
+f9b4ebb7_239266_243993_52  sentence_wer=8.00
+  ref: sirdy
+  hyp: well twenty five thirty thirty four forty f
+017eb8da_206105_219001_28  sentence_wer=7.17
+  ref: and little boy took one home
+  hyp: and thats it right thats really good did you remember that from last week no wow you did a really good job you know what were gonna do now even though you did a good job that time um i want to try to
+7f8b8806_501947_502748_169  sentence_wer=7.00
+  ref: mm
+  hyp: thing else you want to tell me
+72e744d5_1565965_1568240_439  sentence_wer=7.00
+  ref: there
+  hyp: and bring it in to the back
+cb497041_968397_971382_214  sentence_wer=7.00
+  ref: whoops
+  hyp: there is a lot um some books
+6537e653_221091_221591_52  sentence_wer=6.00
+  ref: orange
+  hyp: tell me when they are boring
+93d46162_555878_556528_118  sentence_wer=6.00
+  ref: hmhunh
+  hyp: what did you get to say
+72e744d5_1126881_1128878_290  sentence_wer=6.00
+  ref: here
+  hyp: do you want to stay with here
+56384d1a_1158192_1162140_255  sentence_wer=6.00
+  ref: everybody's
+  hyp: hello no everybody is on side
+
+
+Worst utterances - gensec_zero_shot
+------------------------------------------------------------------------
+e27739fd_1669982_1670482_483  sentence_wer=20.00
+  ref: disin
+  hyp: and he's like frog where's the frog where's the frog where's the frog where's the frog where's the frog where'
+6aa69f93_136230_136730_32  sentence_wer=15.00
+  ref: counting
+  hyp: and then you add up the salt and the water and then you mix that
+2b5598e8_256916_257416_85  sentence_wer=15.00
+  ref: nineteen
+  hyp: i think this is one of the most important ones because it goes through a
+260b3a74_562822_563322_46  sentence_wer=14.00
+  ref: yeah
+  hyp: and he's like he's like he's like he's like he's like he's like he's
+1cce7065_723667_724167_171  sentence_wer=13.00
+  ref: yeah
+  hyp: and he's like he's like he's like he's like he's like he's like
+a9540c06_413615_414315_15  sentence_wer=13.00
+  ref: oh look
+  hyp: and he's like ah he's like ah he's like ah he's like ah he's like ah he's like ah he's like ah he's like ah he
+9246e2d0_482162_482662_86  sentence_wer=9.00
+  ref: nine
+  hyp: i'm sorry i just got hit by a car
+9d52efa8_70009_70509_14  sentence_wer=9.00
+  ref: yeah
+  hyp: and if you have a question please ask me
+15f93d70_497461_498001_101  sentence_wer=8.00
+  ref: thirty
+  hyp: i think it was like six or seven
+a04efac5_855434_855934_298  sentence_wer=7.00
+  ref: eventually
+  hyp: and he's saying frog where are you
+
+
+Worst utterances - oracle_nbest
+------------------------------------------------------------------------
+f9b4ebb7_239266_243993_52  sentence_wer=7.00
+  ref: sirdy
+  hyp: well twenty five thirty thirty four forty
+017eb8da_206105_219001_28  sentence_wer=7.00
+  ref: and little boy took one home
+  hyp: and thats it right thats really good did you remember that from last week no wow you did a really good job you know what were gonna do now even though you did a good job that time um i wanna try to
+7f8b8806_501947_502748_169  sentence_wer=6.00
+  ref: mm
+  hyp: thing else you wanna tell me
+93d46162_555878_556528_118  sentence_wer=5.00
+  ref: hmhunh
+  hyp: oh did you get to
+2b5598e8_539705_540566_178  sentence_wer=5.00
+  ref: mm
+  hyp: go to the next one
+7f8b8806_463404_464165_158  sentence_wer=5.00
+  ref: mm
+  hyp: what kind of a line
+cb497041_968397_971382_214  sentence_wer=5.00
+  ref: whoops
+  hyp: theres a wrap some books
+16fac090_261176_269446_64  sentence_wer=5.00
+  ref: and not about green
+  hyp: oh that sounds like fun i think that would be my favorite center so theres pink and you tell me about blue
+15f93d70_895753_897875_233  sentence_wer=4.50
+  ref: i think
+  hyp: itch yeah so were gonna call it a snack
+15f93d70_487107_495898_100  sentence_wer=4.50
+  ref: twenty five
+  hyp: what do you think comes next um thirty yes
