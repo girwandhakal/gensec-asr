@@ -57,35 +57,21 @@ def load_model(model_id: str):
 
 
 def unique_hypotheses(greedy_text: str, sampled_texts: list[str], limit: int) -> list[dict]:
-    """Keep greedy first, then frequent sampled alternatives with distinct words."""
+    """Keep greedy first, then distinct alternatives in decoder output order."""
     greedy = clean_whisper_text(greedy_text)
     greedy_key = normalize_prediction_for_scoring(greedy)
     counts: Counter[str] = Counter()
     representatives: dict[str, str] = {}
-    first_seen: dict[str, int] = {}
-    for position, text in enumerate(sampled_texts):
+    for text in sampled_texts:
         cleaned = clean_whisper_text(text)
         key = normalize_prediction_for_scoring(cleaned)
         if not key:
             continue
         counts[key] += 1
         representatives.setdefault(key, cleaned)
-        first_seen.setdefault(key, position)
 
     chosen: list[tuple[str, str]] = [(greedy_key, greedy)] if greedy_key else []
-    remaining = set(counts) - {greedy_key}
-    while remaining and len(chosen) < limit:
-        selected_words = set().union(*(set(key.split()) for key, _ in chosen))
-        key = max(
-            remaining,
-            key=lambda candidate: (
-                counts[candidate],
-                bool(set(candidate.split()) - selected_words),
-                -first_seen[candidate],
-            ),
-        )
-        chosen.append((key, representatives[key]))
-        remaining.remove(key)
+    chosen.extend((key, text) for key, text in representatives.items() if key != greedy_key)
 
     return [
         {
@@ -95,7 +81,7 @@ def unique_hypotheses(greedy_text: str, sampled_texts: list[str], limit: int) ->
             "source": "greedy" if rank == 1 and key == greedy_key and greedy_key else "sampled",
             "sample_count": counts[key],
         }
-        for rank, (key, text) in enumerate(chosen, start=1)
+        for rank, (key, text) in enumerate(chosen[:limit], start=1)
     ]
 
 
@@ -183,9 +169,11 @@ DECODE_SIGNATURE_KEYS = (
 )
 
 
-def decode_signature(config: dict) -> str:
+def decode_signature(config: dict, *, raw_samples: bool = False) -> str:
     payload = {key: config[key] for key in DECODE_SIGNATURE_KEYS if key in config}
     payload["decode_method"] = "greedy_plus_sampled_v2"
+    if not raw_samples:
+        payload["candidate_selection"] = "first_distinct"
     return json.dumps(payload, sort_keys=True, default=str)
 
 
@@ -199,7 +187,7 @@ def check_decode_signature(config: dict, output_path: Path, cached: int) -> None
     with whichever config happened to be on disk when it finished.
     """
     stamp_path = output_path.with_suffix(".signature.json")
-    current = decode_signature(config)
+    current = decode_signature(config, raw_samples=output_path == config["whisper_samples_path"])
 
     if not stamp_path.is_file():
         if cached:
@@ -297,6 +285,17 @@ def generate_nbest(config: dict) -> None:
         print(f"Ignoring {removed:,} cached clips outside finalized audio/reference pairs")
     if config["asr_limit"]:
         clips = clips[:config["asr_limit"]]
+    for clip in clips:
+        uid = clip.stem
+        if uid in results or uid not in samples:
+            continue
+        sample = samples[uid]
+        hypotheses = unique_hypotheses(
+            sample["greedy_text"], sample["sampled_texts"], config["num_return_sequences"]
+        )
+        if len(hypotheses) >= config["min_hypotheses"]:
+            results[uid] = {"1best_text": sample["greedy_text"], "nbest": hypotheses}
+
     # Longest-clip-wins is how the decode budget is set, so group similar
     # durations together; otherwise one 25 s clip lifts the budget for the
     # 0.1 s clips sharing its batch.

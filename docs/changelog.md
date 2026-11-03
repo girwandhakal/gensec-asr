@@ -2,6 +2,17 @@
 
 ## 2026-11-02
 
+- **Select the first distinct Whisper alternatives in decoder output order.**
+  Keep the greedy baseline and skip empty or duplicate samples. Using decoder
+  order removes the extra frequency and word-diversity ranking rules. Reuse
+  compatible raw samples to avoid repeating Whisper inference. Use a separate
+  n-best cache and invalidate downstream training and predictions so they reflect
+  the new candidate lists.
+
+- **Allow Git to track `training.txt`.** Keep training and validation loss logs
+  available alongside run results so the selected checkpoint and signs of
+  overfitting can be reviewed.
+
 - **Increase the FLAN-T5 training budget to 10 epochs.** Allow more training
   before the epoch ceiling; retain early stopping with patience 2 and checkpoint
   selection by minimum validation loss. The existing training signature includes

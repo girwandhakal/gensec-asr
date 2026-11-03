@@ -4,6 +4,10 @@
 
 This repository implements generative speech error correction for child-speech ASR. Whisper produces a greedy baseline and sampled transcript candidates; Google FLAN-T5 uses those candidates to generate a corrected transcript. The pipeline evaluates WER and produces child-, group-, and corpus-level analyses and figures.
 
+## Manuscript writing
+
+- Use the `humanizer:humanizer` skill before returning any text intended for the manuscript, whether in chat or in a file. This includes draft prose, revisions, captions, and table notes.
+
 ## Structure and workflow
 
 - `bash_scripts/train.sh` is the single HPC entry point. It activates or creates the configured Conda environment and runs `scripts/run_pipeline.py`.

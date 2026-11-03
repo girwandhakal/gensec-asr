@@ -154,13 +154,12 @@ CSV is the only artifact carrying the clip-to-text link.
 
 ## ASR baseline and correction candidates
 
-Stage 2 decodes each clip once with deterministic greedy search. That transcript
-is the ASR baseline and the first GenSEC input. It also draws 10 transcripts at
-temperature 0.8, removes duplicates after scoring normalization, and retains up
-to four sampled alternatives. Candidates sampled more often are preferred, with
-distinct word choices breaking ties. The correction input has at most five
-transcripts; it is never padded with duplicates. The older sampled-only n-best
-file remains untouched, while the new path forces a full ASR regeneration.
+Stage 2 uses greedy decoding for the ASR baseline and puts it first in the
+GenSEC input when nonempty. It also draws 10 transcripts at temperature 0.8.
+After scoring normalization, it keeps the first four distinct, nonempty
+alternatives in decoder output order, skipping copies of the baseline.
+The new n-best cache can be rebuilt from compatible raw sample pools.
+Clips without a saved pool need to be decoded again.
 
 Stage 2 also checkpoints `data/utterance_id_to_whisper_samples.json` for analysis.
 Each utterance ID maps to `greedy_text` (the cleaned baseline) and `sampled_texts`

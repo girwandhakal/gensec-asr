@@ -1,6 +1,5 @@
 # Model checkpoints and Slurm logs
 work_directory/
-training.txt
 runs/
 **/*.pt
 **/*.pth

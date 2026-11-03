@@ -1,6 +1,6 @@
 seed: 42
 # Cache version
-methodology_version: child_split_v8_hypothesis_length_cap
+methodology_version: child_split_v9_first_distinct
 
 # Upstream media and references
 hpc_media_dir: /bighome/gdhakal/child_asr/data/media
@@ -16,7 +16,7 @@ sample_rate: 16000
 max_clip_seconds: 30  # Whisper window
 min_clip_seconds: 0.5  # Exclude implausibly short aligned speech
 max_reference_words_per_second: 4.0
-nbest_filename: utterance_id_to_nbest_greedy_sample10.json
+nbest_filename: utterance_id_to_nbest_greedy_sample10_first_distinct.json
 num_return_sequences: 5  # Greedy plus sampled alternatives
 asr_sample_pool_size: 10  # Sampling pool before deduplication
 temperature: 0.8

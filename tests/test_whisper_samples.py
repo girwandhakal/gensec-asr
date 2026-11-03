@@ -40,15 +40,18 @@ class WhisperSamplesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             config = self.config(directory)
             config["asr_batch_size"] = 4
-            legacy = json.loads(ns["decode_signature"](config))
-            del legacy["asr_batch_size"]
             for output in (config["nbest_path"], config["whisper_samples_path"]):
+                signature = ns["decode_signature"](
+                    config, raw_samples=output == config["whisper_samples_path"]
+                )
+                legacy = json.loads(signature)
+                del legacy["asr_batch_size"]
                 output.write_text('{"cached": "unchanged"}', encoding="utf-8")
                 stamp = output.with_suffix(".signature.json")
                 stamp.write_text(json.dumps(legacy), encoding="utf-8")
                 ns["check_decode_signature"](config, output, 1)
                 self.assertEqual(stamp.read_text(encoding="utf-8"),
-                                 ns["decode_signature"](config))
+                                 signature)
                 self.assertEqual(output.read_text(encoding="utf-8"),
                                  '{"cached": "unchanged"}')
 
@@ -111,6 +114,27 @@ class WhisperSamplesTests(unittest.TestCase):
                          ns["unique_hypotheses"]("Hello!", pools[0], 5))
         self.assertEqual(model.generate.call_count, 2)
         self.assertEqual(model.generate.call_args.kwargs["num_return_sequences"], 10)
+
+    def test_first_distinct_selection_rebuilds_from_raw_samples(self):
+        ns = generation_functions()
+        ns["load_model"] = Mock()
+        with tempfile.TemporaryDirectory() as directory:
+            config = self.config(directory)
+            config["num_return_sequences"] = 5
+            pool = ["", "YES.", "b", "B!", "c", "d", "e", "f", "f", "f"]
+            samples_path = config["whisper_samples_path"]
+            samples_path.write_text(json.dumps({
+                uid: {"greedy_text": "yes", "sampled_texts": pool}
+                for uid in ("one", "two")
+            }))
+            samples_path.with_suffix(".signature.json").write_text(
+                ns["decode_signature"](config, raw_samples=True)
+            )
+            ns["generate_nbest"](config)
+            results = json.loads(config["nbest_path"].read_text())
+            self.assertEqual([item["text"] for item in results["one"]["nbest"]],
+                             ["yes", "b", "c", "d", "e"])
+            ns["load_model"].assert_not_called()
 
     def config(self, directory):
         path = Path(directory)
