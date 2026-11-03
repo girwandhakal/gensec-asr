@@ -7,8 +7,8 @@ Retained utterances: 14,911
 Per-child cell means
 ------------------------------------------------------------------------
 group       n     whisper      gensec   improvement
-LT         22     54.36%      49.82%         4.54pp
-TD         78     42.40%      39.13%         3.27pp
+LT         22     54.36%      47.14%         7.22pp
+TD         78     42.40%      38.30%         4.10pp
 
 Corpus composition (children)
 ------------------------------------------------------------------------
@@ -27,37 +27,45 @@ Corpus composition (children)
 
 Mixed-effects model (random intercept per child)
 ------------------------------------------------------------------------
-  group[T.TD]                              b=-0.1196  p=0.0566  not significant
-  model[T.gensec]                          b=-0.0454  p=0.0174  significant
-  group[T.TD]:model[T.gensec]              b=+0.0126  p=0.5588  not significant
+  group[T.TD]                              b=-0.1196  p=0.0498  significant
+  model[T.gensec]                          b=-0.0722  p=0.0000  significant
+  group[T.TD]:model[T.gensec]              b=+0.0312  p=0.0881  not significant
   group coefficient: TD-LT difference under Whisper only.
   model coefficient: GenSEC-Whisper difference within LT only.
 
 Interaction: does improvement differ by group?
 ------------------------------------------------------------------------
-  label permutation (10,000 resamples)  p = 0.5720
-  Welch-statistic permutation (20,000 resamples)  p = 0.6147
-  difference in mean improvement: -1.26pp (TD - LT)
+  label permutation (10,000 resamples)  p = 0.0952
+  Welch-statistic permutation (20,000 resamples)  p = 0.0369
+  difference in mean improvement: -3.12pp (TD - LT)
 
   Other tests, for comparison:
-    student_t        p = 0.5641
-    welch_t          p = 0.6095
-    mann_whitney     p = 0.3002
-    yuen_trimmed     p = 0.3392
-    Shapiro LT       p = 5.95e-06
-    Shapiro TD       p = 5.65e-06
-    improvement SD LT       = 0.1053
-    improvement SD TD       = 0.0859
+    student_t        p = 0.0945
+    welch_t          p = 0.0303  <- under .05
+    mann_whitney     p = 0.1831
+    yuen_trimmed     p = 0.1346
+    Shapiro LT       p = 0.777
+    Shapiro TD       p = 4.05e-06
+    improvement SD LT       = 0.0493
+    improvement SD TD       = 0.0825
+
+  WARNING: these tests disagree across alpha = .05.
+  The groups have unequal variances and unequal sample sizes.
+  The label permutation assumes exchangeable improvement scores;
+  that assumption is doubtful here. Welch tests equality of means
+  under unequal variances, but is sensitive to large TD values.
+  No single p-value resolves this discrepancy. Treat the interaction
+  as sensitive to the analysis method, not confirmed or ruled out.
 
 Simple effects: did correction help within each group?
 ------------------------------------------------------------------------
-  LT       n=22    p(Holm)=0.0561  dz=0.43  not significant
-  TD       n=78    p(Holm)=0.00237  dz=0.38  significant
+  LT       n=22    p(Holm)=1.72e-06  dz=1.47  significant
+  TD       n=78    p(Holm)=3.61e-05  dz=0.50  significant
   These paired tests do not test whether the group gains differ.
 
 Overall paired child-level improvement
 ------------------------------------------------------------------------
-  mean improvement: +3.55pp; paired t p = 0.0001499 (n=100)
+  mean improvement: +4.78pp; paired t p = 1.379e-08 (n=100)
 
 Corpus-matched sensitivity analysis
 ------------------------------------------------------------------------
